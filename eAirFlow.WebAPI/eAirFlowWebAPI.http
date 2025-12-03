@@ -1,0 +1,6 @@
+@eAirFlowWebAPI_HostAddress = http://localhost:5207
+
+GET {{eAirFlowWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,30 @@
+class AuthProvider {
+  static int? userId;
+  static String? email;
+  static String? name;
+  static String? surname;
+  static String? password;
+  static String? profileImageUrl;
+  static int? roleId;
+  static int? positionId;
+  static int? employeeId;
+
+
+  static String get fullName {
+    if ((name ?? "").isEmpty && (surname ?? "").isEmpty) return "User";
+    return "${name ?? ""} ${surname ?? ""}".trim();
+  }
+
+    static void clear() {
+    userId = null;
+    name = null;
+    surname = null;
+    email = null;
+    password = null;
+    roleId = null;
+    profileImageUrl = null;
+    positionId=null;
+    employeeId = null;
+  }
+
+}

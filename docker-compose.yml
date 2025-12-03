@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  eairflow-sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=ilhamkr123!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    networks:
+      - eairflow
+
+  eairflow-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:eAirFlowConnection=Server=eairflow-sql,1433;Database=eAirFlowdb;User=sa;Password=ilhamkr123!;TrustServerCertificate=True;ConnectRetryCount=0
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5269:7239"
+    networks:
+      - eairflow
+    depends_on:
+      - eairflow-sql
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - eairflow
+
+networks:
+  eairflow:
+    driver: bridge

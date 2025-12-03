@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Krhan\\source\\repos\\eAirFlow\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4372C4EA-36E0-47D8-AE83-D4D6A2A7D82B}|eAirFlow.Services\\eAirFlow.Services.csproj|c:\\users\\krhan\\source\\repos\\eairflow\\eairflow.services\\services\\flightservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4372C4EA-36E0-47D8-AE83-D4D6A2A7D82B}|eAirFlow.Services\\eAirFlow.Services.csproj|solutionrelative:eairflow.services\\services\\flightservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FlightService.cs",
+              "DocumentMoniker": "C:\\Users\\Krhan\\source\\repos\\eAirFlow\\eAirFlow.Services\\Services\\FlightService.cs",
+              "RelativeDocumentMoniker": "eAirFlow.Services\\Services\\FlightService.cs",
+              "ToolTip": "C:\\Users\\Krhan\\source\\repos\\eAirFlow\\eAirFlow.Services\\Services\\FlightService.cs",
+              "RelativeToolTip": "eAirFlow.Services\\Services\\FlightService.cs",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAqwH8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-03T19:37:43.122Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

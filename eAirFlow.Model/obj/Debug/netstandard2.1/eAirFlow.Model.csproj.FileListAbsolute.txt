@@ -1,0 +1,9 @@
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\bin\Debug\netstandard2.1\eAirFlow.Model.deps.json
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\bin\Debug\netstandard2.1\eAirFlow.Model.dll
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\bin\Debug\netstandard2.1\eAirFlow.Model.pdb
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.AssemblyInfoInputs.cache
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.AssemblyInfo.cs
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.csproj.CoreCompileInputs.cache
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.dll
+C:\Users\Krhan\source\repos\eAirFlow\eAirFlow.Model\obj\Debug\netstandard2.1\eAirFlow.Model.pdb

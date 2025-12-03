@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\eAirFlow.WebAPI.props" />
+</Project>

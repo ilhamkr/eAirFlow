@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "eAirFlow.WebAPI\\eAirFlow.WebAPI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "eAirFlow.Subscriber\\eAirFlow.Subscriber.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
