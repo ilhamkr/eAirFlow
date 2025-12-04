@@ -1,0 +1,25 @@
+# Visual Studio privremeni fajlovi
+.vs/
+*.user
+*.suo
+
+# Build artefakti
+bin/
+obj/
+**/bin/
+**/obj/
+
+# EF Migrations snapshot / designer fajlovi (ako ih ne želiš pratiti)
+*.sourcelink.json
+
+# Log fajlovi
+*.log
+
+# Backup / privremeni fajlovi
+*.tmp
+*.temp
+*.bak
+
+# Rider / ReSharper (ako koristiš)
+.idea/
+*.DotSettings.user
