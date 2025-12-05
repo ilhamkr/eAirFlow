@@ -48,7 +48,7 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
               f.stateMachine == "scheduled")
           .toList();
 
-      List<Luggage> allLuggage = await luggageProv.getAllLuggage();
+      List<Luggage> allLuggage = await luggageProv.getForEmployee(employeeId);
       luggageIssues =
           allLuggage.where((l) => l.stateMachine != "pickedup").length;
 

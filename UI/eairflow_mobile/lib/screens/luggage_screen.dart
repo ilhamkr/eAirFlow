@@ -175,7 +175,7 @@ class _LuggageScreenMobileState extends State<LuggageScreenMobile> {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              "${l.airport!.city} – ${l.airport!.name}",
+                              "${l.airport!.city}, ${l.airport!.country} – ${l.airport!.name}",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

@@ -19,10 +19,7 @@ class NotificationProvider extends BaseProvider<NotificationModel> {
 
   Future<bool> markSeen(int id) async {
     final url = Uri.parse("${BaseProvider.baseUrl}Notification/seen/$id");
-    print("PUT -> $url");
     final response = await http.put(url, headers: createHeaders());
-    print("Status: ${response.statusCode}");
-    print("Body: ${response.body}");
     return response.statusCode == 200;
   }
 
@@ -38,5 +35,4 @@ class NotificationProvider extends BaseProvider<NotificationModel> {
 
     throw Exception("Failed loading notifications");
   }
-  
 }

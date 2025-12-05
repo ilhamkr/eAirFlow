@@ -76,49 +76,52 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     return map;
   }
 
-  Future<void> pickDateTime(TextEditingController controller) async {
-    final now = DateTime.now();
+ Future<void> pickDateTime(TextEditingController controller,
+    {DateTime? minDate}) async {
+  final now = DateTime.now();
 
-    final date = await showDatePicker(
+  final effectiveMin = minDate ?? now;
+
+  final date = await showDatePicker(
+    context: context,
+    initialDate: effectiveMin,
+    firstDate: effectiveMin,
+    lastDate: DateTime(now.year + 5),
+  );
+
+  if (date == null) return;
+
+  TimeOfDay? time;
+  while (true) {
+    time = await showTimePicker(
       context: context,
-      initialDate: now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 5),
-    );
-
-    if (date == null) return;
-
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(now),
+      initialTime: TimeOfDay.fromDateTime(effectiveMin),
     );
 
     if (time == null) return;
 
     final dt = DateTime(date.year, date.month, date.day, time.hour, time.minute);
 
-    if (date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day &&
-        dt.isBefore(now)) {
-      showDialog(
+    if (dt.isBefore(effectiveMin)) {
+      await showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: const Text("Invalid Time"),
-          content: const Text("You cannot select a past time today."),
+          content: const Text("You cannot select a time in the past."),
           actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () => Navigator.pop(context),
-            )
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
           ],
         ),
       );
-      return;
+      continue;
     }
 
     controller.text = dt.toIso8601String();
+    return;
   }
+}
+
+
 
 
   @override
@@ -461,6 +464,41 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 return;
               }
 
+              final now = DateTime.now();
+              final depDT = DateTime.tryParse(depTime.text);
+              final arrDT = DateTime.tryParse(arrTime.text);
+
+              if (depDT == null || arrDT == null) {
+                return showDialog(
+                  context: context,
+                  builder: (_) => const AlertDialog(
+                    title: Text("Invalid Time"),
+                    content: Text("Departure and arrival times are required."),
+                  ),
+                );
+              }
+
+              if (depDT.isBefore(now)) {
+                return showDialog(
+                  context: context,
+                  builder: (_) => const AlertDialog(
+                    title: Text("Departure Invalid"),
+                    content: Text("Departure time cannot be in the past."),
+                  ),
+                );
+              }
+
+              if (arrDT.isBefore(depDT)) {
+                return showDialog(
+                  context: context,
+                  builder: (_) => const AlertDialog(
+                    title: Text("Arrival Invalid"),
+                    content: Text("Arrival time must be AFTER departure time."),
+                  ),
+                );
+              }
+
+
               await flightProv.insertAdmin({
                 "departureLocation": dep.text,
                 "arrivalLocation": arr.text,
@@ -572,6 +610,42 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             onPressed: isLocked
                 ? null
                 : () async {
+
+                  final now = DateTime.now();
+                  final depDT = DateTime.tryParse(depTime.text);
+                  final arrDT = DateTime.tryParse(arrTime.text);
+                  
+                  if (depDT == null || arrDT == null) {
+                    return showDialog(
+                      context: context,
+                      builder: (_) => const AlertDialog(
+                        title: Text("Invalid Time"),
+                        content: Text("Departure and arrival times are required."),
+                      ),
+                    );
+                  }
+                  
+                  if (depDT.isBefore(now)) {
+                    return showDialog(
+                      context: context,
+                      builder: (_) => const AlertDialog(
+                        title: Text("Departure Invalid"),
+                        content: Text("Departure time cannot be in the past."),
+                      ),
+                    );
+                  }
+                  
+                  if (arrDT.isBefore(depDT)) {
+                    return showDialog(
+                      context: context,
+                      builder: (_) => const AlertDialog(
+                        title: Text("Arrival Invalid"),
+                        content: Text("Arrival time must be AFTER departure time."),
+                      ),
+                    );
+                  }
+
+
                     await flightProv.update(flight.flightId!, {
                       "departureLocation": dep.text,
                       "arrivalLocation": arr.text,

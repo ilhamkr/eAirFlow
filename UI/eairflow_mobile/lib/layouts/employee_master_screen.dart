@@ -17,8 +17,10 @@ class EmployeeMasterScreenMobile extends StatefulWidget {
 
 class _EmployeeMasterScreenMobileState
     extends State<EmployeeMasterScreenMobile> {
+
   String displayName() {
-    if (AuthProvider.name != null && AuthProvider.surname != null) {
+    if ((AuthProvider.name ?? "").isNotEmpty &&
+        (AuthProvider.surname ?? "").isNotEmpty) {
       return "${AuthProvider.name} ${AuthProvider.surname}";
     }
     return AuthProvider.email ?? "Employee";
@@ -28,40 +30,41 @@ class _EmployeeMasterScreenMobileState
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: EmployeeSidebarMobile(selectedIndex: widget.selectedIndex),
+    return ValueListenableBuilder(
+      valueListenable: AuthProvider.notifier,
+      builder: (context, _, __) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          drawer: EmployeeSidebarMobile(selectedIndex: widget.selectedIndex),
 
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
-        iconTheme: IconThemeData(color: cs.primary),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 2,
+            iconTheme: IconThemeData(color: cs.primary),
 
-        title: Text(
-          "Employee Panel",
-          style: TextStyle(
-            color: cs.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            title: Text(
+              "Employee Panel",
+              style: TextStyle(
+                color: cs.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
 
-        actions: [
-          InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const UserProfileMobile(),
-                ),
-              );
-              setState(() {});
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Row(
-                children: [
-                  CircleAvatar(
+            actions: [
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const UserProfileMobile(),
+                    ),
+                  );
+                  AuthProvider.notifier.value++;
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: CircleAvatar(
                     radius: 16,
                     backgroundImage: AuthProvider.profileImageUrl != null
                         ? NetworkImage(
@@ -71,18 +74,18 @@ class _EmployeeMasterScreenMobileState
                         ? Icon(Icons.person, color: cs.primary)
                         : null,
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
 
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(12),
-        child: widget.child,
-      ),
+          body: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(12),
+            child: widget.child,
+          ),
+        );
+      },
     );
   }
 }

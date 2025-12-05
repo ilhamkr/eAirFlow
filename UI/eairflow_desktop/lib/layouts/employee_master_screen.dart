@@ -4,7 +4,7 @@ import '../providers/auth_provider.dart';
 import '../providers/base_provider.dart';
 import '../screens/user_profile_screen.dart';
 
-class EmployeeMasterScreen extends StatelessWidget {
+class EmployeeMasterScreen extends StatefulWidget {
   final int index;
   final Widget page;
 
@@ -14,8 +14,14 @@ class EmployeeMasterScreen extends StatelessWidget {
     required this.page,
   });
 
+  @override
+  State<EmployeeMasterScreen> createState() => _EmployeeMasterScreenState();
+}
+
+class _EmployeeMasterScreenState extends State<EmployeeMasterScreen> {
   String _displayName() {
-    if (AuthProvider.name != null && AuthProvider.surname != null) {
+    if ((AuthProvider.name ?? "").isNotEmpty &&
+        (AuthProvider.surname ?? "").isNotEmpty) {
       return "${AuthProvider.name} ${AuthProvider.surname}";
     }
     return AuthProvider.email ?? "Employee";
@@ -25,87 +31,89 @@ class EmployeeMasterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      body: Row(
-        children: [
-          SizedBox(
-            width: 240,
-            child: EmployeeSidebar(selectedIndex: index),
-          ),
+    return ValueListenableBuilder(
+      valueListenable: AuthProvider.notifier,
+      builder: (context, _, __) {
+        return Scaffold(
+          body: Row(
+            children: [
+              SizedBox(
+                width: 240,
+                child: EmployeeSidebar(selectedIndex: widget.index),
+              ),
 
-          Expanded(
-            child: Column(
-              children: [
-                Container(
-                  height: 64,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+              Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 64,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: cs.surface,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      const Spacer(),
+                      child: Row(
+                        children: [
+                          const Spacer(),
 
-                      const SizedBox(width: 8),
-
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const UserProfilePage(),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const UserProfilePage(),
+                                ),
+                              );
+                              AuthProvider.notify();
+                            },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundImage: AuthProvider.profileImageUrl != null
+                                      ? NetworkImage(
+                                          "${BaseProvider.baseUrl}${AuthProvider.profileImageUrl}",
+                                        )
+                                      : null,
+                                  child: AuthProvider.profileImageUrl == null
+                                      ? Icon(Icons.person, color: cs.primary)
+                                      : null,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _displayName(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          );
-
-                          (context as Element).markNeedsBuild();
-                        },
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 18,
-                              backgroundImage: AuthProvider.profileImageUrl != null
-                                  ? NetworkImage(
-                                      "${BaseProvider.baseUrl}${AuthProvider.profileImageUrl}",
-                                    )
-                                  : null,
-                              child: AuthProvider.profileImageUrl == null
-                                  ? Icon(Icons.person, color: cs.primary)
-                                  : null,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _displayName(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                Expanded(
-                  child: Container(
-                    color: cs.surfaceVariant.withOpacity(0.06),
-                    padding: const EdgeInsets.all(16),
-                    child: page,
-                  ),
+                    Expanded(
+                      child: Container(
+                        color: cs.surfaceVariant.withOpacity(0.06),
+                        padding: const EdgeInsets.all(16),
+                        child: widget.page,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AuthProvider {
   static int? userId;
   static String? email;
@@ -8,6 +10,12 @@ class AuthProvider {
   static int? roleId;
   static int? positionId;
   static int? employeeId;
+
+  static final ValueNotifier<int> notifier = ValueNotifier(0);
+
+  static void notify() {
+    notifier.value++;
+  }
 
 
   static String get fullName {

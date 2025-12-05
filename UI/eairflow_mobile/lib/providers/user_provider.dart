@@ -56,13 +56,10 @@ class UserProvider extends BaseProvider<User> {
       ),
     );
 
-    print("📦 FILE BYTES: ${bytes.length}");
 
     var response = await request.send();
 
-    print("🟡 STATUS: ${response.statusCode}");
     final resBody = await response.stream.bytesToString();
-    print("🟡 BODY RAW: $resBody");
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return resBody.replaceAll('"', '').trim();

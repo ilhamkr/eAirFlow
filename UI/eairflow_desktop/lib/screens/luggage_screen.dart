@@ -160,7 +160,7 @@ class _LuggageScreenState extends State<LuggageScreen> {
                                             size: 18, color: Colors.grey.shade700),
                                         const SizedBox(width: 6),
                                         Text(
-                                          "${l.airport!.city} - ${l.airport!.name}",
+                                          "${l.airport!.city}, ${l.airport!.country} - ${l.airport!.name}",
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,

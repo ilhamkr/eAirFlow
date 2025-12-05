@@ -71,30 +71,31 @@ namespace eAirFlow.WebAPI.Controllers
             return Ok(new { count = result.Count, resultList = result });
         }
 
-
-
-
-
         [HttpGet("stats")]
-        public IActionResult GetStats([FromQuery] string airportIds)
+        public async Task<IActionResult> GetStats([FromQuery] string airportIds)
         {
             var ids = airportIds
                 .Split(',')
                 .Select(int.Parse)
                 .ToList();
 
-            var result = ((IFlightService)_service).GetStats(ids);
+            var result = await ((IFlightService)_service).GetStats(ids);
 
             return Ok(result);
         }
 
+
+
         [HttpGet("weekly-trend")]
-        public IActionResult GetWeeklyTrend([FromQuery] string airportIds)
+        public async Task<IActionResult> GetWeeklyTrend([FromQuery] string airportIds)
         {
             var ids = airportIds.Split(',').Select(int.Parse).ToList();
-            var data = ((IFlightService)_service).GetWeeklyTrend(ids);
+
+            var data = await ((IFlightService)_service).GetWeeklyTrend(ids);
             return Ok(data);
         }
+
+
 
         [HttpGet("future-locations")]
         public IActionResult GetFutureLocations([FromQuery] int airlineId)

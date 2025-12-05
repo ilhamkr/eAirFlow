@@ -144,6 +144,14 @@ namespace eAirFlow.Services.Database
 
             List<Flight> flights = new List<Flight>();
             int flightId = 1;
+
+            int sarajevoAirportId = 1;
+            int mostarAirportId = 2;
+
+            int turkishId = 1;
+            int ryanairId = 2;  
+            int lufthansaId = 3; 
+
             DateTime start = DateTime.UtcNow.Date;
 
             string[] sarajevoDest = { "Istanbul", "Berlin", "Roma", "Paris" };
@@ -160,8 +168,39 @@ namespace eAirFlow.Services.Database
                     DateTime arr = date.AddHours(10 + i);
                     int price = 150 + i * 5;
 
-                    flights.Add(new Flight { FlightId = flightId, DepartureLocation = "Sarajevo", ArrivalLocation = dest, DepartureTime = dep, ArrivalTime = arr, AirlineId = 1, AirplaneId = 1, StateMachine = "scheduled", Price = price });
-                    flightId++;
+                    flights.Add(new Flight
+                    {
+                        FlightId = flightId++,
+                        DepartureLocation = "Sarajevo",
+                        ArrivalLocation = dest,
+                        DepartureTime = dep,
+                        ArrivalTime = arr,
+                        AirlineId = turkishId,
+                        AirplaneId = 1,
+                        Price = price,
+                        StateMachine = "scheduled"
+                    });
+                }
+
+                for (int i = 0; i < 3; i++)
+                {
+                    string dest = sarajevoDest[(i + 1) % sarajevoDest.Length];
+                    DateTime dep = date.AddHours(15 + i);
+                    DateTime arr = date.AddHours(17 + i);
+                    int price = 90 + i * 7;
+
+                    flights.Add(new Flight
+                    {
+                        FlightId = flightId++,
+                        DepartureLocation = "Sarajevo",
+                        ArrivalLocation = dest,
+                        DepartureTime = dep,
+                        ArrivalTime = arr,
+                        AirlineId = ryanairId,
+                        AirplaneId = 2,
+                        Price = price,
+                        StateMachine = "scheduled"
+                    });
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -171,11 +210,23 @@ namespace eAirFlow.Services.Database
                     DateTime arr = date.AddHours(14 + i);
                     int price = 130 + i * 10;
 
-                    flights.Add(new Flight { FlightId = flightId, DepartureLocation = "Mostar", ArrivalLocation = dest, DepartureTime = dep, ArrivalTime = arr, AirlineId = 1, AirplaneId = 1, StateMachine = "scheduled", Price = price });
-                    flightId++;
+                    flights.Add(new Flight
+                    {
+                        FlightId = flightId++,
+                        DepartureLocation = "Mostar",
+                        ArrivalLocation = dest,
+                        DepartureTime = dep,
+                        ArrivalTime = arr,
+                        AirlineId = lufthansaId,
+                        AirplaneId = 3,
+                        Price = price,
+                        StateMachine = "scheduled"
+                    });
                 }
             }
+
             modelBuilder.Entity<Flight>().HasData(flights);
+
 
         }
     }

@@ -64,13 +64,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     Checkbox(
                       value: selectedAirports.contains(a.airportId),
                       onChanged: (v) {
-                        if (v == true) {
-                          selectedAirports.add(a.airportId!);
-                        } else {
-                          selectedAirports.remove(a.airportId);
-                        }
+                        setState(() {
+                          if (v == false && selectedAirports.length == 1) {
+                            return;
+                          }
+
+                          if (v == true) {
+                            selectedAirports.add(a.airportId!);
+                          } else {
+                            selectedAirports.remove(a.airportId);
+                          }
+                        });
+
                         loadStats();
                       },
+
                     ),
                     Text(a.name ?? ""),
                     const SizedBox(width: 16),

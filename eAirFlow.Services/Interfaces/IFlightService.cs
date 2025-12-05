@@ -1,4 +1,5 @@
-﻿using eAirFlow.Model.Models;
+﻿using eAirFlow.Model;
+using eAirFlow.Model.Models;
 using eAirFlow.Model.Requests;
 using eAirFlow.Model.SearchObjects;
 using Mapster.Utils;
@@ -19,8 +20,8 @@ namespace eAirFlow.Services.Interfaces
         public Flight Boarding(int id);
         public Flight DelayWithTime(int id, int minutes);
         public Flight AdminInsert(FlightInsertRequest request);
-        Dictionary<string, object> GetStats(List<int> airportIds);
-        List<WeeklyTrend> GetWeeklyTrend(List<int> airportIds);
+        public Task<Dictionary<string, object>> GetStats(List<int> airportIds);
+        Task<List<WeeklyTrendDto>> GetWeeklyTrend(List<int> airportIds);
         public Dictionary<string, List<string>> GetFutureLocations(int airlineId);
 
         void Delete(int id);

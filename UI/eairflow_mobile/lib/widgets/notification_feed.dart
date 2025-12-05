@@ -1,6 +1,6 @@
+import 'package:eairflow_mobile/models/notification.dart';
+import 'package:eairflow_mobile/providers/notification_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:eairflow_desktop/providers/notification_provider.dart';
-import 'package:eairflow_desktop/models/notification.dart';
 import 'package:intl/intl.dart';
 
 class EmployeeNotificationFeed extends StatefulWidget {

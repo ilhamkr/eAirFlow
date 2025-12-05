@@ -23,58 +23,63 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   String? _error;
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+  setState(() {
+    _loading = true;
+    _error = null;
+  });
 
-    try {
-      final prov = UserProvider();
-      final user = await prov.login(_emailCtrl.text, _passCtrl.text);
+  try {
+    final prov = UserProvider();
+    final user = await prov.login(_emailCtrl.text, _passCtrl.text);
 
-      if (user == null) {
-        setState(() => _error = "Invalid credentials");
-        return;
-      }
+    if (user == null) {
+      setState(() => _error = "Invalid credentials");
+      return;
+    }
 
-      AuthProvider.userId = user.userId;
-      AuthProvider.email = user.email;
-      AuthProvider.password = _passCtrl.text;
-      AuthProvider.name = user.name;
-      AuthProvider.surname = user.surname;
-      AuthProvider.roleId = user.roleId;
-      AuthProvider.positionId = user.employee?.positionId;
-      AuthProvider.employeeId= user.employee?.employeeId;
+    AuthProvider.userId = user.userId;
+    AuthProvider.email = user.email;
+    AuthProvider.password = _passCtrl.text;
+    AuthProvider.name = user.name;
+    AuthProvider.surname = user.surname;
+    AuthProvider.roleId = user.roleId;
+    AuthProvider.positionId = user.employee?.positionId;
+    AuthProvider.employeeId = user.employee?.employeeId;
+    AuthProvider.profileImageUrl = user.profileImageUrl;
 
-      if (!mounted) return;
+    AuthProvider.notify();
 
-      if (AuthProvider.roleId == 2 && AuthProvider.positionId == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const EmployeeMasterScreenMobile(
-              0,
-              EmployeeHomeScreen(),
-            ),
-          ),
-        );
-        return;
-      }
+    if (!mounted) return;
 
+    if (AuthProvider.roleId == 2 && AuthProvider.positionId == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => MasterScreenMobile(0, const HomeScreen()),
+          builder: (_) => const EmployeeMasterScreenMobile(
+            0,
+            EmployeeHomeScreen(),
+          ),
         ),
       );
-    } catch (e) {
-      setState(() => _error = "Error logging in");
-    } finally {
-      setState(() => _loading = false);
+      return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MasterScreenMobile(0, const HomeScreen()),
+      ),
+    );
+  } catch (e) {
+    setState(() => _error = "Error logging in");
+  } finally {
+    setState(() => _loading = false);
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {

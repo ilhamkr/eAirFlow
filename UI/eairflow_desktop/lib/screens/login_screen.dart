@@ -53,6 +53,8 @@ class _LoginPageState extends State<LoginPage> {
     AuthProvider.roleId = user.roleId;
     AuthProvider.employeeId = user.employee?.employeeId;
     AuthProvider.positionId = user?.employee?.positionId;
+    AuthProvider.profileImageUrl= user.profileImageUrl;
+    AuthProvider.notify();
 
     if (!mounted) return;
 

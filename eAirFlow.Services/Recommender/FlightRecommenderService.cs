@@ -35,22 +35,21 @@ namespace eAirFlow.Services.Recommender
 
             if (!userReservations.Any())
             {
-                var fallbackFlights = _context.Flights
+                var differentDestinations = _context.Flights
                     .Include(f => f.Airline)
-                    .OrderBy(f => f.Price)
+                    .GroupBy(f => f.ArrivalLocation)
+                    .Select(g => g.OrderBy(f => f.Price).First())
                     .Take(brojPreporuka)
                     .ToList();
 
-                return _mapper.Map<List<Flight>>(fallbackFlights);
+                return _mapper.Map<List<Flight>>(differentDestinations);
             }
 
             var userProfileText = string.Join(" ",
                 userReservations.Select(r =>
                 {
                     var f = r.Flight!;
-                    var airlineName = f.Airline?.Name ?? "";
-                    var airlineCountry = f.Airline?.Country ?? "";
-                    return $"{f.DepartureLocation} {f.ArrivalLocation} {airlineName} {airlineCountry}";
+                    return $"{f.DepartureLocation} {f.ArrivalLocation} {f.Airline?.Name} {f.Airline?.Country}";
                 }));
 
             var candidateFlightsQuery = _context.Flights
@@ -73,8 +72,10 @@ namespace eAirFlow.Services.Recommender
             {
                 var lastFlights = userReservations
                     .OrderByDescending(r => r.ReservationDate)
-                    .Take(brojPreporuka)
                     .Select(r => r.Flight!)
+                    .GroupBy(f => f.ArrivalLocation)
+                    .Select(g => g.First())
+                    .Take(brojPreporuka)
                     .ToList();
 
                 return _mapper.Map<List<Flight>>(lastFlights);
@@ -97,7 +98,7 @@ namespace eAirFlow.Services.Recommender
             var dataView = mlContext.Data.LoadFromEnumerable(dataForMl);
 
             var pipeline = mlContext.Transforms.Text
-                .FeaturizeText(outputColumnName: "Features", inputColumnName: nameof(FlightText.Text));
+                .FeaturizeText("Features", nameof(FlightText.Text));
 
             var model = pipeline.Fit(dataView);
             var transformed = model.Transform(dataView);
@@ -114,12 +115,15 @@ namespace eAirFlow.Services.Recommender
                     Flight = flightTextData[idx].Flight
                 })
                 .OrderByDescending(x => x.Score)
+                .GroupBy(x => x.Flight.ArrivalLocation)
+                .Select(g => g.First())
                 .Take(brojPreporuka)
                 .Select(x => x.Flight)
                 .ToList();
 
             return _mapper.Map<List<Flight>>(scoredFlights);
         }
+
 
 
         private class FlightText

@@ -10,6 +10,7 @@ using DbFlight = eAirFlow.Services.Database.Flight;
 using ModelFlight = eAirFlow.Model.Models.Flight;
 using System.Linq;
 using eAirFlow.Model.Models;
+using eAirFlow.Model;
 
 namespace eAirFlow.Services.Services
 {
@@ -86,80 +87,120 @@ namespace eAirFlow.Services.Services
         }
 
 
-        public Dictionary<string, object> GetStats(List<int> airportIds)
+        public async Task<Dictionary<string, object>> GetStats(List<int> airportIds)
         {
-            var flights = _context.Flights
-                .Include(x => x.Airline)
-                .ThenInclude(a => a.Airport)
-                .Where(x => x.Airline.AirportId.HasValue &&
-                            airportIds.Contains(x.Airline.AirportId.Value))
-                .ToList();
+            var completed = await _context.Flights
+                .Where(f => airportIds.Contains(f.Airline.AirportId.GetValueOrDefault()))
+                .Where(f => f.StateMachine == "completed")
+                .CountAsync();
 
-            var completed = flights.Count(f => f.StateMachine == "completed");
-            var canceled = flights.Count(f => f.StateMachine == "canceled");
-            var delayed = flights.Count(f => f.StateMachine == "delayed");
+            var canceled = await _context.Flights
+                .Where(f => airportIds.Contains(f.Airline.AirportId.GetValueOrDefault()))
+                .Where(f => f.StateMachine == "cancelled")
+                .CountAsync();
 
-            var revenue = flights.Sum(f => f.Price ?? 0);
+            var delayed = await _context.Flights
+                .Where(f => airportIds.Contains(f.Airline.AirportId.GetValueOrDefault()))
+                .Where(f => f.StateMachine == "delayed")
+                .CountAsync();
 
-            var topAirlines = flights
+            var totalRevenue = await _context.Reservations
+                .Include(r => r.Flight)
+                    .ThenInclude(f => f.Airline)
+                .Where(r => r.StateMachine == "paid")
+                .Where(r => r.Flight != null)
+                .Where(r => r.Flight.Airline != null)
+                .Where(r => airportIds.Contains(r.Flight.Airline.AirportId.GetValueOrDefault()))
+                .SumAsync(r => (decimal?)r.Payment.Amount) ?? 0m;
+
+
+            var topAirlines = await _context.Flights
+                .Where(f => airportIds.Contains(f.Airline.AirportId.GetValueOrDefault()))
+                .Where(f => f.StateMachine == "completed")
                 .GroupBy(f => f.Airline.Name)
                 .Select(g => new { airline = g.Key, count = g.Count() })
                 .OrderByDescending(x => x.count)
-                .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            var topDestinations = flights
+            var topDestinations = await _context.Flights
+                .Where(f => airportIds.Contains(f.Airline.AirportId.GetValueOrDefault()))
+                .Where(f => f.StateMachine == "completed")
                 .GroupBy(f => f.ArrivalLocation)
                 .Select(g => new { destination = g.Key, count = g.Count() })
                 .OrderByDescending(x => x.count)
-                .Take(5)
+                .ToListAsync();
+
+            var recentFlights = await _context.Flights
+                .Where(f => f.DepartureTime != null)
+                .Where(f => f.DepartureTime >= DateTime.Today.AddDays(-7))
+                .ToListAsync();
+
+            var weeklyTrend = Enumerable.Range(0, 7)
+                .Select(i => DateTime.Today.AddDays(-i))
+                .Select(date => new WeeklyTrendDto
+                {
+                    Day = date.ToString("ddd"),
+                    Completed = recentFlights.Count(f =>
+                        f.StateMachine == "completed" &&
+                        f.DepartureTime!.Value.Date == date),
+
+                    Canceled = recentFlights.Count(f =>
+                        f.StateMachine == "cancelled" &&
+                        f.DepartureTime!.Value.Date == date),
+
+                    Delayed = recentFlights.Count(f =>
+                        f.StateMachine == "delayed" &&
+                        f.DepartureTime!.Value.Date == date)
+                })
+                .OrderBy(x => x.Day)
                 .ToList();
 
             return new Dictionary<string, object>
-            {
-               { "completed", completed },
-               { "canceled", canceled },
-               { "delayed", delayed },
-               { "totalRevenue", revenue },
-               { "topAirlines", topAirlines },
-               { "topDestinations", topDestinations },
-               { "weeklyTrend", GetWeeklyTrend(airportIds) }
-            };
+    {
+        { "completed", completed },
+        { "canceled", canceled },
+        { "delayed", delayed },
+        { "totalRevenue", totalRevenue },
+        { "topAirlines", topAirlines },
+        { "topDestinations", topDestinations },
+        { "weeklyTrend", weeklyTrend }
+    };
         }
 
-        public List<WeeklyTrend> GetWeeklyTrend(List<int> airportIds)
+
+
+
+        public async Task<List<WeeklyTrendDto>> GetWeeklyTrend(List<int> airportIds)
         {
-            var today = DateTime.Now.Date;
-
-            var diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
-            var weekStart = today.AddDays(-diff);
-            var weekEnd = weekStart.AddDays(7);
-
-            var flights = _context.Flights
+            var recentFlights = await _context.Flights
+                .Where(f => f.DepartureTime != null)
+                .Where(f => f.DepartureTime >= DateTime.Today.AddDays(-7))
                 .Include(f => f.Airline)
-                .Where(f => airportIds.Contains(f.Airline.AirportId ?? 0)
-                    && f.DepartureTime >= weekStart
-                    && f.DepartureTime < weekEnd)
-                .ToList();
+                .ToListAsync();
 
-            var result = new List<WeeklyTrend>();
-            var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-
-            for (int d = 0; d < 7; d++)
-            {
-                var day = weekStart.AddDays(d).Date;
-
-                result.Add(new WeeklyTrend
+            var result = Enumerable.Range(0, 7)
+                .Select(i => DateTime.Today.AddDays(-i))
+                .Select(date => new WeeklyTrendDto
                 {
-                    Day = days[d],
-                    Completed = flights.Count(f => f.StateMachine == "completed" && f.DepartureTime!.Value.Date == day),
-                    Canceled = flights.Count(f => f.StateMachine == "canceled" && f.DepartureTime!.Value.Date == day),
-                    Delayed = flights.Count(f => f.StateMachine == "delayed" && f.DepartureTime!.Value.Date == day)
-                });
-            }
+                    Day = date.ToString("ddd"),
+                    Completed = recentFlights.Count(f =>
+                        f.StateMachine == "completed" &&
+                        f.DepartureTime!.Value.Date == date),
+
+                    Canceled = recentFlights.Count(f =>
+                        f.StateMachine == "cancelled" &&
+                        f.DepartureTime!.Value.Date == date),
+
+                    Delayed = recentFlights.Count(f =>
+                        f.StateMachine == "delayed" &&
+                        f.DepartureTime!.Value.Date == date)
+                })
+                .OrderBy(x => x.Day)
+                .ToList();
 
             return result;
         }
+
 
 
 
@@ -225,7 +266,7 @@ namespace eAirFlow.Services.Services
                 _context.Notifications.Add(new Database.Notification
                 {
                     UserId = r.UserId,
-                    Message = $"Your flight has been delayed by {minutes} minutes.",
+                    Message = $"Flight from {entity.DepartureLocation} to {entity.ArrivalLocation} has been delayed by {minutes} minutes.",
                     SentAt = DateTime.Now,
                     IsSeen = false
                 });
@@ -270,12 +311,13 @@ namespace eAirFlow.Services.Services
 
         public Dictionary<string, List<string>> GetFutureLocations(int airlineId)
         {
-            var today = DateTime.Today;
+            var now = DateTime.Now;
 
             var flights = _context.Flights
                 .Where(f => f.AirlineId == airlineId &&
-                            f.DepartureTime >= today)
+                            f.DepartureTime > now)
                 .ToList();
+
 
             var fromLocations = flights
                 .Select(f => f.DepartureLocation)
