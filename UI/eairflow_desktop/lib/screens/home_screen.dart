@@ -3,6 +3,7 @@ import 'package:eairflow_desktop/providers/reservation_provider.dart';
 import 'package:eairflow_desktop/screens/book_flight_card.dart';
 import 'package:flutter/material.dart';
 import '../widgets/stat_card.dart';
+import '../../main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,7 +12,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
   int flightsBooked = 0;
   int flightsDone = 0;
   int flightsCancelled = 0;
@@ -23,53 +24,71 @@ class _HomeScreenState extends State<HomeScreen> {
     loadStats();
   }
 
+  @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  final route = ModalRoute.of(context);
+  if (route is PageRoute) {
+    routeObserver.subscribe(this, route);
+  }
+}
+
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    loadStats();
+  }
+
   Future<void> loadStats() async {
-  final userId = AuthProvider.userId;
-  if (userId == null) return;
+    final userId = AuthProvider.userId;
+    if (userId == null) return;
 
-  final provider = ReservationProvider();
-  final reservations = await provider.getByUser(userId);
+    final provider = ReservationProvider();
+    final reservations = await provider.getByUser(userId);
 
-  int booked = 0;
-  int done = 0;
-  int cancelled = 0;
-  double spends = 0;
+    int booked = 0;
+    int done = 0;
+    int cancelled = 0;
+    double spends = 0;
 
-  for (var r in reservations) {
-  final flightState = r.flight?.stateMachine;
-  final reservationState = r.stateMachine;
+    for (var r in reservations) {
+      final flightState = r.flight?.stateMachine;
+      final reservationState = r.stateMachine;
 
-  if (r.payment != null && r.payment!.amount != null) {
-    spends += r.payment!.amount!;
+      if (r.payment != null && r.payment!.amount != null) {
+        spends += r.payment!.amount!;
+      }
+
+      if (flightState == "completed") {
+        done++;
+        continue;
+      }
+
+      if (reservationState == "cancelled") {
+        cancelled++;
+        continue;
+      }
+
+      booked++;
+    }
+
+    setState(() {
+      flightsBooked = booked;
+      flightsDone = done;
+      flightsCancelled = cancelled;
+      totalSpends = spends;
+    });
   }
-
-  if (flightState == "completed") {
-    done++;
-    continue;
-  }
-
-  if (reservationState == "cancelled") {
-    cancelled++;
-    continue;
-  }
-
-  booked++;
-
-}
-
-
-  setState(() {
-    flightsBooked = booked;
-    flightsDone = done;
-    flightsCancelled = cancelled;
-    totalSpends = spends;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return LayoutBuilder(
       builder: (context, c) {
         return SingleChildScrollView(
@@ -117,4 +136,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

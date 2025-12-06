@@ -55,12 +55,12 @@ namespace eAirFlow.Services.Services
             if (_context.Users.Any(x => x.Email == request.Email))
                 throw new Exception("Email already exists.");
 
-            if (request.Passsword != request.PasswordConfirmation)
+            if (request.Password != request.PasswordConfirmation)
                 throw new Exception("Password and confirmation must match!");
 
             var salt = GenerateSalt();
             entity.PasswordSalt = salt;
-            entity.PasswordHash = GenerateHash(salt, request.Passsword);
+            entity.PasswordHash = GenerateHash(salt, request.Password);
             entity.CreatedAt = DateTime.Now;
 
             base.BeforeInsert(request, entity);
@@ -70,32 +70,44 @@ namespace eAirFlow.Services.Services
         {
             var entity = await base.InsertAsync(request);
 
-            var token = Guid.NewGuid().ToString("N");
-
-            var confirmation = new DbEmailConfirmation
+            try
             {
-                UserId = entity.UserId,
-                Token = token,
-                CreatedAt = DateTime.Now,
-                IsConfirmed = false
-            };
+                await _rabbitMq.SendEmail(new Email
+                {
+                    EmailTo = entity.Email!,
+                    ReceiverName = entity.Name ?? "User",
+                    Subject = "Confirm your eAirFlow email",
+                    Message = $@"
+                        <h2 style=""color:#1a73e8; font-family:Arial; margin-bottom:10px;"">
+                            Welcome to eAirFlow! ✈️
+                        </h2>
+                        
+                        <p style=""font-family:Arial; font-size:14px; color:#333;"">
+                            We're excited to have you onboard! Your eAirFlow account has been successfully created.
+                        </p>
+                        
+                        <p style=""font-family:Arial; font-size:14px; color:#333;"">
+                            You can now log in and start booking flights, managing reservations, and enjoying a smooth travel experience.
+                        </p>
+                        
+                        <hr style=""margin:20px 0; border:0; border-top:1px solid #ddd;"">
+                        
+                        <p style=""font-family:Arial; font-size:12px; color:#555;"">
+                            If you did not create this account, please ignore this email.
+                        </p>
+                        
+                        <p style=""font-family:Arial; font-size:12px; color:#1a73e8; margin-top:10px;"">
+                            – The eAirFlow Team
+                        </p>
 
-            _context.EmailConfirmations.Add(confirmation);
-            await _context.SaveChangesAsync();
-
-            await _rabbitMq.SendEmail(new Email
+        "
+                    });
+            }
+            catch (Exception ex)
             {
-                EmailTo = entity.Email!,
-                ReceiverName = entity.Name ?? "User",
-                Subject = "Confirm your eAirFlow email",
-                Message = $@"
-                    <h2>Welcome to eAirFlow!</h2>
-                    <p>Please confirm your email:</p>
-                    <a href='https://localhost:7239/User/confirm/{token}'>
-                        Confirm Email
-                    </a>
-                "
-            });
+                Console.WriteLine("EMAIL ERROR: " + ex.Message);
+            }
+
 
             _context.UserRoles.Add(new DbUserRole
             {

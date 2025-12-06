@@ -45,7 +45,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   setState(() => _loading = true);
 
-  final url = Uri.parse("https://localhost:7239/Payment/create-order");
+  final url = Uri.parse("http://localhost:5239/Payment/create-order");
 
   final response = await http.post(
     url,
@@ -86,7 +86,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     print("Reservation ID: ${widget.reservationId}");
     if (_paypalOrderId == null) return;
 
-    final url = Uri.parse("https://localhost:7239/Payment/capture-order");
+    final url = Uri.parse("http://localhost:5239/Payment/capture-order");
 
     final response = await http.post(
       url,

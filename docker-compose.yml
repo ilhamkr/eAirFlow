@@ -20,8 +20,14 @@ services:
     environment:
       - "ConnectionStrings__eAirFlowConnection=Server=eairflow-sql,1433;Database=210019A;User=sa;Password=ilhamkr123!;TrustServerCertificate=True;ConnectRetryCount=0"
       - ASPNETCORE_ENVIRONMENT=Development
+
+      - _rabbitMqHost=rabbitmq
+      - _rabbitMqUser=guest
+      - _rabbitMqPassword=guest
+      - _rabbitMqPort=5672
+
     ports:
-      - "5269:8080"
+      - "5239:5239"
     networks:
       - eairflow
     depends_on:
@@ -37,6 +43,30 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - eairflow
+
+  mail-sender:
+    build:
+      context: .
+      dockerfile: eAirFlow.Subscriber/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    environment:
+      - _rabbitMqHost=rabbitmq
+      - _rabbitMqUser=guest
+      - _rabbitMqPassword=guest
+      - _rabbitMqPort=5672
+
+      - _fromAddress=vizzman9@gmail.com
+      - _password=${_password}
+      - _host=smtp.gmail.com
+      - _port=465
+      - _enableSSL=true
+      - _displayName=eAirFlow
+      - _timeout=250
+
     networks:
       - eairflow
 

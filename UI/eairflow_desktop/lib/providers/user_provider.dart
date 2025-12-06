@@ -34,7 +34,6 @@ class UserProvider extends BaseProvider<User> {
       return jsonDecode(response.body);
     }
 
-    throw Exception("Registration failed: ${response.statusCode} - ${response.body}");
   }
 
   Future<String> uploadProfileImage(int userId, Uint8List bytes, String fileName) async {

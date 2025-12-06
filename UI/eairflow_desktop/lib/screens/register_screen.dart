@@ -17,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
 
 
   bool _loading = false;
@@ -34,7 +35,8 @@ class _RegisterPageState extends State<RegisterPage> {
         "name": _nameCtrl.text.trim(),
         "surname": _surnameCtrl.text.trim(),
         "email": _emailCtrl.text.trim(),
-        "passsword": _passwordCtrl.text.trim(),
+        "phoneNumber": _phoneCtrl.text.trim(),
+        "password": _passwordCtrl.text.trim(),
         "passwordConfirmation": _confirmCtrl.text.trim(),
         "roleId": 1,
       });
@@ -90,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset("assets/images/airplane-mode.png", height: 80),
+                        Image.asset("assets/images/airplane-mode.png", height: 40),
                         const SizedBox(height: 12),
                         const Text(
                           "Create Your Account",
@@ -131,12 +133,38 @@ class _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.email),
                           ),
                           validator: (v) {
-                            if (v == null || v.isEmpty) return "Required";
-                            if (!v.contains("@")) return "Invalid email";
-                            return null;
-                          },
+                          if (v == null || v.isEmpty) return "Required";
+
+                          final emailRegex = RegExp(r"^[\w\.-]+@[\w\.-]+\.\w+$");
+                          if (!emailRegex.hasMatch(v)) return "Invalid email format";
+
+                          return null;
+                        },
+
                         ),
                         const SizedBox(height: 12),
+
+                        TextFormField(
+                          controller: _phoneCtrl,
+                          keyboardType: TextInputType.phone,
+                          decoration: const InputDecoration(
+                            labelText: "Phone Number",
+                            prefixIcon: Icon(Icons.phone),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return "Required";
+                          
+                            final numberRegex = RegExp(r"^[0-9]+$");
+                            if (!numberRegex.hasMatch(v)) return "Phone number must contain only digits";
+                          
+                            if (v.length < 6) return "Phone number too short";
+                          
+                            return null;
+                          },
+
+                        ),
+                        const SizedBox(height: 12),
+
 
                         TextFormField(
                           controller: _passwordCtrl,

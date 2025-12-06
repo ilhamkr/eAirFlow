@@ -41,7 +41,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> _startPayment() async {
     setState(() => _loading = true);
 
-    final url = Uri.parse("https://localhost:7239/Payment/create-order");
+    final url = Uri.parse("http://localhost:5239/Payment/create-order");
 
     try {
       final response = await http.post(
@@ -78,7 +78,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> _capturePayment() async {
     if (_paypalOrderId == null) return;
 
-    final url = Uri.parse("https://localhost:7239/Payment/capture-order");
+    final url = Uri.parse("http://localhost:5239/Payment/capture-order");
 
     try {
       final response = await http.post(

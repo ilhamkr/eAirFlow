@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using QRCoder;
 using System.IO;
 using System.Drawing.Imaging;
+using SkiaSharp;
 
 
 namespace eAirFlow.Services.ReservationStateMachine
@@ -77,17 +78,19 @@ namespace eAirFlow.Services.ReservationStateMachine
             throw new Exception("Pay not allowed in this state.");
         }
 
-        protected string GenerateQrCode(string text)
+        public string GenerateQrCode(string text)
         {
-            var qrGenerator = new QRCoder.QRCodeGenerator();
-            var qrData = qrGenerator.CreateQrCode(text, QRCoder.QRCodeGenerator.ECCLevel.Q);
-            var qrCode = new QRCoder.QRCode(qrData);
+            var qrGenerator = new QRCodeGenerator();
+            var qrData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
 
-            using var bmp = qrCode.GetGraphic(20);
-            using var ms = new MemoryStream();
-            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            return Convert.ToBase64String(ms.ToArray());
+            var pngQrCode = new PngByteQRCode(qrData);
+            byte[] qrBytes = pngQrCode.GetGraphic(20);
+
+            return Convert.ToBase64String(qrBytes);
         }
+
+
+
 
     }
 }

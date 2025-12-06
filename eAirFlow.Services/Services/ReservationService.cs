@@ -1,7 +1,9 @@
-﻿using eAirFlow.Model.Models;
+﻿using eAirFlow.Model.Messages;
+using eAirFlow.Model.Models;
 using eAirFlow.Model.Requests;
 using eAirFlow.Model.SearchObjects;
 using eAirFlow.Services.Interfaces;
+using eAirFlow.Services.RabbitMQ;
 using eAirFlow.Services.ReservationStateMachine;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +19,13 @@ namespace eAirFlow.Services.Services
     public class ReservationService : BaseCRUDService<Reservation, ReservationSearchObject, Database.Reservation, ReservationInsertRequest, ReservationUpdateRequest>, IReservationService
     {
         public BaseReservationState BaseReservationState { get; set; }
+        private readonly IRabbitMQService _rabbitMq;
 
-        public ReservationService(Database._210019Context context, IMapper mapper, BaseReservationState baseReservationState) : base(context, mapper)
+
+        public ReservationService(Database._210019Context context, IMapper mapper, BaseReservationState baseReservationState, IRabbitMQService rabbitMq) : base(context, mapper)
         {
             BaseReservationState = baseReservationState;
+            _rabbitMq = rabbitMq;
         }
 
         public override IQueryable<Database.Reservation> AddFilter(ReservationSearchObject search, IQueryable<Database.Reservation> query)
@@ -57,12 +62,7 @@ namespace eAirFlow.Services.Services
         public override Reservation Insert(ReservationInsertRequest request)
         {
             if (request.AirplaneId == null)
-            {
-                Console.WriteLine($"AIRPLANEID: {request.AirplaneId}");
-                Console.WriteLine($"SELECTEDSEAT: {request.SelectedSeat}");
-
                 throw new Exception("AirplaneId is missing!");
-            }
 
             var seat = _context.Seats.FirstOrDefault(s =>
                 s.SeatNumber == request.SelectedSeat &&
@@ -86,8 +86,44 @@ namespace eAirFlow.Services.Services
             _context.Reservations.Add(entity);
             _context.SaveChanges();
 
+            var user = _context.Users.Find(request.UserId);
+            var flight = _context.Flights
+                .Include(f => f.Airline)
+                .FirstOrDefault(f => f.FlightId == request.FlightId);
+
+            try
+            {
+                _rabbitMq.SendEmail(new Email
+                {
+                    EmailTo = user.Email!,
+                    ReceiverName = user.Name ?? "User",
+                    Subject = "Your eAirFlow reservation is confirmed",
+                    Message = $@"
+                <h2>Reservation Successful!</h2>
+                <p>Dear {user.Name},</p>
+                <p>Your reservation has been successfully created.</p>
+
+                <h3>Flight Details:</h3>
+                <ul>
+                    <li><strong>From:</strong> {flight.DepartureLocation}</li>
+                    <li><strong>To:</strong> {flight.ArrivalLocation}</li>
+                    <li><strong>Airline:</strong> {flight.Airline?.Name}</li>
+                    <li><strong>Departure time:</strong> {flight.DepartureTime}</li>
+                    <li><strong>Seat:</strong> {seat.SeatNumber}</li>
+                </ul>
+
+                <p>Thank you for choosing eAirFlow!</p>
+            "
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EMAIL SEND ERROR: " + ex.Message);
+            }
+
             return _mapper.Map<Model.Models.Reservation>(entity);
         }
+
 
         public override Reservation Update(int id, ReservationUpdateRequest request)
         {

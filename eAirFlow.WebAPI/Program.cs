@@ -25,7 +25,7 @@ using eAirFlow.Services.Recommender;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://localhost:5239", "https://localhost:7239");
+builder.WebHost.UseUrls("http://0.0.0.0:5239");
 
 
 builder.Services.Configure<PayPalSettings>(
@@ -150,7 +150,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<_210019Context>();
 
-    //dataContext.Database.Migrate();
+    dataContext.Database.Migrate();
 }
 
 app.Run();
