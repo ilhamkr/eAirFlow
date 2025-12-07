@@ -122,7 +122,11 @@ Widget build(BuildContext context) {
 
                 const SizedBox(height: 26),
 
-                const BookFlightCard(),
+                BookFlightCard(
+                  onBookingFinished: () {
+                    loadStats(); 
+                  },
+                ),
               ],
             ),
           ),

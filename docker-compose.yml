@@ -18,7 +18,7 @@ services:
     build:
       context: .
     environment:
-      - "ConnectionStrings__eAirFlowConnection=Server=eairflow-sql,1433;Database=210019A;User=sa;Password=ilhamkr123!;TrustServerCertificate=True;ConnectRetryCount=0"
+      - "ConnectionStrings__eAirFlowConnection=Server=eairflow-sql,1433;Database=210019;User=sa;Password=ilhamkr123!;TrustServerCertificate=True;ConnectRetryCount=0"
       - ASPNETCORE_ENVIRONMENT=Development
 
       - _rabbitMqHost=rabbitmq

@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BookFlightCard extends StatefulWidget {
-  const BookFlightCard({super.key});
+  final VoidCallback onFlightBooked;
+  const BookFlightCard({super.key, required this.onFlightBooked});
 
   @override
   State<BookFlightCard> createState() => _BookFlightCardState();
@@ -47,13 +48,29 @@ class _BookFlightCardState extends State<BookFlightCard> {
   List<Flight> recommendedFlights = [];
   bool loadingRecommendations = true;
 
+  List<dynamic> myReservations = [];
+
 
   @override
   void initState() {
     super.initState();
     _loadAirports();
     _loadRecommendations();
+    _loadMyReservations();
   }
+
+  Future<void> _loadMyReservations() async {
+  final userId = AuthProvider.userId;
+  if (userId == null) return;
+
+  final provider = ReservationProvider();
+  final res = await provider.getByUser(userId);
+
+  setState(() {
+    myReservations = res;
+  });
+}
+
 
   Future<void> _loadRecommendations() async {
   try {
@@ -215,7 +232,6 @@ class _BookFlightCardState extends State<BookFlightCard> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -346,15 +362,22 @@ class _BookFlightCardState extends State<BookFlightCard> {
                           const SizedBox(height: 10),
 
                           ElevatedButton(
-                            onPressed: () {
-                              showDialog(
+                              onPressed: () async {
+                              final result = await showDialog(
                                 context: context,
                                 builder: (_) => BookNowDialog(
                                   flight: f,
                                   airlineName: f.airline?.name ?? "Airline",
-                                  airportId: f.airline?.airportId,
+                                  airportId: selectedAirportId,
                                 ),
                               );
+                          
+                              if (result == true && context.mounted) {
+                                widget.onFlightBooked();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Flight booked successfully")),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
@@ -484,6 +507,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
                       .name ??
                   "Airline",
                    airportId: selectedAirportId,
+                   reservations: myReservations,
             ),
           ),
       ],
@@ -696,13 +720,14 @@ class FlightResultCard extends StatelessWidget {
   final Flight flight;
   final String airlineName;
   final int? airportId;
-
+  final List reservations;
 
   const FlightResultCard({
     super.key,
     required this.flight,
     required this.airlineName,
     required this.airportId,
+    required this.reservations,
   });
 
   String _formatDate(DateTime d) {
@@ -738,128 +763,152 @@ class FlightResultCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final String? logoPath = _getAirlineLogo(airlineName);
+Widget build(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+  final String? logoPath = _getAirlineLogo(airlineName);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-          )
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: cs.primary.withOpacity(0.15),
-            backgroundImage: logoPath != null ? AssetImage(logoPath!) : null,
-            child: logoPath == null
-            ? Text(
-            airlineName.isNotEmpty ? airlineName[0] : "A",
-            style: TextStyle(
-            color: cs.primary,
-            fontWeight: FontWeight.bold,
-          ),
+  final alreadyBooked = reservations.any(
+    (r) =>
+        r.flightId == flight.flightId &&
+        r.stateMachine?.toLowerCase() != "cancelled",
+  );
+
+  return Container(
+    decoration: BoxDecoration(
+      color: cs.surface,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: cs.outlineVariant),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 6,
         )
-      : null,
-      ),
-
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: _locationBlock(
-                    title: flight.departureLocation ?? "-",
-                    time: flight.departureTime != null
-                        ? _formatDate(flight.departureTime!)
-                        : "-",
-                    alignEnd: false,
+      ],
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    child: Row(
+      children: [
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: cs.primary.withOpacity(0.15),
+          backgroundImage: logoPath != null ? AssetImage(logoPath) : null,
+          child: logoPath == null
+              ? Text(
+                  airlineName.isNotEmpty ? airlineName[0] : "A",
+                  style: TextStyle(
+                    color: cs.primary,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
+                )
+              : null,
+        ),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        airlineName,
-                        style: TextStyle(
-                          color: cs.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _durationText,
-                        style: const TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const Text("Non-stop"),
-                    ],
-                  ),
-                ),
+        const SizedBox(width: 16),
 
-                Expanded(
-                  child: _locationBlock(
-                    title: flight.arrivalLocation ?? "-",
-                    time: flight.arrivalTime != null
-                        ? _formatDate(flight.arrivalTime!)
-                        : "-",
-                    alignEnd: true,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: 20),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+        Expanded(
+          child: Row(
             children: [
-              Text(
-                flight.price != null ? "\$${flight.price}" : "---",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
+              Expanded(
+                child: _locationBlock(
+                  title: flight.departureLocation ?? "-",
+                  time: flight.departureTime != null
+                      ? _formatDate(flight.departureTime!)
+                      : "-",
+                  alignEnd: false,
                 ),
               ),
 
-              const SizedBox(height: 8),
-
-              ElevatedButton(
-                onPressed: () {
-                   showDialog(
-                      context: context,
-                      builder: (_) => BookNowDialog(
-                      flight: flight,
-                      airlineName: airlineName,
-                      airportId: airportId,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      airlineName,
+                      style: TextStyle(
+                        color: cs.primary,
+                        fontWeight: FontWeight.w700,
                       ),
-                    );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: cs.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _durationText,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const Text("Non-stop"),
+                  ],
                 ),
-                child: const Text("Book now",
-                    style: TextStyle(color: Colors.white)),
+              ),
+
+              Expanded(
+                child: _locationBlock(
+                  title: flight.arrivalLocation ?? "-",
+                  time: flight.arrivalTime != null
+                      ? _formatDate(flight.arrivalTime!)
+                      : "-",
+                  alignEnd: true,
+                ),
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+
+        const SizedBox(width: 20),
+
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              flight.price != null ? "\$${flight.price}" : "---",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            alreadyBooked
+                ? Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Text(
+                      "Already booked",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => BookNowDialog(
+                          flight: flight,
+                          airlineName: airlineName,
+                          airportId: airportId,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: cs.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: const Text(
+                      "Book now",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
   String? _getAirlineLogo(String airlineName) {
   final logos = {
@@ -996,7 +1045,7 @@ class _BookNowDialogState extends State<BookNowDialog> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      final result = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PaymentScreen(
@@ -1006,6 +1055,11 @@ class _BookNowDialogState extends State<BookNowDialog> {
           ),
         ),
       );
+      
+      if (result == true) {
+        Navigator.pop(context, true); 
+      }
+
     } catch (e) {
       print("ERROR: $e");
       ScaffoldMessenger.of(context).showSnackBar(

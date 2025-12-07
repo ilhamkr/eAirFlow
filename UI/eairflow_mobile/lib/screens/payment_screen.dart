@@ -41,7 +41,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> _startPayment() async {
     setState(() => _loading = true);
 
-    final url = Uri.parse("http://localhost:5239/Payment/create-order");
+    final url = Uri.parse("http://10.0.2.2:5239/Payment/create-order");
 
     try {
       final response = await http.post(
@@ -78,7 +78,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> _capturePayment() async {
     if (_paypalOrderId == null) return;
 
-    final url = Uri.parse("http://localhost:5239/Payment/capture-order");
+    final url = Uri.parse("http://10.0.2.2:5239/Payment/capture-order");
 
     try {
       final response = await http.post(
@@ -160,7 +160,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
                   backgroundColor: Colors.green.shade600,
                 ),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {  
+                  Navigator.pop(context, true); 
+                },
                 child: const Text(
                   "Done",
                   style: TextStyle(fontSize: 16, color: Colors.white),

@@ -13,17 +13,19 @@ void main() {
     ),
   );
 }
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 class eAirFlowMobileApp extends StatelessWidget {
   const eAirFlowMobileApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'eAirFlow Mobile',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
-
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,

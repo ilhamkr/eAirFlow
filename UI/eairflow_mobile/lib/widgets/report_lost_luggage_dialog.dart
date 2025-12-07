@@ -16,6 +16,8 @@ class ReportLostDialogMobile extends StatefulWidget {
 }
 
 class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController tagController = TextEditingController();
 
@@ -37,29 +39,25 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
   }
 
   Future<void> pickImage() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
 
-  if (file != null) {
-    setState(() {
-      selectedImagePath = file.path;
-    });
+    if (file != null) {
+      setState(() {
+        selectedImagePath = file.path;
+      });
+    }
   }
-}
 
   Future<void> submit() async {
-    if (tagController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        selectedAirport == null ||
-        selectedImagePath == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields are required")),
-      );
+    if (!_formKey.currentState!.validate()) return;
+
+    if (selectedImagePath == null || selectedAirport == null) {
+      setState(() {});
       return;
     }
 
     final userId = AuthProvider.userId!;
-
     setState(() => submitting = true);
 
     final success = await LuggageProvider().reportLost(
@@ -75,119 +73,122 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
     if (success) {
       Navigator.pop(context);
       widget.onSubmitted?.call();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Report submitted")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to submit report")),
-      );
     }
   }
 
-    @override
-    Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Report Lost Luggage"),
-      content: SingleChildScrollView(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-    width: double.infinity,
-    child: DropdownButtonFormField<Airport>(
-      isExpanded: true,
-      value: selectedAirport,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: "Airport",
-      ),
-      hint: const Text("Select Airport"),
-      items: airports
-          .map(
-            (a) => DropdownMenuItem(
-              value: a,
-              child: Text(
-                "${a.city} - ${a.name}",
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          )
-          .toList(),
-      onChanged: (val) => setState(() => selectedAirport = val),
-    ),
-  ),
-
-
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: tagController,
-              decoration: const InputDecoration(
-                labelText: "Tag number",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: descriptionController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: "Description",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            Row(
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.85,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton.icon(
-                  onPressed: pickImage,
-                  icon: const Icon(Icons.image),
-                  label: const Text("Choose Image"),
+
+                DropdownButtonFormField<Airport>(
+                  isExpanded: true,
+                  value: selectedAirport,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Airport",
+                  ),
+                  items: airports.map((a) => DropdownMenuItem(
+                        value: a,
+                        child: Text("${a.city} - ${a.name}"),
+                      )).toList(),
+                  onChanged: (val) => setState(() => selectedAirport = val),
+                  validator: (v) =>
+                      v == null ? "Airport is required" : null,
                 ),
-                const SizedBox(width: 12),
-                if (selectedImagePath != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      File(selectedImagePath!),
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
+
+                const SizedBox(height: 14),
+
+                TextFormField(
+                  controller: tagController,
+                  decoration: const InputDecoration(
+                    labelText: "Tag number",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? "Tag is required" : null,
+                ),
+
+                const SizedBox(height: 14),
+
+                TextFormField(
+                  controller: descriptionController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: "Description",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? "Description is required" : null,
+                ),
+
+                const SizedBox(height: 14),
+                
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: pickImage,
+                      icon: const Icon(Icons.image),
+                      label: const Text("Choose Image"),
                     ),
-                  )
+                    const SizedBox(width: 12),
+                    if (selectedImagePath != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          File(selectedImagePath!),
+                          width: 70,
+                          height: 70,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                  ],
+                ),
+
+                if (selectedImagePath == null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Text(
+                      "Image is required",
+                      style: TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
               ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: submitting ? null : () => Navigator.pop(context),
-        child: const Text("Cancel"),
-      ),
-      ElevatedButton(
-        onPressed: submitting ? null : submit,
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-        child: submitting
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Text("Submit"),
-      ),
-    ],
-  );
+
+      actions: [
+        TextButton(
+          onPressed: submitting ? null : () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+
+        ElevatedButton(
+          onPressed: submitting ? null : submit,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          child: submitting
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text("Submit"),
+        ),
+      ],
+    );
+  }
 }
 
-}

@@ -83,6 +83,12 @@ Password: **test**
 
 ---
 
+### Paypal Credentials
+Email: **eairflowpay@personal.example.com**  
+Password: **eairflow**
+
+---
+
 ## RabbitMQ
 
 RabbitMQ was used to send emails to users after successful registration and flight booking.

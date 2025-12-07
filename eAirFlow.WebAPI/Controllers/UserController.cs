@@ -208,9 +208,9 @@ namespace eAirFlow.WebAPI.Controllers
             var ok = await _userService.DeleteUserAsync(id);
 
             if (!ok)
-                return NotFound("User not found");
+                return NotFound(false);
 
-            return Ok("User deleted.");
+            return Ok(true);
         }
 
 

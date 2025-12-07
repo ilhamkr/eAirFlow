@@ -114,6 +114,12 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
               await userProv.deleteUser(user.userId!);
               Navigator.pop(context);
               loadUsers();
+               ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("User successfully deleted."),
+                backgroundColor: Colors.green,
+              ),
+              );
             },
             child: const Text("Delete"),
           ),
@@ -289,7 +295,6 @@ void showAddUserDialog() {
   int? selectedPosition;
   int? selectedAirport;
 
-
   showDialog(
     context: context,
     builder: (_) {
@@ -303,50 +308,88 @@ void showAddUserDialog() {
                 key: formKey,
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
+
                       TextFormField(
                         controller: nameCtrl,
                         decoration: const InputDecoration(labelText: "Name"),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return "Name is required";
+                          if (!RegExp(r"^[A-Za-zČĆŽŠĐčćžšđ ]{2,}$").hasMatch(v)) {
+                            return "Only letters allowed";
+                          }
+                          return null;
+                        },
                       ),
+
                       TextFormField(
                         controller: surnameCtrl,
                         decoration: const InputDecoration(labelText: "Surname"),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return "Surname is required";
+                          if (!RegExp(r"^[A-Za-zČĆŽŠĐčćžšđ ]{2,}$").hasMatch(v)) {
+                            return "Only letters allowed";
+                          }
+                          return null;
+                        },
                       ),
+
                       TextFormField(
                         controller: emailCtrl,
                         decoration: const InputDecoration(labelText: "Email"),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return "Email required";
+                          if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(v)) {
+                            return "Invalid email format";
+                          }
+                          return null;
+                        },
                       ),
+
                       TextFormField(
                         controller: phoneCtrl,
-                        decoration:
-                            const InputDecoration(labelText: "Phone Number"),
+                        decoration: const InputDecoration(labelText: "Phone Number"),
+                        keyboardType: TextInputType.phone,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return "Phone number is required";
+                          }
+
+                          if (!RegExp(r"^\+?[0-9]+$").hasMatch(v)) {
+                            return "Only numbers are allowed";
+                          }
+
+                          if (v.replaceAll("+", "").length < 6) {
+                            return "Minimum 6 digits required";
+                          }
+
+                          if (v.replaceAll("+", "").length > 15) {
+                            return "Maximum 15 digits allowed";
+                          }
+
+                          return null;
+                        },
                       ),
+
+
                       TextFormField(
                         controller: passCtrl,
                         decoration: const InputDecoration(labelText: "Password"),
                         obscureText: true,
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return "Password required";
+                          if (v.length < 4) return "Minimum 4 characters";
+                          return null;
+                        },
                       ),
+
                       TextFormField(
                         controller: passConfirmCtrl,
-                        decoration: const InputDecoration(
-                            labelText: "Confirm Password"),
+                        decoration: const InputDecoration(labelText: "Confirm Password"),
                         obscureText: true,
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return "Required";
-                          }
-                          if (v != passCtrl.text) {
-                            return "Passwords do not match";
-                          }
+                          if (v == null || v.trim().isEmpty) return "Confirm password";
+                          if (v != passCtrl.text) return "Passwords do not match";
                           return null;
                         },
                       ),
@@ -355,8 +398,7 @@ void showAddUserDialog() {
 
                       DropdownButtonFormField<int>(
                         value: selectedRole,
-                        decoration:
-                            const InputDecoration(labelText: "Role"),
+                        decoration: const InputDecoration(labelText: "Role"),
                         items: const [
                           DropdownMenuItem(value: 1, child: Text("User")),
                           DropdownMenuItem(value: 2, child: Text("Employee")),
@@ -366,19 +408,23 @@ void showAddUserDialog() {
                             selectedRole = value!;
                             if (selectedRole != 2) {
                               selectedPosition = null;
+                              selectedAirport = null;
                             }
                           });
                         },
                       ),
+
                     ],
                   ),
                 ),
               ),
             ),
+
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel")),
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
 
               ElevatedButton(
                 child: const Text("Save"),
@@ -390,26 +436,32 @@ void showAddUserDialog() {
                     "surname": surnameCtrl.text,
                     "email": emailCtrl.text,
                     "phoneNumber": phoneCtrl.text,
-                    "passsword": passCtrl.text,
+                    "password": passCtrl.text,
                     "passwordConfirmation": passConfirmCtrl.text,
                     "roleId": selectedRole,
                   };
 
                   try {
-                    final newUser = await userProv.register(request);
-
-                    if (selectedRole == 2 && selectedPosition != null) {
-                      await userProv.assignPosition(
-                        newUser["userId"],
-                        selectedPosition!,
-                        selectedAirport!,
-                      );
-                    }
+                    await userProv.register(request);
 
                     Navigator.pop(context);
-                    loadUsers();
+
+                    await loadUsers();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("User successfully added."),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
                   } catch (e) {
-                    print("Add user error: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Error while adding user"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
                   }
                 },
               ),
@@ -420,6 +472,7 @@ void showAddUserDialog() {
     },
   );
 }
+
 
 
 

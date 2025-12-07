@@ -86,6 +86,28 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
     }
   }
 
+  Future<bool> confirmCancelReservation() async {
+  return await showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text("Cancel Reservation"),
+      content: const Text("Are you sure you want to cancel this reservation?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("No"),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text("Yes, cancel"),
+        ),
+      ],
+    ),
+  );
+}
+
+
   @override
   void initState() {
     super.initState();
@@ -135,18 +157,31 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
   }
 
   Future<void> cancelReservation(int reservationId) async {
-    final provider = ReservationProvider();
+  final provider = ReservationProvider();
 
-    try {
-      await provider.deleteReservation(reservationId);
+  try {
+    await provider.deleteReservation(reservationId);
 
-      setState(() {
-        reservations.removeWhere((r) => r.reservationId == reservationId);
-      });
-    } catch (e) {
-      print("Cancel error: $e");
-    }
+    setState(() {
+      reservations.removeWhere((r) => r.reservationId == reservationId);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Reservation successfully cancelled."),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Error cancelling reservation."),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +415,13 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () => cancelReservation(r.reservationId ?? 0),
+                          onPressed: () async {
+                            final ok = await confirmCancelReservation();
+                            if (!ok) return;
+                          
+                            await cancelReservation(r.reservationId ?? 0);
+                          },
+
                           child: const Text("Cancel"),
                         ),
 

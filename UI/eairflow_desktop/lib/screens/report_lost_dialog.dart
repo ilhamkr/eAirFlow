@@ -28,6 +28,11 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
   bool submitting = false;
   List<Airport> airports = [];
 
+  bool tagError = false;
+  bool descriptionError = false;
+  bool airportError = false;
+  bool imageError = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,44 +50,56 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
     if (result != null && result.files.single.path != null) {
       setState(() {
         selectedImagePath = result.files.single.path!;
+        imageError = false;
       });
     }
   }
 
+  void validate() {
+    setState(() {
+      tagError = tagController.text.isEmpty;
+      descriptionError = descriptionController.text.isEmpty;
+      airportError = selectedAirport == null;
+      imageError = selectedImagePath == null;
+    });
+  }
+
   Future<void> submit() async {
-    if (tagController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        selectedImagePath == null ||
-        selectedAirport == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields are required")),
-      );
-      return;
-    }
+  validate();
 
-    final userId = AuthProvider.userId!;
+  if (tagError || descriptionError || airportError || imageError) {
+    return;
+  }
 
-    setState(() => submitting = true);
+  final userId = AuthProvider.userId!;
+  setState(() => submitting = true);
 
-    final success = await LuggageProvider().reportLost(
-      userId: userId,
-      flightId: 0,
-      description: "Tag ${tagController.text}: ${descriptionController.text}",
-      filePath: selectedImagePath!,
-      airportId: selectedAirport!.airportId!,
+  final success = await LuggageProvider().reportLost(
+    userId: userId,
+    flightId: 0,
+    description: "Tag ${tagController.text}: ${descriptionController.text}",
+    filePath: selectedImagePath!,
+    airportId: selectedAirport!.airportId!,
+  );
+
+  setState(() => submitting = false);
+
+  if (success) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Luggage successfully reported."),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
     );
 
-    setState(() => submitting = false);
-
-    if (success) {
+    Future.delayed(const Duration(milliseconds: 300), () {
       Navigator.pop(context);
       widget.onSubmitted?.call();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to report luggage")),
-      );
-    }
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,15 +119,24 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
                         child: Text("${a.city} - ${a.name}"),
                       ))
                   .toList(),
-              onChanged: (val) => setState(() => selectedAirport = val),
+              onChanged: (val) {
+                setState(() {
+                  selectedAirport = val;
+                  airportError = false;
+                });
+              },
+              decoration: InputDecoration(
+                errorText: airportError ? "Airport is required" : null,
+              ),
             ),
 
             const SizedBox(height: 12),
 
             TextField(
               controller: tagController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Tag number",
+                errorText: tagError ? "Tag is required" : null,
               ),
             ),
 
@@ -119,8 +145,10 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
             TextField(
               controller: descriptionController,
               maxLines: 3,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Description",
+                errorText:
+                    descriptionError ? "Description is required" : null,
               ),
             ),
 
@@ -143,6 +171,18 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
                   ),
               ],
             ),
+
+            if (imageError)
+              const Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Image is required",
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -158,7 +198,8 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
           ),
           child: submitting
               ? const SizedBox(
-                  width: 20, height: 20,
+                  width: 20,
+                  height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Text("Submit Report"),

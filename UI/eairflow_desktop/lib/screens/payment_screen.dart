@@ -122,32 +122,77 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
 Widget build(BuildContext context) {
   if (_qrCodeBase64 != null) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Payment Success")),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            const Text("Payment Successful!",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Image.memory(
-                base64Decode(_qrCodeBase64!),
-                width: 220,
-                height: 220,
+  return Scaffold(
+    backgroundColor: const Color(0xFFF5F7FA),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.check_circle, size: 80, color: Colors.green),
+          const SizedBox(height: 16),
+
+          const Text(
+            "Payment Successful!",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Your flight reservation is now confirmed.",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade700,
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Image.memory(
+              base64Decode(_qrCodeBase64!),
+              width: 220,
+              height: 220,
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          ElevatedButton.icon(
+            icon: const Icon(Icons.arrow_back),
+            label: const Text("Back to Dashboard"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          ],
-        ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
 
   if (_approvalUrl != null) {

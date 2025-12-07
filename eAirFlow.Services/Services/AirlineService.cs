@@ -50,14 +50,20 @@ namespace eAirFlow.Services.Services
 
         public void Delete(int id)
         {
-            var entity = _context.Airlines.FirstOrDefault(x => x.AirlineId == id);
+            var airplanes = _context.Airplanes
+                .Where(x => x.AirlineId == id)
+                .ToList();
 
-            if (entity == null)
-                throw new Exception("Airline not found.");
+            _context.Airplanes.RemoveRange(airplanes);
 
-            _context.Airlines.Remove(entity);
+            var airline = _context.Airlines.Find(id);
+            if (airline == null)
+                throw new Exception("Airline not found");
+
+            _context.Airlines.Remove(airline);
             _context.SaveChanges();
         }
+
 
     }
 }

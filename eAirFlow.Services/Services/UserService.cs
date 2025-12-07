@@ -184,6 +184,9 @@ namespace eAirFlow.Services.Services
             if (user == null)
                 return false;
 
+            var employee = _context.Employees.Where(x => x.UserId == id);
+            _context.Employees.RemoveRange(employee);
+
             var roles = _context.UserRoles.Where(x => x.UserId == id);
             _context.UserRoles.RemoveRange(roles);
 
@@ -192,6 +195,7 @@ namespace eAirFlow.Services.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
 
     }
 }

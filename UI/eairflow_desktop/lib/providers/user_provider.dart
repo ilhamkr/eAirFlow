@@ -101,15 +101,16 @@ class UserProvider extends BaseProvider<User> {
   }
 
   Future<bool> deleteUser(int id) async {
-    final url = Uri.parse("${BaseProvider.baseUrl}User/$id");
+  final url = Uri.parse("${BaseProvider.baseUrl}User/$id");
 
-    final response = await http.delete(
-      url,
-      headers: createHeaders(),
-    );
+  final response = await http.delete(
+    url,
+    headers: createHeaders(),
+  );
 
-    return response.statusCode == 200;
-  }
+  return response.statusCode == 200;
+}
+
 
   Future<bool> changeRole(int userId, int newRoleId) async {
   final url = Uri.parse("${BaseProvider.baseUrl}User/change-role/$userId");

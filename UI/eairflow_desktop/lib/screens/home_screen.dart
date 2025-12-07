@@ -85,6 +85,7 @@ void didChangeDependencies() {
       flightsCancelled = cancelled;
       totalSpends = spends;
     });
+
   }
 
   @override
@@ -127,7 +128,9 @@ void didChangeDependencies() {
               ),
 
               const SizedBox(height: 20),
-              const BookFlightCard(),
+              BookFlightCard(
+                onFlightBooked: loadStats,
+              ),
               const SizedBox(height: 16),
             ],
           ),

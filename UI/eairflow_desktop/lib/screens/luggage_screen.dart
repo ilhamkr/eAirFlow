@@ -22,20 +22,26 @@ class _LuggageScreenState extends State<LuggageScreen> {
   }
 
   Future<void> loadData() async {
-    final provider = LuggageProvider();
-    final userId = AuthProvider.userId ?? 0;
+  final provider = LuggageProvider();
+  final userId = AuthProvider.userId ?? 0;
 
-    try {
-      var result = await provider.getMyLuggage(userId);
-      setState(() {
-        luggageList = result;
-        loading = false;
-      });
-    } catch (e) {
-      print("LUGGAGE ERROR: $e");
-      setState(() => loading = false);
-    }
+  try {
+    var result = await provider.getMyLuggage(userId);
+
+    final filtered = result.where((l) =>
+        l.stateMachine?.toLowerCase() != "pickedup"
+    ).toList();
+
+    setState(() {
+      luggageList = filtered;
+      loading = false;
+    });
+  } catch (e) {
+    print("LUGGAGE ERROR: $e");
+    setState(() => loading = false);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -39,6 +39,11 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
 
       final rProv = ReservationProvider();
       reservations = await rProv.getByUser(userId);
+      reservations.sort((a, b) {
+        final da = DateTime.tryParse(a.reservationDate ?? "") ?? DateTime(2000);
+        final db = DateTime.tryParse(b.reservationDate ?? "") ?? DateTime(2000);
+        return db.compareTo(da); 
+      });
     } catch (e) {
       print("ERROR loading trips: $e");
     }
@@ -94,18 +99,60 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
     }
   }
 
-  Future<void> cancelReservation(int id) async {
-    try {
-      final prov = ReservationProvider();
-      await prov.deleteReservation(id);
+  Future<void> cancelReservation(BuildContext context, int id) async {
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Cancel reservation"),
+      content: const Text(
+        "Are you sure you want to cancel this reservation?",
+        style: TextStyle(fontSize: 16),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("No"),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text("Yes, Cancel"),
+        ),
+      ],
+    ),
+  );
 
-      setState(() {
-        reservations.removeWhere((x) => x.reservationId == id);
-      });
-    } catch (e) {
-      print("Cancel Error: $e");
+  if (confirm != true) return;
+
+  try {
+    final prov = ReservationProvider();
+    await prov.deleteReservation(id);
+
+    setState(() {
+      reservations.removeWhere((x) => x.reservationId == id);
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Reservation successfully cancelled"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to cancel reservation"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +374,7 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () =>
-                                cancelReservation(r.reservationId ?? 0),
+                                cancelReservation(context, r.reservationId ?? 0),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red.shade400,
                             ),

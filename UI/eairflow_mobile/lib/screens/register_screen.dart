@@ -118,8 +118,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: "Name",
                             prefixIcon: Icon(Icons.badge),
                           ),
-                          validator: (v) =>
-                              v == null || v.isEmpty ? "Required" : null,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return "Name is required";
+                            if (v.length < 2) return "Minimum 2 characters";
+                            if (!RegExp(r"^[a-zA-ZčćžšđČĆŽŠĐ\s]+$").hasMatch(v)) {
+                              return "Only letters allowed";
+                            }
+                            return null;
+                          },
+
                         ),
                         const SizedBox(height: 12),
 
@@ -129,8 +136,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: "Surname",
                             prefixIcon: Icon(Icons.person),
                           ),
-                          validator: (v) =>
-                              v == null || v.isEmpty ? "Required" : null,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return "Surname is required";
+                            if (v.length < 2) return "Minimum 2 characters";
+                            if (!RegExp(r"^[a-zA-ZčćžšđČĆŽŠĐ\s]+$").hasMatch(v)) {
+                              return "Only letters allowed";
+                            }
+                            return null;
+                          },
+
                         ),
                         const SizedBox(height: 12),
 
@@ -141,10 +155,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.email),
                           ),
                           validator: (v) {
-                            if (v == null || v.isEmpty) return "Required";
-                            if (!v.contains("@")) return "Invalid email";
+                            if (v == null || v.trim().isEmpty) return "Email is required";
+
+                            final emailRegex = RegExp(
+                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                            );
+
+                            if (!emailRegex.hasMatch(v)) return "Invalid email format";
                             return null;
                           },
+
                         ),
                         const SizedBox(height: 12),
 
@@ -156,10 +176,17 @@ class _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.phone),
                           ),
                           validator: (v) {
-                            if (v == null || v.isEmpty) return "Required";
-                            if (v.length < 6) return "Phone number too short";
+                            if (v == null || v.trim().isEmpty) return "Phone number is required";
+
+                            final phoneRegex = RegExp(r"^\+?[0-9]{8,15}$");
+
+                            if (!phoneRegex.hasMatch(v)) {
+                              return "Only numbers (8–15 digits)";
+                            }
+
                             return null;
                           },
+
                         ),
                         const SizedBox(height: 12),
 
@@ -170,10 +197,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: "Password",
                             prefixIcon: Icon(Icons.lock),
                           ),
-                          validator: (v) =>
-                              v != null && v.length < 4
-                                  ? "Minimum 4 characters"
-                                  : null,
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return "Password is required";
+                            if (v.length < 6) return "Minimum 6 characters";
+                            if (!RegExp(r"[A-Z]").hasMatch(v)) return "Must contain one uppercase letter";
+                            if (!RegExp(r"[0-9]").hasMatch(v)) return "Must contain one number";
+                            return null;
+                          },
+
                         ),
                         const SizedBox(height: 12),
 
@@ -185,11 +216,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             prefixIcon: Icon(Icons.lock_outline),
                           ),
                           validator: (v) {
-                            if (v != _passwordCtrl.text) {
-                              return "Passwords must match";
-                            }
+                            if (v == null || v.isEmpty) return "Confirm password";
+                            if (v != _passwordCtrl.text) return "Passwords do not match";
                             return null;
                           },
+
                         ),
 
                         const SizedBox(height: 16),

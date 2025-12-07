@@ -32,6 +32,29 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
   Map<String, List<Flight>> groupedFlights = {};
 
+  void showSuccess(String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(msg),
+      backgroundColor: Colors.green,
+    ),
+  );
+}
+
+  Future<bool> confirmDelete(String title) async {
+  return await showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text("Confirm"),
+      content: Text(title),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+        ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
+      ],
+    ),
+  );
+}
+
   Map<String, List<Flight>> groupFlightsByDay(List<Flight> list) {
     Map<String, List<Flight>> map = {
       "Today": [],
@@ -101,20 +124,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     if (time == null) return;
 
     final dt = DateTime(date.year, date.month, date.day, time.hour, time.minute);
-
-    if (dt.isBefore(effectiveMin)) {
-      await showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Invalid Time"),
-          content: const Text("You cannot select a time in the past."),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
-          ],
-        ),
-      );
-      continue;
-    }
 
     controller.text = dt.toIso8601String();
     return;
@@ -375,39 +384,108 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   }
 
   void addFlightDialog() {
-    final dep = TextEditingController();
-    final arr = TextEditingController();
-    final price = TextEditingController();
-    final depTime = TextEditingController();
-    final arrTime = TextEditingController();
-    int? selectedAirline;
+  final dep = TextEditingController();
+  final arr = TextEditingController();
+  final price = TextEditingController();
+  final depTime = TextEditingController();
+  final arrTime = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
+  String? depError;
+  String? arrError;
+  String? priceError;
+
+  int? selectedAirline;
+
+  showDialog(
+    context: context,
+    builder: (_) => StatefulBuilder(builder: (context, setLocal) {
+      return AlertDialog(
         title: const Text("Add New Flight"),
         content: SingleChildScrollView(
           child: Column(
             children: [
-              TextField(controller: dep, decoration: const InputDecoration(labelText: "Departure location")),
-              TextField(controller: arr, decoration: const InputDecoration(labelText: "Arrival location")),
-              TextField(controller: price, decoration: const InputDecoration(labelText: "Price")),
+
+              TextField(
+                controller: dep,
+                decoration: const InputDecoration(
+                  labelText: "Departure location",
+                  prefixIcon: Icon(Icons.flight_takeoff),
+                ),
+              ),
+
+              TextField(
+                controller: arr,
+                decoration: const InputDecoration(
+                  labelText: "Arrival location",
+                  prefixIcon: Icon(Icons.flight_land),
+                ),
+              ),
+
+              TextField(
+                controller: price,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Price",
+                  prefixIcon: const Icon(Icons.price_change),
+                  errorText: priceError,
+                ),
+                onChanged: (v) {
+                  setLocal(() {
+                    priceError = (int.tryParse(v) == null || int.parse(v) <= 0)
+                        ? "Price must be a number greater than 0"
+                        : null;
+                  });
+                },
+              ),
 
               TextField(
                 controller: depTime,
                 readOnly: true,
-                decoration: const InputDecoration(labelText: "Departure Time"),
-                onTap: () => pickDateTime(depTime),
+                decoration: InputDecoration(
+                  labelText: "Departure Time",
+                  prefixIcon: const Icon(Icons.access_time),
+                  errorText: depError,
+                ),
+                onTap: () async {
+                  await pickDateTime(depTime);
+                  final dt = DateTime.tryParse(depTime.text);
+
+                  setLocal(() {
+                    depError = (dt == null || dt.isBefore(DateTime.now()))
+                        ? "Departure cannot be in the past"
+                        : null;
+                  });
+                },
               ),
+
               TextField(
                 controller: arrTime,
                 readOnly: true,
-                decoration: const InputDecoration(labelText: "Arrival Time"),
-                onTap: () => pickDateTime(arrTime),
+                decoration: InputDecoration(
+                  labelText: "Arrival Time",
+                  prefixIcon: const Icon(Icons.timer),
+                  errorText: arrError,
+                ),
+                onTap: () async {
+                  await pickDateTime(arrTime);
+
+                  final depDT = DateTime.tryParse(depTime.text);
+                  final arrDT = DateTime.tryParse(arrTime.text);
+
+                  setLocal(() {
+                    arrError =
+                        (depDT != null && arrDT != null && arrDT.isBefore(depDT))
+                            ? "Arrival must be after departure"
+                            : null;
+                  });
+                },
               ),
 
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: "Airline"),
+                decoration: const InputDecoration(
+                  labelText: "Airline",
+                  prefixIcon: Icon(Icons.airlines),
+                ),
                 items: airlines
                     .map((a) => DropdownMenuItem(
                           value: a.airlineId!,
@@ -422,8 +500,8 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
         actions: [
           TextButton(
-            child: const Text("Cancel"),
             onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
 
           ElevatedButton(
@@ -435,69 +513,12 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                   price.text.isEmpty ||
                   depTime.text.isEmpty ||
                   arrTime.text.isEmpty ||
-                  selectedAirline == null) {
-
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Error"),
-                    content: const Text("All fields are required!"),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
-                    ],
-                  ),
-                );
+                  selectedAirline == null ||
+                  depError != null ||
+                  arrError != null ||
+                  priceError != null) {
                 return;
               }
-
-              if (int.tryParse(price.text) == null || int.parse(price.text) <= 0) {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Invalid Price"),
-                    content: const Text("Price must be a number greater than 0."),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
-                    ],
-                  ),
-                );
-                return;
-              }
-
-              final now = DateTime.now();
-              final depDT = DateTime.tryParse(depTime.text);
-              final arrDT = DateTime.tryParse(arrTime.text);
-
-              if (depDT == null || arrDT == null) {
-                return showDialog(
-                  context: context,
-                  builder: (_) => const AlertDialog(
-                    title: Text("Invalid Time"),
-                    content: Text("Departure and arrival times are required."),
-                  ),
-                );
-              }
-
-              if (depDT.isBefore(now)) {
-                return showDialog(
-                  context: context,
-                  builder: (_) => const AlertDialog(
-                    title: Text("Departure Invalid"),
-                    content: Text("Departure time cannot be in the past."),
-                  ),
-                );
-              }
-
-              if (arrDT.isBefore(depDT)) {
-                return showDialog(
-                  context: context,
-                  builder: (_) => const AlertDialog(
-                    title: Text("Arrival Invalid"),
-                    content: Text("Arrival time must be AFTER departure time."),
-                  ),
-                );
-              }
-
 
               await flightProv.insertAdmin({
                 "departureLocation": dep.text,
@@ -510,30 +531,37 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               Navigator.pop(context);
               loadFlights();
+              showSuccess("Flight successfully added.");
             },
           ),
         ],
-      ),
-    );
-  }
+      );
+    }),
+  );
+}
+
+
 
   void editFlightDialog(Flight flight) {
-    final dep = TextEditingController(text: flight.departureLocation);
-    final arr = TextEditingController(text: flight.arrivalLocation);
-    final price = TextEditingController(text: flight.price?.toString());
-    final depTime = TextEditingController(text: flight.departureTime?.toIso8601String());
-    final arrTime = TextEditingController(text: flight.arrivalTime?.toIso8601String());
-    int? selectedAirline = flight.airlineId;
+  final dep = TextEditingController(text: flight.departureLocation);
+  final arr = TextEditingController(text: flight.arrivalLocation);
+  final price = TextEditingController(text: flight.price?.toString());
+  final depTime = TextEditingController(text: flight.departureTime?.toIso8601String());
+  final arrTime = TextEditingController(text: flight.arrivalTime?.toIso8601String());
 
-    final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
+  String? depError;
+  String? arrError;
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
+  int? selectedAirline = flight.airlineId;
+  final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
+
+  showDialog(
+    context: context,
+    builder: (_) => StatefulBuilder(builder: (context, setLocal) {
+      return AlertDialog(
         title: const Text("Edit Flight"),
         content: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
               if (isLocked)
@@ -547,46 +575,93 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                   ),
                   child: const Text(
                     "This flight is currently BOARDING and cannot be edited.",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                 ),
 
               TextField(
                 controller: dep,
                 enabled: !isLocked,
-                decoration: const InputDecoration(labelText: "Departure location"),
+                decoration: const InputDecoration(
+                  labelText: "Departure location",
+                  prefixIcon: Icon(Icons.flight_takeoff),
+                ),
               ),
+
               TextField(
                 controller: arr,
                 enabled: !isLocked,
-                decoration: const InputDecoration(labelText: "Arrival location"),
+                decoration: const InputDecoration(
+                  labelText: "Arrival location",
+                  prefixIcon: Icon(Icons.flight_land),
+                ),
               ),
+
               TextField(
                 controller: price,
                 enabled: !isLocked,
-                decoration: const InputDecoration(labelText: "Price"),
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "Price",
+                  prefixIcon: Icon(Icons.price_change),
+                ),
               ),
+
               TextField(
                 controller: depTime,
                 readOnly: true,
                 enabled: !isLocked,
-                decoration: const InputDecoration(labelText: "Departure Time"),
-                onTap: () => !isLocked ? pickDateTime(depTime) : null,
+                decoration: InputDecoration(
+                  labelText: "Departure Time",
+                  prefixIcon: const Icon(Icons.access_time),
+                  errorText: depError,
+                ),
+                onTap: () async {
+                  if (isLocked) return;
+
+                  await pickDateTime(depTime);
+                  final dt = DateTime.tryParse(depTime.text);
+
+                  setLocal(() {
+                    depError = (dt == null || dt.isBefore(DateTime.now()))
+                        ? "Departure cannot be in the past"
+                        : null;
+                  });
+                },
               ),
+
               TextField(
                 controller: arrTime,
                 readOnly: true,
                 enabled: !isLocked,
-                decoration: const InputDecoration(labelText: "Arrival Time"),
-                onTap: () => !isLocked ? pickDateTime(arrTime) : null,
+                decoration: InputDecoration(
+                  labelText: "Arrival Time",
+                  prefixIcon: const Icon(Icons.timer),
+                  errorText: arrError,
+                ),
+                onTap: () async {
+                  if (isLocked) return;
+
+                  await pickDateTime(arrTime);
+
+                  final depDT = DateTime.tryParse(depTime.text);
+                  final arrDT = DateTime.tryParse(arrTime.text);
+
+                  setLocal(() {
+                    arrError =
+                        (depDT != null && arrDT != null && arrDT.isBefore(depDT))
+                            ? "Arrival must be after departure"
+                            : null;
+                  });
+                },
               ),
 
               DropdownButtonFormField<int>(
                 value: selectedAirline,
-                decoration: const InputDecoration(labelText: "Airline"),
+                decoration: const InputDecoration(
+                  labelText: "Airline",
+                  prefixIcon: Icon(Icons.airlines),
+                ),
                 items: airlines
                     .map((a) => DropdownMenuItem(
                           value: a.airlineId!,
@@ -611,40 +686,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 ? null
                 : () async {
 
-                  final now = DateTime.now();
-                  final depDT = DateTime.tryParse(depTime.text);
-                  final arrDT = DateTime.tryParse(arrTime.text);
-                  
-                  if (depDT == null || arrDT == null) {
-                    return showDialog(
-                      context: context,
-                      builder: (_) => const AlertDialog(
-                        title: Text("Invalid Time"),
-                        content: Text("Departure and arrival times are required."),
-                      ),
-                    );
-                  }
-                  
-                  if (depDT.isBefore(now)) {
-                    return showDialog(
-                      context: context,
-                      builder: (_) => const AlertDialog(
-                        title: Text("Departure Invalid"),
-                        content: Text("Departure time cannot be in the past."),
-                      ),
-                    );
-                  }
-                  
-                  if (arrDT.isBefore(depDT)) {
-                    return showDialog(
-                      context: context,
-                      builder: (_) => const AlertDialog(
-                        title: Text("Arrival Invalid"),
-                        content: Text("Arrival time must be AFTER departure time."),
-                      ),
-                    );
-                  }
-
+                    if (depError != null || arrError != null) return;
 
                     await flightProv.update(flight.flightId!, {
                       "departureLocation": dep.text,
@@ -657,12 +699,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                     Navigator.pop(context);
                     loadFlights();
+                    showSuccess("Flight updated successfully.");
                   },
           ),
         ],
-      ),
-    );
-  }
+      );
+    }),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -826,12 +871,17 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                         onPressed: () => editFlightDialog(f),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () async {
-                          await flightProv.delete(f.flightId!);
-                          loadFlights();
-                        },
-                      ),
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () async {
+                        final ok = await confirmDelete("Do you really want to delete this flight?");
+                        if (!ok) return;
+
+                        await flightProv.delete(f.flightId!);
+                        loadFlights();
+                        showSuccess("Flight deleted successfully.");
+                      },
+                    ),
+
                     ],
                   ),
           ),
@@ -873,8 +923,13 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () async {
+                          final ok = await confirmDelete("Delete airline?");
+                          if (!ok) return;
+
                           await airlineProv.delete(a.airlineId!);
                           loadAirlines();
+                          showSuccess("Airline deleted successfully.");
+
                         },
                       ),
                     ],
@@ -921,8 +976,13 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () async {
+                          final ok = await confirmDelete("Delete airport?");
+                          if (!ok) return;
+
                           await airportProv.delete(a.airportId!);
                           loadAirports();
+                          showSuccess("Airport deleted successfully.");
+
                         },
                       ),
                     ],
