@@ -91,7 +91,7 @@ Password: **eairflow**
 
 ## RabbitMQ
 
-RabbitMQ was used to send emails to users after successful registration and flight booking.
+RabbitMQ was used to send emails to users after successful registration.
 
 
 

@@ -87,6 +87,10 @@ public partial class _210019Context : DbContext
 
             entity.HasOne(d => d.Airline).WithMany(p => p.Flights)
                 .HasForeignKey(d => d.AirlineId);
+
+            entity.HasOne(f => f.Airport)
+            .WithMany()
+            .HasForeignKey(f => f.AirportId);
         });
 
         modelBuilder.Entity<FlightReview>(entity =>

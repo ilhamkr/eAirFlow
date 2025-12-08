@@ -76,7 +76,7 @@ namespace eAirFlow.Services.Services
                 {
                     EmailTo = entity.Email!,
                     ReceiverName = entity.Name ?? "User",
-                    Subject = "Confirm your eAirFlow email",
+                    Subject = "eAirFlow",
                     Message = $@"
                         <h2 style=""color:#1a73e8; font-family:Arial; margin-bottom:10px;"">
                             Welcome to eAirFlow! ✈️

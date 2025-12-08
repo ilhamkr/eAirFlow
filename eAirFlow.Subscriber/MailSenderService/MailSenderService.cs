@@ -2,12 +2,10 @@
 using MailKit.Net.Smtp;
 using DotNetEnv;
 
-
 namespace eAirFlow.Subscriber.MailSenderService
 {
     public class MailSenderService : IMailSenderService
     {
-
         public async Task SendEmail(Email emailObj)
         {
             if (emailObj == null) return;
@@ -29,7 +27,6 @@ namespace eAirFlow.Subscriber.MailSenderService
             }
 
             var email = new MimeMessage();
-
             email.From.Add(new MailboxAddress(displayName, fromAddress));
             email.To.Add(new MailboxAddress(emailObj.ReceiverName, emailObj.EmailTo));
 
@@ -45,24 +42,39 @@ namespace eAirFlow.Subscriber.MailSenderService
 
                 using (var smtp = new SmtpClient())
                 {
+                    Console.WriteLine($"Pokušavam da se povežem na SMTP server {host} na portu {port} sa SSL: {enableSSL}");
+
                     await smtp.ConnectAsync(host, port, enableSSL);
                     Console.WriteLine("Uspješno spojeno na SMTP server...");
+
+                    Console.WriteLine($"Pokušavam da se autentifikujem sa korisničkim imenom {fromAddress}");
 
                     await smtp.AuthenticateAsync(fromAddress, password);
                     Console.WriteLine("Autentifikacija na SMTP serveru uspješna.");
 
+                    Console.WriteLine("Pokušavam da pošaljem email...");
                     await smtp.SendAsync(email);
-
                     await smtp.DisconnectAsync(true);
+
+                    Console.WriteLine("Email uspješno poslan.");
                 }
-                Console.WriteLine("Mail uspjesno poslan.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error {ex.Message}");
+                Console.WriteLine($"Greška prilikom slanja emaila: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                if (ex is SmtpCommandException smtpEx)
+                {
+                    Console.WriteLine($"SMTP Greška: {smtpEx.Message}");
+                }
+                else if (ex is SmtpProtocolException smtpProtocolEx)
+                {
+                    Console.WriteLine($"SMTP Protokol Greška: {smtpProtocolEx.Message}");
+                }
+
                 return;
             }
         }
-
     }
 }

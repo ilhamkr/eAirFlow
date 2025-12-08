@@ -50,11 +50,28 @@ namespace eAirFlow.Services.Services
 
         public void Delete(int id)
         {
-            var airplanes = _context.Airplanes
-                .Where(x => x.AirlineId == id)
+            var flights = _context.Flights
+                .Where(f => f.AirlineId == id)
                 .ToList();
 
+            _context.Flights.RemoveRange(flights);
+            _context.SaveChanges();
+
+            var airplanes = _context.Airplanes
+                .Where(a => a.AirlineId == id)
+                .ToList();
+
+            var airplaneIds = airplanes.Select(a => a.AirplaneId).ToList();
+
+            var seats = _context.Seats
+                .Where(s => s.AirplaneId.HasValue && airplaneIds.Contains(s.AirplaneId.Value))
+                .ToList();
+
+            _context.Seats.RemoveRange(seats);
+            _context.SaveChanges();
+
             _context.Airplanes.RemoveRange(airplanes);
+            _context.SaveChanges();
 
             var airline = _context.Airlines.Find(id);
             if (airline == null)
@@ -63,6 +80,7 @@ namespace eAirFlow.Services.Services
             _context.Airlines.Remove(airline);
             _context.SaveChanges();
         }
+
 
 
     }

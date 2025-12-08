@@ -13,5 +13,6 @@ namespace eAirFlow.Model.Requests
         public int? AirlineId { get; set; }
         public int? AirplaneId { get; set; }
         public int? Price { get; set; }
+        public int AirportId { get; set; }
     }
 }

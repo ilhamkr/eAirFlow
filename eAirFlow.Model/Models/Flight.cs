@@ -26,6 +26,7 @@ namespace eAirFlow.Model.Models
 
         public Airline Airline { get; set; }
 
-
+        public int? AirportId { get; set; }
+        public Airport? Airport { get; set; }
     }
 }

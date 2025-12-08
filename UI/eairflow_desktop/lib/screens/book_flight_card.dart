@@ -368,7 +368,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
                                 builder: (_) => BookNowDialog(
                                   flight: f,
                                   airlineName: f.airline?.name ?? "Airline",
-                                  airportId: selectedAirportId,
+                                  airportId: selectedAirportId ?? f.airportId,
                                 ),
                               );
                           
@@ -1020,53 +1020,74 @@ class _BookNowDialogState extends State<BookNowDialog> {
     return base + seatPrice + mealPrice;
   }
 
+   Future<bool> _alreadyBookedThisFlight(int flightId) async {
+  final userId = AuthProvider.userId;
+  if (userId == null) return false;
+
+  final provider = ReservationProvider();
+  final reservations = await provider.getByUser(userId);
+
+  return reservations.any(
+    (r) =>
+        r.flightId == flightId &&
+        r.stateMachine?.toLowerCase() != "cancelled",
+  );
+}
+
   Future<void> _confirmBooking() async {
-    if (selectedSeat == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select a seat")),
-      );
-      return;
-    }
-
-    final reservationProvider = ReservationProvider();
-
-    final request = {
-  "userId": AuthProvider.userId,
-  "flightId": widget.flight.flightId,
-  "seatId": selectedSeatClass?.seatClassId,
-  "mealTypeId": selectedMeal?.mealTypeId,
-  "selectedSeat": selectedSeat,
-  "airportId": widget.airportId,
-  "airplaneId": widget.flight.airplaneId
-};
-
-    try {
-      final reservation = await reservationProvider.insert(request);
-
-      if (!mounted) return;
-
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentScreen(
-            reservationId: reservation.reservationId!,
-            userId: AuthProvider.userId!,
-            amount: totalPrice.toInt(),
-          ),
-        ),
-      );
-      
-      if (result == true) {
-        Navigator.pop(context, true); 
-      }
-
-    } catch (e) {
-      print("ERROR: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Reservation failed: $e")),
-      );
-    }
+  if (selectedSeat == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Please select a seat")),
+    );
+    return;
   }
+
+  final alreadyBooked =
+      await _alreadyBookedThisFlight(widget.flight.flightId!);
+
+  if (alreadyBooked) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("You already have a reservation for this flight."),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
+
+  final reservationProvider = ReservationProvider();
+
+  final request = {
+    "userId": AuthProvider.userId,
+    "flightId": widget.flight.flightId,
+    "seatId": selectedSeatClass?.seatClassId,
+    "mealTypeId": selectedMeal?.mealTypeId,
+    "selectedSeat": selectedSeat,
+    "airportId": widget.airportId,
+    "airplaneId": widget.flight.airplaneId
+  };
+
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PaymentScreen(
+        userId: AuthProvider.userId!,
+        amount: totalPrice.toInt(),
+        flightId: widget.flight.flightId!,
+        seatId: selectedSeatClass!.seatClassId!,
+        mealTypeId: selectedMeal!.mealTypeId!,
+        selectedSeat: selectedSeat!,
+        airportId: (widget.airportId ?? widget.flight.airportId)!,
+        airplaneId: widget.flight.airplaneId!,
+      ),
+    ),
+  );
+
+  if (result == true && mounted) {
+    Navigator.pop(context, true);
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

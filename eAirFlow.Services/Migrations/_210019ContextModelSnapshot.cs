@@ -271,7 +271,7 @@ namespace eAirFlow.Services.Migrations
                             EmployeeId = 1,
                             AirportId = 1,
                             Email = "employee@example.com",
-                            HireDate = new DateTime(2025, 12, 5, 18, 27, 32, 736, DateTimeKind.Utc).AddTicks(9182),
+                            HireDate = new DateTime(2025, 12, 8, 19, 41, 18, 172, DateTimeKind.Utc).AddTicks(4666),
                             Name = "employee",
                             PhoneNumber = "555-555",
                             PositionId = 1,
@@ -292,6 +292,9 @@ namespace eAirFlow.Services.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("AirplaneId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AirportId")
                         .HasColumnType("int");
 
                     b.Property<string>("ArrivalLocation")
@@ -316,6 +319,8 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("AirlineId");
 
+                    b.HasIndex("AirportId");
+
                     b.ToTable("Flights");
 
                     b.HasData(
@@ -324,330 +329,7 @@ namespace eAirFlow.Services.Migrations
                             FlightId = 1,
                             AirlineId = 1,
                             AirplaneId = 1,
-                            ArrivalLocation = "Istanbul",
-                            ArrivalTime = new DateTime(2025, 12, 5, 10, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 8, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 150,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 2,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 5, 11, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 155,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 3,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 5, 12, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 10, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 160,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 4,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 5, 13, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 11, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 165,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 5,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 5, 17, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 15, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 90,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 6,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 5, 18, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 16, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 97,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 7,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 5, 19, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 5, 17, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 104,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 8,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Munich",
-                            ArrivalTime = new DateTime(2025, 12, 5, 14, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 5, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 130,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 9,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Frankfurt",
-                            ArrivalTime = new DateTime(2025, 12, 5, 15, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 5, 13, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 140,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 10,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Istanbul",
-                            ArrivalTime = new DateTime(2025, 12, 6, 10, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 8, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 150,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 11,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 6, 11, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 155,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 12,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 6, 12, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 10, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 160,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 13,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 6, 13, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 11, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 165,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 14,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 6, 17, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 15, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 90,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 15,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 6, 18, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 16, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 97,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 16,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 6, 19, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 6, 17, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 104,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 17,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Munich",
-                            ArrivalTime = new DateTime(2025, 12, 6, 14, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 6, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 130,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 18,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Frankfurt",
-                            ArrivalTime = new DateTime(2025, 12, 6, 15, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 6, 13, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 140,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 19,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Istanbul",
-                            ArrivalTime = new DateTime(2025, 12, 7, 10, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 8, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 150,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 20,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 7, 11, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 155,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 21,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 7, 12, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 10, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 160,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 22,
-                            AirlineId = 1,
-                            AirplaneId = 1,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 7, 13, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 11, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 165,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 23,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Berlin",
-                            ArrivalTime = new DateTime(2025, 12, 7, 17, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 15, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 90,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 24,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Roma",
-                            ArrivalTime = new DateTime(2025, 12, 7, 18, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 16, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 97,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 25,
-                            AirlineId = 2,
-                            AirplaneId = 2,
-                            ArrivalLocation = "Paris",
-                            ArrivalTime = new DateTime(2025, 12, 7, 19, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Sarajevo",
-                            DepartureTime = new DateTime(2025, 12, 7, 17, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 104,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 26,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Munich",
-                            ArrivalTime = new DateTime(2025, 12, 7, 14, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 7, 12, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 130,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 27,
-                            AirlineId = 3,
-                            AirplaneId = 3,
-                            ArrivalLocation = "Frankfurt",
-                            ArrivalTime = new DateTime(2025, 12, 7, 15, 0, 0, 0, DateTimeKind.Utc),
-                            DepartureLocation = "Mostar",
-                            DepartureTime = new DateTime(2025, 12, 7, 13, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 140,
-                            StateMachine = "scheduled"
-                        },
-                        new
-                        {
-                            FlightId = 28,
-                            AirlineId = 1,
-                            AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -657,9 +339,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 29,
+                            FlightId = 2,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 8, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -669,9 +352,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 30,
+                            FlightId = 3,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 8, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -681,9 +365,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 31,
+                            FlightId = 4,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 8, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -693,9 +378,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 32,
+                            FlightId = 5,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 8, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -705,9 +391,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 33,
+                            FlightId = 6,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 8, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -717,9 +404,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 34,
+                            FlightId = 7,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 8, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -729,9 +417,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 35,
+                            FlightId = 8,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 8, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -741,9 +430,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 36,
+                            FlightId = 9,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 8, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -753,9 +443,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 37,
+                            FlightId = 10,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 9, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -765,9 +456,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 38,
+                            FlightId = 11,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 9, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -777,9 +469,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 39,
+                            FlightId = 12,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 9, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -789,9 +482,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 40,
+                            FlightId = 13,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 9, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -801,9 +495,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 41,
+                            FlightId = 14,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 9, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -813,9 +508,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 42,
+                            FlightId = 15,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -825,9 +521,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 43,
+                            FlightId = 16,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 9, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -837,9 +534,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 44,
+                            FlightId = 17,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 9, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -849,9 +547,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 45,
+                            FlightId = 18,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 9, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -861,9 +560,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 46,
+                            FlightId = 19,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 10, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -873,9 +573,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 47,
+                            FlightId = 20,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 10, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -885,9 +586,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 48,
+                            FlightId = 21,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 10, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -897,9 +599,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 49,
+                            FlightId = 22,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 10, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -909,9 +612,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 50,
+                            FlightId = 23,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 10, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -921,9 +625,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 51,
+                            FlightId = 24,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 10, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -933,9 +638,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 52,
+                            FlightId = 25,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 10, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -945,9 +651,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 53,
+                            FlightId = 26,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -957,9 +664,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 54,
+                            FlightId = 27,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 10, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -969,9 +677,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 55,
+                            FlightId = 28,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 11, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -981,9 +690,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 56,
+                            FlightId = 29,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 11, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -993,9 +703,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 57,
+                            FlightId = 30,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 11, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1005,9 +716,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 58,
+                            FlightId = 31,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 11, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1017,9 +729,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 59,
+                            FlightId = 32,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 11, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1029,9 +742,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 60,
+                            FlightId = 33,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 11, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1041,9 +755,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 61,
+                            FlightId = 34,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 11, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1053,9 +768,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 62,
+                            FlightId = 35,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 11, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1065,9 +781,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 63,
+                            FlightId = 36,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 11, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1077,9 +794,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 64,
+                            FlightId = 37,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 12, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1089,9 +807,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 65,
+                            FlightId = 38,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 12, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1101,9 +820,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 66,
+                            FlightId = 39,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 12, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1113,9 +833,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 67,
+                            FlightId = 40,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 12, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1125,9 +846,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 68,
+                            FlightId = 41,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 12, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1137,9 +859,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 69,
+                            FlightId = 42,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 12, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1149,9 +872,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 70,
+                            FlightId = 43,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 12, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1161,9 +885,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 71,
+                            FlightId = 44,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 12, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1173,9 +898,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 72,
+                            FlightId = 45,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 12, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1185,9 +911,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 73,
+                            FlightId = 46,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 13, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1197,9 +924,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 74,
+                            FlightId = 47,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 13, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1209,9 +937,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 75,
+                            FlightId = 48,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 13, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1221,9 +950,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 76,
+                            FlightId = 49,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 13, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1233,9 +963,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 77,
+                            FlightId = 50,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 13, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1245,9 +976,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 78,
+                            FlightId = 51,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 13, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1257,9 +989,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 79,
+                            FlightId = 52,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 13, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1269,9 +1002,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 80,
+                            FlightId = 53,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 13, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1281,9 +1015,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 81,
+                            FlightId = 54,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 13, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1293,9 +1028,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 82,
+                            FlightId = 55,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 14, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1305,9 +1041,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 83,
+                            FlightId = 56,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 14, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1317,9 +1054,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 84,
+                            FlightId = 57,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 14, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1329,9 +1067,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 85,
+                            FlightId = 58,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 14, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1341,9 +1080,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 86,
+                            FlightId = 59,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 14, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1353,9 +1093,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 87,
+                            FlightId = 60,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 14, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1365,9 +1106,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 88,
+                            FlightId = 61,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 14, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1377,9 +1119,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 89,
+                            FlightId = 62,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 14, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1389,9 +1132,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 90,
+                            FlightId = 63,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 14, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1401,9 +1145,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 91,
+                            FlightId = 64,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1413,9 +1158,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 92,
+                            FlightId = 65,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 15, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1425,9 +1171,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 93,
+                            FlightId = 66,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 15, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1437,9 +1184,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 94,
+                            FlightId = 67,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 15, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1449,9 +1197,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 95,
+                            FlightId = 68,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 15, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1461,9 +1210,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 96,
+                            FlightId = 69,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 15, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1473,9 +1223,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 97,
+                            FlightId = 70,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 15, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1485,9 +1236,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 98,
+                            FlightId = 71,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 15, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1497,9 +1249,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 99,
+                            FlightId = 72,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 15, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1509,9 +1262,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 100,
+                            FlightId = 73,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1521,9 +1275,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 101,
+                            FlightId = 74,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 16, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1533,9 +1288,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 102,
+                            FlightId = 75,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 16, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1545,9 +1301,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 103,
+                            FlightId = 76,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 16, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1557,9 +1314,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 104,
+                            FlightId = 77,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 16, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1569,9 +1327,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 105,
+                            FlightId = 78,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 16, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1581,9 +1340,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 106,
+                            FlightId = 79,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 16, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1593,9 +1353,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 107,
+                            FlightId = 80,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 16, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1605,9 +1366,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 108,
+                            FlightId = 81,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 16, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1617,9 +1379,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 109,
+                            FlightId = 82,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 17, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1629,9 +1392,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 110,
+                            FlightId = 83,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 17, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1641,9 +1405,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 111,
+                            FlightId = 84,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1653,9 +1418,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 112,
+                            FlightId = 85,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 17, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1665,9 +1431,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 113,
+                            FlightId = 86,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 17, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1677,9 +1444,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 114,
+                            FlightId = 87,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 17, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1689,9 +1457,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 115,
+                            FlightId = 88,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 17, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1701,9 +1470,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 116,
+                            FlightId = 89,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 17, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1713,9 +1483,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 117,
+                            FlightId = 90,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 17, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1725,9 +1496,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 118,
+                            FlightId = 91,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1737,9 +1509,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 119,
+                            FlightId = 92,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 18, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1749,9 +1522,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 120,
+                            FlightId = 93,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 18, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1761,9 +1535,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 121,
+                            FlightId = 94,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 18, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1773,9 +1548,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 122,
+                            FlightId = 95,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 18, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1785,9 +1561,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 123,
+                            FlightId = 96,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 18, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1797,9 +1574,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 124,
+                            FlightId = 97,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 18, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1809,9 +1587,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 125,
+                            FlightId = 98,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 18, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1821,9 +1600,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 126,
+                            FlightId = 99,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 18, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1833,9 +1613,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 127,
+                            FlightId = 100,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 19, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1845,9 +1626,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 128,
+                            FlightId = 101,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 19, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1857,9 +1639,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 129,
+                            FlightId = 102,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 19, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1869,9 +1652,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 130,
+                            FlightId = 103,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 19, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1881,9 +1665,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 131,
+                            FlightId = 104,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 19, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1893,9 +1678,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 132,
+                            FlightId = 105,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 19, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1905,9 +1691,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 133,
+                            FlightId = 106,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 19, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1917,9 +1704,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 134,
+                            FlightId = 107,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 19, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1929,9 +1717,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 135,
+                            FlightId = 108,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 19, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -1941,9 +1730,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 136,
+                            FlightId = 109,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 20, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1953,9 +1743,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 137,
+                            FlightId = 110,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 20, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1965,9 +1756,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 138,
+                            FlightId = 111,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 20, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1977,9 +1769,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 139,
+                            FlightId = 112,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 20, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -1989,9 +1782,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 140,
+                            FlightId = 113,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 20, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2001,9 +1795,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 141,
+                            FlightId = 114,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 20, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2013,9 +1808,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 142,
+                            FlightId = 115,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 20, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2025,9 +1821,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 143,
+                            FlightId = 116,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 20, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2037,9 +1834,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 144,
+                            FlightId = 117,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 20, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2049,9 +1847,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 145,
+                            FlightId = 118,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 21, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2061,9 +1860,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 146,
+                            FlightId = 119,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 21, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2073,9 +1873,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 147,
+                            FlightId = 120,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 21, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2085,9 +1886,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 148,
+                            FlightId = 121,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 21, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2097,9 +1899,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 149,
+                            FlightId = 122,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 21, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2109,9 +1912,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 150,
+                            FlightId = 123,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 21, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2121,9 +1925,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 151,
+                            FlightId = 124,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 21, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2133,9 +1938,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 152,
+                            FlightId = 125,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 21, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2145,9 +1951,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 153,
+                            FlightId = 126,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 21, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2157,9 +1964,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 154,
+                            FlightId = 127,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 22, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2169,9 +1977,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 155,
+                            FlightId = 128,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 22, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2181,9 +1990,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 156,
+                            FlightId = 129,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 22, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2193,9 +2003,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 157,
+                            FlightId = 130,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 22, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2205,9 +2016,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 158,
+                            FlightId = 131,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 22, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2217,9 +2029,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 159,
+                            FlightId = 132,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 22, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2229,9 +2042,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 160,
+                            FlightId = 133,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 22, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2241,9 +2055,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 161,
+                            FlightId = 134,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 22, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2253,9 +2068,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 162,
+                            FlightId = 135,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 22, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2265,9 +2081,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 163,
+                            FlightId = 136,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 23, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2277,9 +2094,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 164,
+                            FlightId = 137,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 23, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2289,9 +2107,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 165,
+                            FlightId = 138,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 23, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2301,9 +2120,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 166,
+                            FlightId = 139,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 23, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2313,9 +2133,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 167,
+                            FlightId = 140,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 23, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2325,9 +2146,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 168,
+                            FlightId = 141,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 23, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2337,9 +2159,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 169,
+                            FlightId = 142,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 23, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2349,9 +2172,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 170,
+                            FlightId = 143,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 23, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2361,9 +2185,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 171,
+                            FlightId = 144,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 23, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2373,9 +2198,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 172,
+                            FlightId = 145,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Istanbul",
                             ArrivalTime = new DateTime(2025, 12, 24, 10, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2385,9 +2211,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 173,
+                            FlightId = 146,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 24, 11, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2397,9 +2224,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 174,
+                            FlightId = 147,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 24, 12, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2409,9 +2237,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 175,
+                            FlightId = 148,
                             AirlineId = 1,
                             AirplaneId = 1,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 24, 13, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2421,9 +2250,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 176,
+                            FlightId = 149,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Berlin",
                             ArrivalTime = new DateTime(2025, 12, 24, 17, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2433,9 +2263,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 177,
+                            FlightId = 150,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Roma",
                             ArrivalTime = new DateTime(2025, 12, 24, 18, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2445,9 +2276,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 178,
+                            FlightId = 151,
                             AirlineId = 2,
                             AirplaneId = 2,
+                            AirportId = 1,
                             ArrivalLocation = "Paris",
                             ArrivalTime = new DateTime(2025, 12, 24, 19, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Sarajevo",
@@ -2457,9 +2289,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 179,
+                            FlightId = 152,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2025, 12, 24, 14, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
@@ -2469,13 +2302,365 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            FlightId = 180,
+                            FlightId = 153,
                             AirlineId = 3,
                             AirplaneId = 3,
+                            AirportId = 2,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2025, 12, 24, 15, 0, 0, 0, DateTimeKind.Utc),
                             DepartureLocation = "Mostar",
                             DepartureTime = new DateTime(2025, 12, 24, 13, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 140,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 154,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Istanbul",
+                            ArrivalTime = new DateTime(2025, 12, 25, 10, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 150,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 155,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 25, 11, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 155,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 156,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 25, 12, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 160,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 157,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 25, 13, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 165,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 158,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 25, 17, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 90,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 159,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 25, 18, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 16, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 97,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 160,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 25, 19, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 25, 17, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 104,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 161,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Munich",
+                            ArrivalTime = new DateTime(2025, 12, 25, 14, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 25, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 130,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 162,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Frankfurt",
+                            ArrivalTime = new DateTime(2025, 12, 25, 15, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 25, 13, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 140,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 163,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Istanbul",
+                            ArrivalTime = new DateTime(2025, 12, 26, 10, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 150,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 164,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 26, 11, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 155,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 165,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 26, 12, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 160,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 166,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 26, 13, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 165,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 167,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 26, 17, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 90,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 168,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 26, 18, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 16, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 97,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 169,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 26, 19, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 26, 17, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 104,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 170,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Munich",
+                            ArrivalTime = new DateTime(2025, 12, 26, 14, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 26, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 130,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 171,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Frankfurt",
+                            ArrivalTime = new DateTime(2025, 12, 26, 15, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 26, 13, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 140,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 172,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Istanbul",
+                            ArrivalTime = new DateTime(2025, 12, 27, 10, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 150,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 173,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 27, 11, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 155,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 174,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 27, 12, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 160,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 175,
+                            AirlineId = 1,
+                            AirplaneId = 1,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 27, 13, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 165,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 176,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Berlin",
+                            ArrivalTime = new DateTime(2025, 12, 27, 17, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 90,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 177,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Roma",
+                            ArrivalTime = new DateTime(2025, 12, 27, 18, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 16, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 97,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 178,
+                            AirlineId = 2,
+                            AirplaneId = 2,
+                            AirportId = 1,
+                            ArrivalLocation = "Paris",
+                            ArrivalTime = new DateTime(2025, 12, 27, 19, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Sarajevo",
+                            DepartureTime = new DateTime(2025, 12, 27, 17, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 104,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 179,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Munich",
+                            ArrivalTime = new DateTime(2025, 12, 27, 14, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 27, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 130,
+                            StateMachine = "scheduled"
+                        },
+                        new
+                        {
+                            FlightId = 180,
+                            AirlineId = 3,
+                            AirplaneId = 3,
+                            AirportId = 2,
+                            ArrivalLocation = "Frankfurt",
+                            ArrivalTime = new DateTime(2025, 12, 27, 15, 0, 0, 0, DateTimeKind.Utc),
+                            DepartureLocation = "Mostar",
+                            DepartureTime = new DateTime(2025, 12, 27, 13, 0, 0, 0, DateTimeKind.Utc),
                             Price = 140,
                             StateMachine = "scheduled"
                         });
@@ -6689,33 +6874,33 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2025, 12, 5, 18, 27, 32, 736, DateTimeKind.Utc).AddTicks(9087),
+                            CreatedAt = new DateTime(2025, 12, 8, 19, 41, 18, 172, DateTimeKind.Utc).AddTicks(4543),
                             Email = "user@example.com",
                             Name = "User",
-                            PasswordHash = "yRCgMCahqz8P2rVcvwaqqNOg01zSfTHQYCjH7ocSswM=",
-                            PasswordSalt = "oMuv2IaA237OaGMjh9Mv4Q==",
+                            PasswordHash = "owwan4AYiufNGkxrrgrsfGzepKSOvyEGI8UuiBkvBF8=",
+                            PasswordSalt = "OMHLkvdAvXym6nc+KTp5RA==",
                             PhoneNumber = "555-555",
                             Surname = "User"
                         },
                         new
                         {
                             UserId = 2,
-                            CreatedAt = new DateTime(2025, 12, 5, 18, 27, 32, 736, DateTimeKind.Utc).AddTicks(9110),
+                            CreatedAt = new DateTime(2025, 12, 8, 19, 41, 18, 172, DateTimeKind.Utc).AddTicks(4566),
                             Email = "employee@example.com",
                             Name = "Employee",
-                            PasswordHash = "yRCgMCahqz8P2rVcvwaqqNOg01zSfTHQYCjH7ocSswM=",
-                            PasswordSalt = "oMuv2IaA237OaGMjh9Mv4Q==",
+                            PasswordHash = "owwan4AYiufNGkxrrgrsfGzepKSOvyEGI8UuiBkvBF8=",
+                            PasswordSalt = "OMHLkvdAvXym6nc+KTp5RA==",
                             PhoneNumber = "555-555",
                             Surname = "Employee"
                         },
                         new
                         {
                             UserId = 3,
-                            CreatedAt = new DateTime(2025, 12, 5, 18, 27, 32, 736, DateTimeKind.Utc).AddTicks(9126),
+                            CreatedAt = new DateTime(2025, 12, 8, 19, 41, 18, 172, DateTimeKind.Utc).AddTicks(4604),
                             Email = "admin@example.com",
                             Name = "Admin",
-                            PasswordHash = "yRCgMCahqz8P2rVcvwaqqNOg01zSfTHQYCjH7ocSswM=",
-                            PasswordSalt = "oMuv2IaA237OaGMjh9Mv4Q==",
+                            PasswordHash = "owwan4AYiufNGkxrrgrsfGzepKSOvyEGI8UuiBkvBF8=",
+                            PasswordSalt = "OMHLkvdAvXym6nc+KTp5RA==",
                             PhoneNumber = "555-555",
                             Surname = "Admin"
                         });
@@ -6831,7 +7016,13 @@ namespace eAirFlow.Services.Migrations
                         .WithMany("Flights")
                         .HasForeignKey("AirlineId");
 
+                    b.HasOne("eAirFlow.Services.Database.Airport", "Airport")
+                        .WithMany()
+                        .HasForeignKey("AirportId");
+
                     b.Navigation("Airline");
+
+                    b.Navigation("Airport");
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.FlightReview", b =>

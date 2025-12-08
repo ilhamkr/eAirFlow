@@ -84,16 +84,35 @@ class _AdminPositionScreenState extends State<AdminPositionScreen> {
                 "name": nameCtrl.text,
                 "description": descCtrl.text,
               });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Position successfully created"),
+                  backgroundColor: Colors.green,
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 2),
+                ),
+              );
             } else {
               await posProv.update(position.positionId!, {
                 "name": nameCtrl.text,
                 "description": descCtrl.text,
               });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Position successfully updated"),
+                  backgroundColor: Colors.blue,
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 2),
+                ),
+              );
             }
 
             Navigator.pop(context);
             loadPositions();
           },
+
         )
       ],
     ),
@@ -118,6 +137,15 @@ class _AdminPositionScreenState extends State<AdminPositionScreen> {
             onPressed: () async {
               await posProv.delete(p.positionId!);
               Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Position successfully deleted."),
+                    backgroundColor: Colors.green,
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               loadPositions();
             },
           )

@@ -24,6 +24,8 @@ public partial class Flight
     public int? Price { get; set; }
 
     public virtual Airline? Airline { get; set; }
+    public int? AirportId { get; set; }
+    public Airport? Airport { get; set; }
 
     public virtual ICollection<FlightReview> FlightReviews { get; set; } = new List<FlightReview>();
 

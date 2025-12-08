@@ -401,7 +401,9 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
                           ),
                           child: Image.memory(
                             base64Decode(r.qrCodeBase64!),
-                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            height: MediaQuery.of(context).size.width * 0.5, 
+                            fit: BoxFit.contain,
                           ),
                         ),
 

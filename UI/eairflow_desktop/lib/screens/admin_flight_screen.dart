@@ -223,6 +223,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               Navigator.pop(context);
               loadAirports();
+              showSuccess("Airport successfully added.");
             },
           ),
         ],
@@ -263,6 +264,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               Navigator.pop(context);
               loadAirports();
+              showSuccess("Airport successfully updated");
             },
           ),
         ],
@@ -326,6 +328,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               Navigator.pop(context);
               loadAirlines();
+              showSuccess("Airline successfully added.");
             },
           ),
         ],
@@ -376,6 +379,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               Navigator.pop(context);
               loadAirlines();
+              showSuccess("Airline successfully updated");
             },
           ),
         ],
@@ -395,6 +399,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   String? priceError;
 
   int? selectedAirline;
+  int? selectedAirport;
 
   showDialog(
     context: context,
@@ -483,6 +488,21 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               DropdownButtonFormField<int>(
                 decoration: const InputDecoration(
+                  labelText: "Airport",
+                  prefixIcon: Icon(Icons.location_city),
+                ),
+                items: airports
+                    .map((a) => DropdownMenuItem(
+                          value: a.airportId!,
+                          child: Text(a.name ?? ""),
+                        ))
+                    .toList(),
+                onChanged: (v) => selectedAirport = v,
+              ),
+
+
+              DropdownButtonFormField<int>(
+                decoration: const InputDecoration(
                   labelText: "Airline",
                   prefixIcon: Icon(Icons.airlines),
                 ),
@@ -527,6 +547,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 "departureTime": depTime.text,
                 "arrivalTime": arrTime.text,
                 "airlineId": selectedAirline,
+                "airportId": selectedAirport,
               });
 
               Navigator.pop(context);
@@ -553,6 +574,8 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   String? arrError;
 
   int? selectedAirline = flight.airlineId;
+  int? selectedAirport = flight.airportId;
+
   final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
 
   showDialog(
@@ -657,6 +680,22 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
               ),
 
               DropdownButtonFormField<int>(
+                value: selectedAirport,
+                decoration: const InputDecoration(
+                  labelText: "Airport",
+                  prefixIcon: Icon(Icons.location_city),
+                ),
+                items: airports
+                    .map((a) => DropdownMenuItem(
+                          value: a.airportId!,
+                          child: Text(a.name ?? ""),
+                        ))
+                    .toList(),
+                onChanged: isLocked ? null : (v) => selectedAirport = v,
+              ),
+
+
+              DropdownButtonFormField<int>(
                 value: selectedAirline,
                 decoration: const InputDecoration(
                   labelText: "Airline",
@@ -695,6 +734,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       "departureTime": depTime.text,
                       "arrivalTime": arrTime.text,
                       "airlineId": selectedAirline,
+                      "airportId": selectedAirport,
                     });
 
                     Navigator.pop(context);
@@ -835,6 +875,19 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       const Icon(Icons.airlines, color: Colors.black54, size: 20),
                       const SizedBox(width: 6),
                       Text(f.airline?.name ?? "-"),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.location_city, color: Colors.black54, size: 20),
+                      const SizedBox(width: 6),
+                      const Text(
+                        "Airport: ",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(f.airport?.name ?? "N/A"),
                     ],
                   ),
                   const SizedBox(height: 6),

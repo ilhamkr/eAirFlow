@@ -4,15 +4,24 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentScreen extends StatefulWidget {
-  final int reservationId;
   final int userId;
   final int amount;
-
+   final int flightId;
+  final int seatId;
+  final int mealTypeId;
+  final String selectedSeat;
+  final int airportId;
+  final int airplaneId;
   const PaymentScreen({
     super.key,
-    required this.reservationId,
     required this.userId,
     required this.amount,
+    required this.flightId,
+    required this.seatId,
+    required this.mealTypeId,
+    required this.selectedSeat,
+    required this.airportId,
+    required this.airplaneId,
   });
 
   @override
@@ -50,7 +59,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         body: jsonEncode({
           "amount": widget.amount,
           "returnUrl": returnUrl,
-          "cancelUrl": cancelUrl
+          "cancelUrl": cancelUrl,
         }),
       );
 
@@ -76,41 +85,47 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> _capturePayment() async {
-    if (_paypalOrderId == null) return;
+  print("=== CAPTURING PAYMENT ===");
+  print("Order ID: $_paypalOrderId");
+  if (_paypalOrderId == null) return;
 
-    final url = Uri.parse("http://10.0.2.2:5239/Payment/capture-order");
+  final url = Uri.parse("http://10.0.2.2:5239/Payment/capture-order");
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "orderId": _paypalOrderId,
-          "reservationId": widget.reservationId,
-          "userId": widget.userId,
-          "amount": widget.amount
-        }),
-      );
+  final response = await http.post(
+    url,
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({
+      "orderId": _paypalOrderId,
+      "userId": widget.userId,
+      "amount": widget.amount,
 
-      if (response.statusCode != 200) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Capture failed")));
-        return;
-      }
+      "flightId": widget.flightId,
+      "seatId": widget.seatId,
+      "mealTypeId": widget.mealTypeId,
+      "selectedSeat": widget.selectedSeat,
+      "airportId": widget.airportId,
+      "airplaneId": widget.airplaneId,
+    }),
+  );
 
-      final data = jsonDecode(response.body);
+  print("Capture Status: ${response.statusCode}");
+  print("Capture Body: ${response.body}");
 
-      if (mounted) {
-        setState(() {
-          _qrCodeBase64 = data["qrCode"];
-          _approvalUrl = null;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
-    }
+  if (response.statusCode != 200) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Capture failed")));
+    return;
   }
+
+  final data = jsonDecode(response.body);
+
+  if (mounted) {
+    setState(() {
+      _qrCodeBase64 = data["qrCode"];
+      _approvalUrl = null;
+    });
+  }
+}
 
   Widget _buildSuccessView() {
     return Scaffold(

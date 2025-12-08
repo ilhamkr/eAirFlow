@@ -93,6 +93,15 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
               });
               Navigator.pop(context);
               loadUsers();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("User successfully updated"),
+                  backgroundColor: Colors.blue,
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
           ),
         ],
@@ -212,11 +221,20 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                 DropdownMenuItem(value: 3, child: Text("Admin")),
               ],
               onChanged: (value) async {
-              await userProv.changeRole(user.userId!, value!);
+                await userProv.changeRole(user.userId!, value!);
 
+                loadUsers();
 
-              loadUsers();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("User role successfully updated."),
+                    backgroundColor: Colors.blue,
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
+
 
             ),
 
@@ -233,9 +251,20 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                   ))
                   .toList(),
                 onChanged: (value) async {
-                await userProv.updatePosition(user.userId!, value!);
-                loadUsers();
+                  await userProv.updatePosition(user.userId!, value!);
+
+                  loadUsers();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Employee position successfully updated"),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
                 },
+
               ),
 
               if (user.roleId == 2 && airports.isNotEmpty)
@@ -254,7 +283,17 @@ class _AdminUserScreenState extends State<AdminUserScreen> {
                   onChanged: (value) async {
                     await userProv.updateEmployeeAirport(user.userId!, value!);
                     loadUsers();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Employee airport successfully updated"),
+                        backgroundColor: Colors.orange,
+                        behavior: SnackBarBehavior.floating,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
                   },
+
                 ),
 
 

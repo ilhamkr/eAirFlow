@@ -177,6 +177,7 @@ namespace eAirFlow.Services.Database
                         ArrivalTime = arr,
                         AirlineId = turkishId,
                         AirplaneId = 1,
+                        AirportId = sarajevoAirportId,
                         Price = price,
                         StateMachine = "scheduled"
                     });
@@ -198,6 +199,7 @@ namespace eAirFlow.Services.Database
                         ArrivalTime = arr,
                         AirlineId = ryanairId,
                         AirplaneId = 2,
+                        AirportId = sarajevoAirportId,
                         Price = price,
                         StateMachine = "scheduled"
                     });
@@ -219,6 +221,7 @@ namespace eAirFlow.Services.Database
                         ArrivalTime = arr,
                         AirlineId = lufthansaId,
                         AirplaneId = 3,
+                        AirportId= mostarAirportId,
                         Price = price,
                         StateMachine = "scheduled"
                     });

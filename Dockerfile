@@ -3,6 +3,17 @@ WORKDIR /app
 EXPOSE 7239
 ENV ASPNETCORE_URLS=http://+:7239
 
+RUN apt-get update && apt-get install -y \
+    libfontconfig1 \
+    libfreetype6 \
+    libjpeg62-turbo \
+    libpng16-16 \
+    libtiff6 \
+    libx11-6 \
+    libxext6 \
+    libxi6 \
+    libxrender1
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .

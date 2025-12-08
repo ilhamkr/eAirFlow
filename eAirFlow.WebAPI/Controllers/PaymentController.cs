@@ -10,6 +10,12 @@ using PayPalCheckoutSdk.Orders;
 using eAirFlow.WebAPI.Settings;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using QRCoder;
+using System.Drawing.Imaging;
+using System.Drawing;
+using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
+using System.IO;
 
 
 
@@ -89,22 +95,18 @@ namespace eAirFlow.WebAPI.Controllers
         [HttpPost("capture-order")]
         public async Task<IActionResult> Capture([FromBody] CaptureOrderRequest req)
         {
-            var environment = new SandboxEnvironment(
-                _paypal.ClientId,
-                _paypal.Secret
-            );
+            var environment = new SandboxEnvironment(_paypal.ClientId, _paypal.Secret);
             var client = new PayPalHttpClient(environment);
 
             var captureRequest = new OrdersCaptureRequest(req.OrderId);
             captureRequest.RequestBody(new OrderActionRequest());
-
             var response = await client.Execute(captureRequest);
             var result = response.Result<Order>();
 
             if (result.Status != "COMPLETED")
                 return BadRequest("Payment not completed");
 
-            var payment = new eAirFlow.Services.Database.Payment
+            var payment = new Services.Database.Payment
             {
                 UserId = req.UserId,
                 Amount = req.Amount,
@@ -116,16 +118,91 @@ namespace eAirFlow.WebAPI.Controllers
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
-            var updated = _reservationService.MarkAsPaid(
-                req.ReservationId, payment.PaymentId
+            var reservation = new Services.Database.Reservation
+            {
+                UserId = req.UserId,
+                FlightId = req.FlightId,
+                SeatId = req.SeatId,
+                MealTypeId = req.MealTypeId,
+                AirportId = req.AirportId,
+                AirplaneId = req.AirplaneId,
+                PaymentId = payment.PaymentId,
+                StateMachine = "paid",
+                ReservationDate = DateTime.Now
+            };
+
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
+
+            var qrCodeBase64 = GenerateQrBase64(
+                $"RES:{reservation.ReservationId}|PAY:{payment.PaymentId}|AMOUNT:{payment.Amount}"
             );
+
+            reservation.QrCodeBase64 = qrCodeBase64;
+            await _context.SaveChangesAsync();
 
             return Ok(new
             {
                 success = true,
-                qrCode = updated.QrCodeBase64
+                qrCode = qrCodeBase64,
+                reservationId = reservation.ReservationId
             });
         }
+
+
+
+        private string GenerateQrBase64(string text)
+        {
+            var qrGenerator = new QRCodeGenerator();
+
+            var qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.H);
+
+            using (var ms = new MemoryStream())
+            {
+                using (var skBitmap = new SkiaSharp.SKBitmap(qrCodeData.ModuleMatrix[0].Length * 10, qrCodeData.ModuleMatrix.Count * 10))
+                {
+                    using (var canvas = new SkiaSharp.SKCanvas(skBitmap))
+                    {
+                        canvas.Clear(SkiaSharp.SKColors.White);
+                        var paint = new SkiaSharp.SKPaint
+                        {
+                            Color = SkiaSharp.SKColors.Black,
+                            Style = SkiaSharp.SKPaintStyle.Fill
+                        };
+
+                        for (int y = 0; y < qrCodeData.ModuleMatrix.Count; y++)
+                        {
+                            for (int x = 0; x < qrCodeData.ModuleMatrix[y].Length; x++)
+                            {
+                                if (qrCodeData.ModuleMatrix[y][x]) 
+                                {
+                                    canvas.DrawRect(x * 10, y * 10, 10, 10, paint);
+                                }
+                            }
+                        }
+                    }
+
+                    using (var pngImage = skBitmap.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100))
+                    {
+                        pngImage.SaveTo(ms);
+                    }
+
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

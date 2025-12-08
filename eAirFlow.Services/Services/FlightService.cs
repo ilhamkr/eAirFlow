@@ -34,7 +34,8 @@ namespace eAirFlow.Services.Services
         {
             query = query
                 .Include(f => f.Airline)
-                .ThenInclude(a => a.Airport);
+                .ThenInclude(a => a.Airport)
+                .Include(f => f.Airport);
 
             if (search == null)
                 return query;
@@ -299,6 +300,7 @@ namespace eAirFlow.Services.Services
                 ArrivalTime = request.ArrivalTime,
                 AirlineId = request.AirlineId,
                 AirplaneId = airplane.AirplaneId,
+                AirportId = request.AirportId,
                 Price = request.Price,
                 StateMachine = "scheduled"
             };
