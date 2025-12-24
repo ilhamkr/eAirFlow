@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../providers/flight_provider.dart';
 import '../providers/airport_provider.dart';
 import '../models/airport.dart';
+import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -42,6 +46,78 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     setState(() => loading = false);
   }
 
+  Future<void> downloadReport() async {
+    if (stats == null) return;
+
+    final doc = pw.Document();
+    final selected = airports
+        .where((a) => selectedAirports.contains(a.airportId))
+        .map((a) => a.name ?? "Unknown")
+        .join(', ');
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => [
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                'Flight Performance Report',
+                style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.Text(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())),
+            ],
+          ),
+          pw.SizedBox(height: 8),
+          pw.Text('Airports: ${selected.isEmpty ? 'All' : selected}'),
+          pw.SizedBox(height: 16),
+          pw.Text('Key Metrics',
+              style:
+                  pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 8),
+          pw.Table.fromTextArray(
+            headers: const ['Metric', 'Value'],
+            headerStyle:
+                pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+            cellStyle: const pw.TextStyle(fontSize: 12),
+            data: [
+              ['Completed Flights', stats!["completed"].toString()],
+              ['Canceled Flights', stats!["canceled"].toString()],
+              ['Delayed Flights', stats!["delayed"].toString()],
+              ['Total Revenue', '\$${stats!["totalRevenue"]}'],
+            ],
+          ),
+          pw.SizedBox(height: 16),
+          _pdfTopSection('Top Airlines', stats!["topAirlines"], 'airline'),
+          pw.SizedBox(height: 12),
+          _pdfTopSection(
+              'Top Destinations', stats!["topDestinations"], 'destination'),
+          pw.SizedBox(height: 12),
+          _pdfWeeklyTable(stats!["weeklyTrend"]),
+        ],
+      ),
+    );
+
+    try {
+      await Printing.layoutPdf(onLayout: (format) async => doc.save());
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PDF report generated successfully.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate PDF report: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading || stats == null) {
@@ -49,9 +125,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Reports",
-      style: TextStyle(fontWeight: FontWeight.bold),
-      )),
+      appBar: AppBar(
+        title: const Text(
+          "Reports",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            onPressed: downloadReport,
+            icon: const Icon(Icons.download),
+            tooltip: 'Download PDF',
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -316,6 +402,60 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   );
 }
 
+pw.Widget _pdfTopSection(String title, List items, String key) {
+    final limited = items.take(5).toList();
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(title,
+            style:
+                pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 6),
+        pw.Table.fromTextArray(
+          headers: const ['#', 'Name', 'Flights'],
+          headerStyle:
+              pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+          cellStyle: const pw.TextStyle(fontSize: 12),
+          data: List.generate(limited.length, (i) {
+            final entry = limited[i];
+            final label = entry[key]?.toString() ?? '';
+            final count = entry["count"]?.toString() ?? '0';
+            return ['${i + 1}', label, count];
+          }),
+        ),
+      ],
+    );
+  }
+
+  pw.Widget _pdfWeeklyTable(List trend) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text('Weekly Flights Breakdown',
+            style:
+                pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 6),
+        pw.Table.fromTextArray(
+          headers: const ['Day', 'Completed', 'Canceled', 'Delayed'],
+          headerStyle:
+              pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+          cellStyle: const pw.TextStyle(fontSize: 12),
+          data: trend.map((row) {
+            final completed = row['completed'] ?? 0;
+            final canceled = row['canceled'] ?? 0;
+            final delayed = row['delayed'] ?? 0;
+            return [
+              row['day'] ?? '',
+              completed.toString(),
+              canceled.toString(),
+              delayed.toString(),
+            ];
+          }).toList(),
+        ),
+      ],
+    );
+  }
 
 
 }
