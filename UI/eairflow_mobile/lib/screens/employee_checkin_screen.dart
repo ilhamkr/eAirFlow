@@ -3,7 +3,7 @@ import 'package:eairflow_mobile/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:eairflow_mobile/models/checkin.dart';
 import 'package:eairflow_mobile/providers/checkin_provider.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
 
 class EmployeeCheckInScreen extends StatefulWidget {
   const EmployeeCheckInScreen({super.key});
@@ -92,7 +92,11 @@ class _EmployeeCheckInScreenMobileState
       itemBuilder: (context, index) {
         final c = checkins[index];
         final r = c.reservation;
-        final df = DateFormat("yyyy-MM-dd HH:mm");
+        final timeZoneId = r?.airport?.timeZoneId ?? r?.flight?.airport?.timeZoneId;
+        final departureText =
+            formatDateInTimeZone(r?.flight?.departureTime, timeZoneId);
+        final paymentDateText =
+            formatDateInTimeZone(r?.payment?.transactionDate, timeZoneId);
 
         return Card(
           elevation: 5,
@@ -166,7 +170,7 @@ class _EmployeeCheckInScreenMobileState
                             const SizedBox(width: 6),
                             Text(
                               r?.flight?.departureTime != null
-                                  ? df.format(r!.flight!.departureTime!)
+                                  ? departureText
                                   : "N/A",
                               style: const TextStyle(fontSize: 16),
                             ),
@@ -243,7 +247,7 @@ class _EmployeeCheckInScreenMobileState
                             const SizedBox(width: 6),
                             Text(
                               r?.payment?.transactionDate != null
-                                  ? df.format(r!.payment!.transactionDate!)
+                                  ? paymentDateText
                                   : "N/A",
                               style: const TextStyle(fontSize: 16),
                             ),

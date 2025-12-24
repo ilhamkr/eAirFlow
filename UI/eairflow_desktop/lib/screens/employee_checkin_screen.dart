@@ -4,7 +4,7 @@ import 'package:eairflow_desktop/providers/auth_provider.dart';
 import 'package:eairflow_desktop/providers/checkin_provider.dart';
 import 'package:eairflow_desktop/widgets/animated_scanline.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_desktop/utils/timezone_helper.dart';
 
 class EmployeeCheckInScreen extends StatefulWidget {
   const EmployeeCheckInScreen({super.key});
@@ -94,7 +94,11 @@ class _EmployeeCheckInScreenState extends State<EmployeeCheckInScreen> {
         itemBuilder: (context, index) {
           final c = checkins[index];
           final r = c.reservation;
-          final df = DateFormat("yyyy-MM-dd HH:mm");
+          final timeZoneId = r?.airport?.timeZoneId ?? r?.flight?.airport?.timeZoneId;
+          final departureText =
+              formatDateInTimeZone(r?.flight?.departureTime, timeZoneId);
+          final paymentDateText =
+              formatDateInTimeZone(r?.payment?.transactionDate, timeZoneId);
 
           return Card(
             elevation: 6,
@@ -180,9 +184,7 @@ class _EmployeeCheckInScreenState extends State<EmployeeCheckInScreen> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              r?.flight?.departureTime != null
-                                  ? df.format(r!.flight!.departureTime!)
-                                  : "N/A",
+                              departureText,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],
@@ -257,9 +259,7 @@ class _EmployeeCheckInScreenState extends State<EmployeeCheckInScreen> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              r?.payment?.transactionDate != null
-                                  ? df.format(r!.payment!.transactionDate!)
-                                  : "N/A",
+                              paymentDateText,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],

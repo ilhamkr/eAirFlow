@@ -7,7 +7,7 @@ import 'package:eairflow_mobile/providers/checkin_provider.dart';
 import 'package:eairflow_mobile/providers/flight_review_provider.dart';
 import 'package:eairflow_mobile/models/reservation.dart';
 import 'package:eairflow_mobile/models/flight_review.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
 
 class MyTripsMobile extends StatefulWidget {
   const MyTripsMobile({super.key});
@@ -172,7 +172,13 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
           bool alreadyReviewed =
               userReviews.any((rev) => rev.flightId == r.flightId);
 
-          final df = DateFormat("yyyy-MM-dd HH:mm");
+          final timeZoneId =
+              r.airport?.timeZoneId ?? r.flight?.airport?.timeZoneId;
+          final departureText =
+              formatDateInTimeZone(r.flight?.departureTime, timeZoneId);
+          final reservationDateText = r.reservationDate != null
+              ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZoneId)
+              : "N/A";
           if (!popupShown &&
               r.flight?.stateMachine?.toLowerCase() == "completed" &&
               !alreadyReviewed) {
@@ -224,8 +230,8 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
                             const SizedBox(width: 6),
                             Text(
                               r.flight?.departureTime != null
-                                ? df.format(r.flight!.departureTime!)
-                                : 'N/A',
+                                    ? departureText
+                                    : 'N/A',
                               style: const TextStyle(fontSize: 16),
                             )
 
@@ -283,9 +289,7 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              r.reservationDate != null
-                                ? df.format(DateTime.parse(r.reservationDate!))
-                                : 'N/A',
+                               reservationDateText,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],

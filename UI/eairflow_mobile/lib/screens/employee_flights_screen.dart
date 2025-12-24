@@ -1,6 +1,6 @@
 import 'package:eairflow_mobile/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
 import '../providers/flight_provider.dart';
 import '../models/flight.dart';
 
@@ -62,7 +62,15 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
   Widget _flightCard(BuildContext context, Flight f) {
     String airportName =
         f.airline?.airport?.name ?? f.departureLocation ?? "Unknown Airport";
-        final df = DateFormat("yyyy-MM-dd HH:mm");
+        final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+    final departureText = formatDateInTimeZone(f.departureTime, timeZoneId);
+    final arrivalText = formatDateInTimeZone(f.arrivalTime, timeZoneId);
+    final duration = calculateDurationWithTimeZones(
+      f.departureTime,
+      timeZoneId,
+      f.arrivalTime,
+      timeZoneId,
+    );
 
     Color statusColor;
     switch (f.stateMachine?.toLowerCase()) {
@@ -113,19 +121,32 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
 
           const SizedBox(height: 12),
 
+          Row(
+          children: [
+            const Icon(Icons.access_time, size: 20, color: Colors.black54),
+            Text(" Departure time:",
+             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              f.departureTime != null
+                    ? departureText
+                    : "N/A",
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+
+          const SizedBox(height: 4),
+
 
           Row(
             children: [
-              const Icon(Icons.access_time, size: 20, color: Colors.black54),
-              Text(" Departure time:",
-               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+              const Icon(Icons.timer, size: 20, color: Colors.black54),
               const SizedBox(width: 6),
               Text(
-                f.departureTime != null
-                    ? df.format(f.departureTime!)
-                    : "N/A",
-                style: const TextStyle(fontSize: 14),
+                formatDuration(duration),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -135,13 +156,13 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
           Row(
             children: [
               const Icon(Icons.schedule, size: 20, color: Colors.black54),
-              Text(" Arrival time:",
-               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                f.arrivalTime != null
-                    ? df.format(f.arrivalTime!)
+            Text(" Arrival time:",
+             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              f.arrivalTime != null
+                    ? arrivalText
                     : "N/A",
                 style: const TextStyle(fontSize: 14),
               ),

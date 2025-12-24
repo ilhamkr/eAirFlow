@@ -1,4 +1,5 @@
 import 'package:eairflow_desktop/models/airlines.dart';
+import 'package:eairflow_desktop/models/airport.dart';
 
 class Flight {
   int? flightId;
@@ -11,6 +12,7 @@ class Flight {
   int? price;
   String? stateMachine;
   Airline? airline;
+  Airport? airport;
 
   Flight({
     this.flightId,
@@ -23,6 +25,7 @@ class Flight {
     this.price,
     this.stateMachine,
     this.airline,
+    this.airport,
   });
 
   factory Flight.fromJson(Map<String, dynamic> json) => Flight(
@@ -42,5 +45,8 @@ class Flight {
         airline: json['airline'] != null
           ? Airline.fromJson(json['airline'])
           : null,
+        airport: json['airport'] != null
+            ? Airport.fromJson(json['airport'])
+            : null,
       );
 }

@@ -43,7 +43,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("AirportId");
 
-                    b.ToTable("Airlines");
+                    b.ToTable("Airlines", (string)null);
 
                     b.HasData(
                         new
@@ -90,7 +90,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("AirlineId");
 
-                    b.ToTable("Airplanes");
+                    b.ToTable("Airplanes", (string)null);
 
                     b.HasData(
                         new
@@ -138,7 +138,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("AirportId");
 
-                    b.ToTable("Airports");
+                    b.ToTable("Airports", (string)null);
 
                     b.HasData(
                         new
@@ -190,7 +190,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CheckIns");
+                    b.ToTable("CheckIns", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.EmailConfirmation", b =>
@@ -218,7 +218,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EmailConfirmations");
+                    b.ToTable("EmailConfirmations", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.Employee", b =>
@@ -263,7 +263,7 @@ namespace eAirFlow.Services.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasData(
                         new
@@ -316,7 +316,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("AirlineId");
 
-                    b.ToTable("Flights");
+                    b.ToTable("Flights", (string)null);
 
                     b.HasData(
                         new
@@ -2510,7 +2510,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FlightReviews");
+                    b.ToTable("FlightReviews", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.Luggage", b =>
@@ -2547,7 +2547,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Luggages");
+                    b.ToTable("Luggages", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.LuggageReport", b =>
@@ -2579,7 +2579,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("LuggageId");
 
-                    b.ToTable("LuggageReports");
+                    b.ToTable("LuggageReports", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.MealType", b =>
@@ -2598,7 +2598,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("MealTypeId");
 
-                    b.ToTable("MealTypes");
+                    b.ToTable("MealTypes", (string)null);
 
                     b.HasData(
                         new
@@ -2645,7 +2645,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.Payment", b =>
@@ -2675,7 +2675,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.Position", b =>
@@ -2694,7 +2694,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("PositionId");
 
-                    b.ToTable("Positions");
+                    b.ToTable("Positions", (string)null);
 
                     b.HasData(
                         new
@@ -2771,7 +2771,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("eAirFlow.Services.Database.Role", b =>
@@ -2788,7 +2788,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -2831,7 +2831,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("SeatClassId");
 
-                    b.ToTable("Seats");
+                    b.ToTable("Seats", (string)null);
 
                     b.HasData(
                         new
@@ -6629,7 +6629,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("SeatClassId");
 
-                    b.ToTable("SeatClasses");
+                    b.ToTable("SeatClasses", (string)null);
 
                     b.HasData(
                         new
@@ -6683,7 +6683,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -6733,7 +6733,7 @@ namespace eAirFlow.Services.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
 
                     b.HasData(
                         new

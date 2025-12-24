@@ -1,8 +1,8 @@
 import 'package:eairflow_desktop/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../providers/flight_provider.dart';
 import '../models/flight.dart';
+import '../utils/timezone_helper.dart';
 
 class EmployeeFlightsScreen extends StatefulWidget {
   const EmployeeFlightsScreen({super.key});
@@ -69,13 +69,17 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
   }
 
 Widget _flightCard(BuildContext context, Flight f) {
-  final df = DateFormat("yyyy-MM-dd HH:mm");
-
   String airportName = f.airline?.airport?.name ?? "Unknown Airport";
 
-
-
-
+  final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+  final departureText = formatDateInTimeZone(f.departureTime, timeZoneId);
+  final arrivalText = formatDateInTimeZone(f.arrivalTime, timeZoneId);
+  final duration = calculateDurationWithTimeZones(
+    f.departureTime,
+    timeZoneId,
+    f.arrivalTime,
+    timeZoneId,
+  );
 
   Color statusColor;
   switch (f.stateMachine?.toLowerCase()) {
@@ -134,9 +138,7 @@ Widget _flightCard(BuildContext context, Flight f) {
               ),
               const SizedBox(width: 6),
               Text(
-                f.departureTime != null
-                    ? df.format(f.departureTime!)
-                    : "N/A",
+                departureText,
                 style: const TextStyle(fontSize: 14),
               ),
             ],
@@ -152,13 +154,25 @@ Widget _flightCard(BuildContext context, Flight f) {
               ),
               const SizedBox(width: 6),
               Text(
-                f.arrivalTime != null
-                    ? df.format(f.arrivalTime!)
-                    : "N/A",
+                arrivalText,
                 style: const TextStyle(fontSize: 14),
               ),
             ],
           ),
+
+          if (duration != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.timer, size: 20, color: Colors.black54),
+                const SizedBox(width: 6),
+                Text(
+                  formatDuration(duration),
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          ],
 
           const SizedBox(height: 4),
 

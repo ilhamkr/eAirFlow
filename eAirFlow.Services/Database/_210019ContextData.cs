@@ -23,8 +23,8 @@ namespace eAirFlow.Services.Database
             new Position { PositionId = 3, Name = "Security Officer", Description = "Ensures passenger and airport security" });
 
             modelBuilder.Entity<Airport>().HasData(
-                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina" },
-                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina" });
+                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina", TimeZoneId = "Europe/Sarajevo" },
+                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina", TimeZoneId = "Europe/Sarajevo" });
 
             modelBuilder.Entity<Airline>().HasData(
                 new Airline { AirlineId = 1, Name = "Turkish Airlines", Country = "Turkey", AirportId = 1 },

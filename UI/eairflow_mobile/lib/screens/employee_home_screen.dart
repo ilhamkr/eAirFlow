@@ -6,7 +6,7 @@ import 'package:eairflow_mobile/models/notification.dart';
 import 'package:eairflow_mobile/providers/flight_provider.dart';
 import 'package:eairflow_mobile/providers/luggage_provider.dart';
 import 'package:eairflow_mobile/providers/notification_provider.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
 
 class EmployeeHomeScreen extends StatefulWidget {
   const EmployeeHomeScreen({super.key});
@@ -192,7 +192,10 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
 
             ...activeOperations.map((f) {
               String subtitle = "";
-              final df = DateFormat("yyyy-MM-dd HH:mm");
+              final timeZoneId =
+                  f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+              final departureText =
+                  formatDateInTimeZone(f.departureTime, timeZoneId);
 
               switch (f.stateMachine) {
                 case "boarding":
@@ -201,11 +204,11 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
                   break;
                 case "delayed":
                   subtitle =
-                      "New departure: ${f.departureTime != null ? df.format(f.departureTime!) : 'N/A'}";
+                      "New departure: ${f.departureTime != null ? departureText : 'N/A'}";
                   break;
                 case "scheduled":
                   subtitle =
-                      "Departure: ${f.departureTime != null ? df.format(f.departureTime!) : 'N/A'}";
+                      "Departure: ${f.departureTime != null ? departureText : 'N/A'}";
                   break;
               }
 
@@ -234,7 +237,6 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
 
             ...notifications.map((n) {
               final prettyMsg = buildReadableMessage(n);
-              final df = DateFormat("yyyy-MM-dd HH:mm");
               DateTime? sentTime;
 
               if (n.sentAt != null) {
@@ -242,6 +244,8 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
                   sentTime = DateTime.parse(n.sentAt!);
                 } catch (_) {}
               }
+
+              final sentLabel = formatDateInTimeZone(sentTime, null);
 
               return Card(
                 elevation: 2,
@@ -252,7 +256,7 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
                   ),
                   title: Text(prettyMsg),
                   subtitle: Text(sentTime != null
-                      ? df.format(sentTime!)
+                      ? sentLabel
                       : "Unknown date"),
                   trailing: n.isSeen == true
                       ? const Icon(Icons.check, color: Colors.green)

@@ -5,7 +5,7 @@ import 'package:eairflow_desktop/providers/flight_provider.dart';
 import 'package:eairflow_desktop/providers/luggage_provider.dart';
 import 'package:eairflow_desktop/models/flight.dart';
 import 'package:eairflow_desktop/models/luggage.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_desktop/utils/timezone_helper.dart';
 
 class EmployeeHomeScreen extends StatefulWidget {
   const EmployeeHomeScreen({super.key});
@@ -119,17 +119,17 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
           const SizedBox(height: 12),
 
           ...activeOperations.map((f) {
-            final df = DateFormat("yyyy-MM-dd HH:mm");
+            final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
 
            String subtitle = switch (f.stateMachine) {
               "boarding" =>
                   "Flight - ${f.departureLocation ?? ""} → ${f.arrivalLocation ?? ""} • Boarding now",
             
               "delayed" =>
-                  "New departure: ${f.departureTime != null ? df.format(f.departureTime!) : 'N/A'}",
+                  "New departure: ${formatDateInTimeZone(f.departureTime, timeZoneId)}",
             
               "scheduled" =>
-                  "Departure: ${f.departureTime != null ? df.format(f.departureTime!) : 'N/A'}",
+                  "Departure: ${formatDateInTimeZone(f.departureTime, timeZoneId)}",
             
               _ => "",
             };

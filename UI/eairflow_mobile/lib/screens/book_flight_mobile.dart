@@ -13,7 +13,36 @@ import 'package:eairflow_mobile/providers/seatclass_provider.dart';
 import 'package:eairflow_mobile/providers/user_provider.dart';
 import 'package:eairflow_mobile/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
+
+String _departureTimeZone(Flight flight) {
+  return flight.airport?.timeZoneId ??
+      flight.airline?.airport?.timeZoneId ??
+      'UTC';
+}
+
+String _arrivalTimeZone(Flight flight) {
+  return flight.airline?.airport?.timeZoneId ??
+      flight.airport?.timeZoneId ??
+      'UTC';
+}
+
+String _formatFlightDateTime(Flight flight, DateTime? dateTime,
+    {bool isArrival = false}) {
+  return formatDateInTimeZone(
+    dateTime,
+    isArrival ? _arrivalTimeZone(flight) : _departureTimeZone(flight),
+  );
+}
+
+Duration? _calculateFlightDuration(Flight flight) {
+  return calculateDurationWithTimeZones(
+    flight.departureTime,
+    _departureTimeZone(flight),
+    flight.arrivalTime,
+    _arrivalTimeZone(flight),
+  );
+}
 
 class BookFlightCard extends StatefulWidget {
   final VoidCallback? onBookingFinished;
@@ -258,7 +287,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
       
                 itemBuilder: (_, i) {
   final f = recommendedFlights[i];
-  final df = DateFormat("yyyy-MM-dd HH:mm");
+  
 
   return Container(
     width: 300,
@@ -322,7 +351,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
             ),
             const SizedBox(width: 6),
             Text(
-              f.departureTime != null ? df.format(f.departureTime!) : 'N/A',
+              _formatFlightDateTime(f, f.departureTime),
               style: const TextStyle(fontSize: 14),
             ),
           ],
@@ -700,28 +729,14 @@ class FlightResultCard extends StatelessWidget {
     required this.reservations
   });
 
-  String _formatDate(DateTime d) {
-    final months = [
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec"
-    ];
-    final h = d.hour.toString().padLeft(2, '0');
-    final m = d.minute.toString().padLeft(2, '0');
-    return "${d.day} ${months[d.month - 1]}  $h:$m";
-  }
+  String get _departureTime => _formatFlightDateTime(flight, flight.departureTime);
 
-  Duration? get _duration {
-    if (flight.departureTime == null || flight.arrivalTime == null) return null;
-    return flight.arrivalTime!.difference(flight.departureTime!);
-  }
+  String get _arrivalTime =>
+      _formatFlightDateTime(flight, flight.arrivalTime, isArrival: true);
 
-  String get _durationText {
-    final d = _duration;
-    if (d == null) return "";
-    final h = d.inHours;
-    final m = d.inMinutes.remainder(60);
-    return "${h}h ${m}m";
-  }
+  Duration? get _duration => _calculateFlightDuration(flight);
+
+  String get _durationText => formatDuration(_duration);
 
   @override
 Widget build(BuildContext context) {
@@ -851,9 +866,7 @@ Widget build(BuildContext context) {
             Expanded(
               child: _locationBlock(
                 title: flight.departureLocation ?? "-",
-                time: flight.departureTime != null
-                    ? _formatDate(flight.departureTime!)
-                    : "-",
+                time: _departureTime,
                 alignEnd: false,
               ),
             ),
@@ -879,9 +892,7 @@ Widget build(BuildContext context) {
             Expanded(
               child: _locationBlock(
                 title: flight.arrivalLocation ?? "-",
-                time: flight.arrivalTime != null
-                    ? _formatDate(flight.arrivalTime!)
-                    : "-",
+                time: _arrivalTime,
                 alignEnd: true,
               ),
             ),

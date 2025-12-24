@@ -1,7 +1,7 @@
 import 'package:eairflow_mobile/models/notification.dart';
 import 'package:eairflow_mobile/providers/notification_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_mobile/utils/timezone_helper.dart';
 
 class EmployeeNotificationFeed extends StatefulWidget {
   const EmployeeNotificationFeed({super.key});
@@ -92,7 +92,6 @@ class _EmployeeNotificationFeedState extends State<EmployeeNotificationFeed> {
 
         ...notifications.map((n) {
           final prettyMsg = buildReadableMessage(n);
-          final df = DateFormat("yyyy-MM-dd HH:mm");
 
           DateTime? sentTime;
           if (n.sentAt != null) {
@@ -100,6 +99,8 @@ class _EmployeeNotificationFeedState extends State<EmployeeNotificationFeed> {
               sentTime = DateTime.parse(n.sentAt!);
             } catch (_) {}
           }
+
+          final sentLabel = formatDateInTimeZone(sentTime, null);
 
           return Card(
             elevation: 2,
@@ -110,7 +111,7 @@ class _EmployeeNotificationFeedState extends State<EmployeeNotificationFeed> {
               ),
               title: Text(prettyMsg),
               subtitle: Text(
-                sentTime != null ? df.format(sentTime) : "Unknown date",
+                sentTime != null ? sentLabel : "Unknown date",
               ),
               trailing: n.isSeen == true
                   ? const Icon(Icons.check, color: Colors.green)

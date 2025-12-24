@@ -6,8 +6,8 @@ import 'package:eairflow_desktop/providers/flight_review_provider.dart';
 import 'package:eairflow_desktop/providers/reservation_provider.dart';
 import 'package:eairflow_desktop/widgets/rate_flight_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
+import 'package:eairflow_desktop/utils/timezone_helper.dart';
 
 class MyTripsScreen extends StatefulWidget {
   const MyTripsScreen({super.key});
@@ -204,7 +204,11 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
         itemCount: reservations.length,
         itemBuilder: (context, index) {
           final r = reservations[index];
-          final df = DateFormat("yyyy-MM-dd HH:mm");
+          final timeZoneId = r.airport?.timeZoneId ?? r.flight?.airport?.timeZoneId;
+          final departureText = formatDateInTimeZone(r.flight?.departureTime, timeZoneId);
+          final reservationDateText = r.reservationDate != null
+              ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZoneId)
+              : 'N/A';
 
           bool alreadyReviewed = userReviews.any(
             (rev) => rev.flightId == r.flightId,
@@ -264,9 +268,7 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              r.flight?.departureTime != null
-                                  ? df.format(r.flight!.departureTime!)
-                                  : 'N/A',
+                              departureText,
                               style: const TextStyle(fontSize: 16),
                             )
                           ],
@@ -322,9 +324,7 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              r.reservationDate != null
-                                  ? df.format(DateTime.parse(r.reservationDate!))
-                                  : 'N/A',
+                              reservationDateText,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],

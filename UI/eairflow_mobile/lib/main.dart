@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/user_provider.dart';
 import 'screens/login_screen.dart';
+import 'utils/timezone_helper.dart';
 
 void main() {
+  ensureTimeZonesInitialized();
   runApp(
     MultiProvider(
       providers: [

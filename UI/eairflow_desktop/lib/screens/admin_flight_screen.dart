@@ -5,7 +5,7 @@ import 'package:eairflow_desktop/providers/airport_provider.dart';
 import 'package:eairflow_desktop/models/flight.dart';
 import 'package:eairflow_desktop/models/airlines.dart';
 import 'package:eairflow_desktop/models/airport.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_desktop/utils/timezone_helper.dart';
 
 class AdminFlightsScreen extends StatefulWidget {
   const AdminFlightsScreen({super.key});
@@ -774,7 +774,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
   Widget buildDaySection(String label, {bool completed = false}) {
     final list = groupedFlights[label] ?? [];
-    final df = DateFormat("yyyy-MM-dd HH:mm");
 
     return ExpansionTile(
       initiallyExpanded: label == "Today",
@@ -783,6 +782,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       children: list.map((f) {
+        final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -815,7 +815,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       const Icon(Icons.access_time, color: Colors.black54, size: 20),
                       const SizedBox(width: 6),
                       const Text("Departure time: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(f.departureTime != null ? df.format(f.departureTime!) : "N/A"),
+                      Text(formatDateInTimeZone(f.departureTime, timeZoneId)),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -825,7 +825,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       const Icon(Icons.timer, color: Colors.black54, size: 20),
                       const SizedBox(width: 6),
                       const Text("Arrival time: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(f.arrivalTime != null ? df.format(f.arrivalTime!) : "N/A"),
+                      Text(formatDateInTimeZone(f.arrivalTime, timeZoneId)),
                     ],
                   ),
                   const SizedBox(height: 6),

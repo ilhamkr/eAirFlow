@@ -9,5 +9,6 @@ namespace eAirFlow.Model.Requests
         public string Name { get; set; } = null!;
         public string City { get; set; } = null!;
         public string Country { get; set; } = null!;
+        public string TimeZoneId { get; set; } = null!;
     }
 }

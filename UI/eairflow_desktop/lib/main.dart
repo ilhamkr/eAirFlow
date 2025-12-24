@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'package:eairflow_desktop/providers/airlines_provider.dart';
+import 'utils/timezone_helper.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 void main() {
+  ensureTimeZonesInitialized();
   runApp(
     MultiProvider(
       providers: [

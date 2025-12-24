@@ -13,7 +13,36 @@ import 'package:eairflow_desktop/providers/seatclass_provider.dart';
 import 'package:eairflow_desktop/providers/user_provider.dart';
 import 'package:eairflow_desktop/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:eairflow_desktop/utils/timezone_helper.dart';
+
+String _departureTimeZone(Flight flight) {
+  return flight.airport?.timeZoneId ??
+      flight.airline?.airport?.timeZoneId ??
+      'UTC';
+}
+
+String _arrivalTimeZone(Flight flight) {
+  return flight.airline?.airport?.timeZoneId ??
+      flight.airport?.timeZoneId ??
+      'UTC';
+}
+
+String _formatFlightDateTime(Flight flight, DateTime? dateTime,
+    {bool isArrival = false}) {
+  return formatDateInTimeZone(
+    dateTime,
+    isArrival ? _arrivalTimeZone(flight) : _departureTimeZone(flight),
+  );
+}
+
+Duration? _calculateFlightDuration(Flight flight) {
+  return calculateDurationWithTimeZones(
+    flight.departureTime,
+    _departureTimeZone(flight),
+    flight.arrivalTime,
+    _arrivalTimeZone(flight),
+  );
+}
 
 class BookFlightCard extends StatefulWidget {
   final VoidCallback onFlightBooked;
@@ -268,7 +297,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
 
                   itemBuilder: (_, i) {
                     final f = recommendedFlights[i];
-                    final df = DateFormat("yyyy-MM-dd HH:mm");
+                    final departureText = _formatFlightDateTime(f, f.departureTime);
 
                     return Container(
                       width: 300,
@@ -334,9 +363,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                f.departureTime != null
-                                    ? df.format(f.departureTime!)
-                                    : 'N/A',
+                                departureText,
                                 style: const TextStyle(fontSize: 14),
                               ),
                             ],
