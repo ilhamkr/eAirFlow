@@ -67,4 +67,19 @@ Future<List<CheckIn>> getForEmployee(int empId) async {
     throw e;
   }
 }
+
+ Future<List<CheckIn>> getForUser(int userId) async {
+    final url = Uri.parse("${BaseProvider.baseUrl}CheckIn?UserId=$userId");
+
+    final response = await http.get(url, headers: createHeaders());
+
+    if (response.statusCode != 200) {
+      throw Exception("Server error: ${response.statusCode}");
+    }
+
+    final data = jsonDecode(response.body);
+    final list = data["resultList"] as List;
+    return list.map((e) => CheckIn.fromJson(e)).toList();
+  }
+
 }

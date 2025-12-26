@@ -5,6 +5,9 @@ import 'package:eairflow_desktop/providers/auth_provider.dart';
 import 'package:eairflow_desktop/providers/luggage_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:eairflow_desktop/models/checkin.dart';
+import 'package:eairflow_desktop/providers/checkin_provider.dart';
+import 'package:intl/intl.dart';
 
 class ReportLostDialog extends StatefulWidget {
   final VoidCallback? onSubmitted;
@@ -24,24 +27,45 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
 
   String? selectedImagePath;
   Airport? selectedAirport;
+  CheckIn? selectedCheckIn;
 
   bool submitting = false;
   List<Airport> airports = [];
+  List<CheckIn> checkIns = [];
 
   bool tagError = false;
   bool descriptionError = false;
   bool airportError = false;
   bool imageError = false;
+  bool flightError = false;
+  bool loadingData = true;
 
   @override
   void initState() {
     super.initState();
-    loadAllAirports();
+    loadData();
   }
 
-  Future<void> loadAllAirports() async {
-    airports = await AirportProvider().getAll();
-    setState(() {});
+   Future<void> loadData() async {
+    try {
+      final userId = AuthProvider.userId;
+      if (userId != null) {
+        checkIns = await CheckInProvider().getForUser(userId);
+        final seenReservations = <int>{};
+        checkIns = checkIns
+            .where((c) =>
+                c.reservationId != null && seenReservations.add(c.reservationId!))
+            .toList();
+        if (checkIns.isNotEmpty) {
+          selectedCheckIn = checkIns.first;
+          selectedAirport = selectedCheckIn?.reservation?.airport ??
+              selectedCheckIn?.reservation?.flight?.airport;
+        }
+      }
+      airportError = checkIns.isNotEmpty && selectedAirport == null;
+    } finally {
+      setState(() => loadingData = false);
+    }
   }
 
   Future<void> pickImage() async {
@@ -60,6 +84,7 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
       tagError = tagController.text.isEmpty;
       descriptionError = descriptionController.text.isEmpty;
       airportError = selectedAirport == null;
+      flightError = checkIns.isNotEmpty && selectedCheckIn == null;
       imageError = selectedImagePath == null;
     });
   }
@@ -67,7 +92,7 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
   Future<void> submit() async {
   validate();
 
-  if (tagError || descriptionError || airportError || imageError) {
+  if (tagError || descriptionError || airportError || flightError || imageError) {
     return;
   }
 
@@ -76,7 +101,7 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
 
   final success = await LuggageProvider().reportLost(
     userId: userId,
-    flightId: 0,
+    flightId: selectedCheckIn?.reservation?.flightId ?? 0,
     description: "Tag ${tagController.text}: ${descriptionController.text}",
     filePath: selectedImagePath!,
     airportId: selectedAirport!.airportId!,
@@ -103,6 +128,19 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
 
   @override
   Widget build(BuildContext context) {
+   String flightLabel(CheckIn c) {
+      final flight = c.reservation?.flight;
+      final departure = flight?.departureLocation ?? "";
+      final arrival = flight?.arrivalLocation ?? "";
+      final airport = c.reservation?.airport?.name ??
+          flight?.airport?.name ??
+          "";
+      final date = flight?.departureTime != null
+          ? DateFormat('dd.MM.yyyy HH:mm').format(flight!.departureTime!)
+          : "";
+      return "$departure → $arrival ${date.isNotEmpty ? "- $date" : ""} - $airport".trim();
+    }
+
     return AlertDialog(
       title: const Text("Report Lost Luggage"),
       content: SizedBox(
@@ -110,25 +148,64 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButtonFormField<Airport>(
-              hint: const Text("Select Airport"),
-              value: selectedAirport,
-              items: airports
-                  .map((a) => DropdownMenuItem(
-                        value: a,
-                        child: Text("${a.city} - ${a.name}"),
-                      ))
-                  .toList(),
-              onChanged: (val) {
-                setState(() {
-                  selectedAirport = val;
-                  airportError = false;
-                });
-              },
-              decoration: InputDecoration(
-                errorText: airportError ? "Airport is required" : null,
+           if (loadingData)
+              const Center(child: CircularProgressIndicator())
+            else if (checkIns.isEmpty)
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                ),
               ),
-            ),
+           
+
+            if (selectedAirport != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Airport: ${selectedAirport!.city} - ${selectedAirport!.name}",
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 12),
+
+            if (loadingData)
+              const Center(child: CircularProgressIndicator())
+            else if (checkIns.isEmpty)
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    "You need a completed check-in to report lost luggage.",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
+            else
+              DropdownButtonFormField<CheckIn>(
+                hint: const Text("Select Flight"),
+                value: selectedCheckIn,
+                items: checkIns
+                    .map((c) => DropdownMenuItem(
+                          value: c,
+                          child: Text(flightLabel(c)),
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    selectedCheckIn = val;
+                    flightError = false;
+                  });
+                },
+                decoration: InputDecoration(
+                  errorText: flightError ? "Flight is required" : null,
+                ),
+              ),
 
             const SizedBox(height: 12),
 
@@ -192,7 +269,7 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
           child: const Text("Cancel"),
         ),
         ElevatedButton(
-          onPressed: submitting ? null : submit,
+          onPressed: submitting || loadingData || checkIns.isEmpty ? null : submit,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
           ),

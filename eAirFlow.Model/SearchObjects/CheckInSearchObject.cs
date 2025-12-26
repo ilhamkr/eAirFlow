@@ -8,5 +8,6 @@ namespace eAirFlow.Model.SearchObjects
     {
         public int? ReservationId { get; set; }
         public int? SeatId { get; set; }
+        public int? UserId { get; set; }
     }
 }

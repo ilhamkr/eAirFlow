@@ -33,7 +33,11 @@ namespace eAirFlow.Services.Services
             if (search.SeatId.HasValue)
                 query = query.Where(x => x.SeatId == search.SeatId.Value);
 
-            query = query.Where(x => x.StateMachine != "completed");
+            if (search.UserId.HasValue)
+                query = query.Where(x => x.UserId == search.UserId.Value);
+
+
+            query = query.Where(x => x.StateMachine == "completed");
 
             query = query
             .Include(x => x.User)
