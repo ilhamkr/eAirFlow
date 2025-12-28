@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:eairflow_desktop/providers/auth_provider.dart';
 import 'package:eairflow_desktop/providers/user_provider.dart';
 import 'package:eairflow_desktop/models/user.dart';
+import 'package:eairflow_desktop/providers/reservation_provider.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -18,6 +19,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _isSaving = false;
   bool _isEdit = false;
   bool _hovering = false;
+  bool _hasReservation = false;
 
   String? _profileImageUrl;
   User? _user;
@@ -57,6 +59,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
       _positionCtrl.text = _user?.employee?.position?.name ?? "";
       _airportCtrl.text = _user?.employee?.airport?.name ?? "";
       print("Loaded profileImageUrl: ${_user?.profileImageUrl}");
+
+       if (AuthProvider.userId != null) {
+        final reservationProvider = ReservationProvider();
+        final reservations =
+            await reservationProvider.getByUser(AuthProvider.userId!);
+        _hasReservation = reservations.any((r) =>
+            (r.flight?.stateMachine?.toLowerCase() ?? "") != "completed");
+      }
+
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -164,7 +175,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
         actions: [
           if (!_isLoading && !_isEdit)
             TextButton.icon(
-              onPressed: () => setState(() => _isEdit = true),
+               onPressed:
+                  _hasReservation ? null : () => setState(() => _isEdit = true),
               icon: const Icon(Icons.edit),
               label: const Text("Edit"),
             ),
@@ -207,6 +219,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         children: [
                           Column(
                             children: [
+                               if (_hasReservation)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: cs.secondaryContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.info_outline,
+                                      color: Colors.deepOrange),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      "Personal details cannot be edited after a reservation is made.",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                               MouseRegion(
                                 onEnter: (_) => setState(() => _hovering = true),
                                 onExit: (_) => setState(() => _hovering = false),
@@ -275,7 +311,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _nameCtrl,
-                                        enabled: _isEdit,
+                                        enabled: _isEdit && !_hasReservation,
                                         decoration: const InputDecoration(
                                           labelText: "Name",
                                           prefixIcon:
@@ -289,7 +325,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _surnameCtrl,
-                                        enabled: _isEdit,
+                                        enabled: _isEdit && !_hasReservation,
                                         decoration: const InputDecoration(
                                           labelText: "Surname",
                                           prefixIcon: Icon(Icons.badge),
@@ -308,7 +344,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _emailCtrl,
-                                        enabled: _isEdit,
+                                        enabled: _isEdit && !_hasReservation,
                                         decoration: const InputDecoration(
                                           labelText: "Email",
                                           prefixIcon:
@@ -347,7 +383,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _phoneCtrl,
-                                        enabled: _isEdit,
+                                        enabled: _isEdit && !_hasReservation,
                                         decoration: const InputDecoration(
                                           labelText: "Phone",
                                           prefixIcon:
@@ -392,8 +428,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       ),
                                       const SizedBox(width: 12),
                                       ElevatedButton.icon(
-                                        onPressed:
-                                            _isSaving ? null : _save,
+                                        onPressed: _isSaving || _hasReservation
+                                            ? null
+                                            : _save,
                                         icon: const Icon(Icons.save),
                                         label: const Text("Save"),
                                       ),

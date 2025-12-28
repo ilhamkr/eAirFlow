@@ -36,6 +36,7 @@ namespace eAirFlow.Services.Services
             if (search.UserId.HasValue)
                 query = query.Where(x => x.UserId == search.UserId.Value);
 
+            
 
             query = query.Where(x => x.StateMachine == "completed");
 

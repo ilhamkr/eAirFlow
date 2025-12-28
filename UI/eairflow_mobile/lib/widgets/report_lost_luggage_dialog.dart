@@ -29,7 +29,6 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
   CheckIn? selectedCheckIn;
 
   bool loadingData = true;
-  bool flightError = false;
   bool submitting = false;
 
   List<Airport> airports = [];
@@ -44,6 +43,9 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
    Future<void> loadData() async {
     try {
       airports = await AirportProvider().getAll();
+      if (airports.isNotEmpty) {
+        selectedAirport = airports.first;
+      }
 
       final userId = AuthProvider.userId;
       if (userId != null) {
@@ -77,12 +79,10 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
       return;
     }
 
-    if (checkIns.isNotEmpty && selectedCheckIn == null) {
-      setState(() => flightError = true);
-      return;
-    }
+    
 
     final userId = AuthProvider.userId!;
+    selectedCheckIn ??= checkIns.isNotEmpty ? checkIns.first : null;
     setState(() => submitting = true);
 
     final success = await LuggageProvider().reportLost(
@@ -153,27 +153,16 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
                     ),
                   )
                 else
-                  DropdownButtonFormField<CheckIn>(
-                    isExpanded: true,
-                    value: selectedCheckIn,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                  InputDecorator(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Flight",
-                      errorText:
-                          flightError && selectedCheckIn == null
-                              ? "Flight is required"
-                              : null,
                     ),
-                    items: checkIns
-                        .map((c) => DropdownMenuItem(
-                              value: c,
-                              child: Text(flightLabel(c)),
-                            ))
-                        .toList(),
-                    onChanged: (val) => setState(() {
-                      selectedCheckIn = val;
-                      flightError = false;
-                    }),
+                    child: Text(
+                      selectedCheckIn != null
+                          ? flightLabel(selectedCheckIn!)
+                          : "No flight available",
+                    ),
                   ),
 
                 const SizedBox(height: 14),

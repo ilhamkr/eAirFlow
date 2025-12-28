@@ -1002,6 +1002,15 @@ class BookNowPage extends StatefulWidget {
 class _BookNowPageState extends State<BookNowPage> {
   String? selectedSeat;
 
+  final _travelerFormKey = GlobalKey<FormState>();
+  final _dobCtrl = TextEditingController();
+  final _addressCtrl = TextEditingController();
+  final _cityCtrl = TextEditingController();
+  final _countryCtrl = TextEditingController();
+  final _passportCtrl = TextEditingController();
+  final _citizenshipCtrl = TextEditingController();
+  final _baggageCtrl = TextEditingController();
+
   List<SeatClass> seatClasses = [];
   List<MealType> mealTypes = [];
 
@@ -1011,6 +1020,18 @@ class _BookNowPageState extends State<BookNowPage> {
   Set<String> occupiedSeats = {};
 
   bool isLoading = true;
+
+  @override
+  void dispose() {
+    _dobCtrl.dispose();
+    _addressCtrl.dispose();
+    _cityCtrl.dispose();
+    _countryCtrl.dispose();
+    _passportCtrl.dispose();
+    _citizenshipCtrl.dispose();
+    _baggageCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -1076,6 +1097,13 @@ class _BookNowPageState extends State<BookNowPage> {
 
 
   Future<void> _confirmBooking() async {
+     if (!_travelerFormKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please complete passenger details")),
+      );
+      return;
+    }
+
     if (selectedSeat == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select a seat")),
@@ -1106,6 +1134,13 @@ class _BookNowPageState extends State<BookNowPage> {
       "selectedSeat": selectedSeat,
       "airportId": widget.airportId,
       "airplaneId": widget.flight.airplaneId,
+      "dateOfBirth": _dobCtrl.text.trim(),
+      "address": _addressCtrl.text.trim(),
+      "city": _cityCtrl.text.trim(),
+      "country": _countryCtrl.text.trim(),
+      "passportNumber": _passportCtrl.text.trim(),
+      "citizenship": _citizenshipCtrl.text.trim(),
+      "baggageInfo": _baggageCtrl.text.trim(),
     };
 
     print("➡️ INSERT: $request");
@@ -1140,6 +1175,7 @@ class _BookNowPageState extends State<BookNowPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final allowedRows = _allowedRowsForSeatClass(selectedSeatClass);
 
     return Scaffold(
       appBar: AppBar(
@@ -1188,12 +1224,14 @@ class _BookNowPageState extends State<BookNowPage> {
                               final isOccupied =
                                   occupiedSeats.contains(seat);
                               final isSelected = selectedSeat == seat;
+                              final isAllowed = allowedRows.contains(row);
+                              final isSelectable = isAllowed && !isOccupied;
 
                               return GestureDetector(
-                                onTap: isOccupied
-                                    ? null
-                                    : () => setState(
-                                        () => selectedSeat = seat),
+                                onTap: isSelectable
+                                    ? () => setState(
+                                        () => selectedSeat = seat)
+                                    : null,
                                 child: Container(
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
@@ -1201,7 +1239,9 @@ class _BookNowPageState extends State<BookNowPage> {
                                         ? Colors.grey.shade400
                                         : isSelected
                                             ? cs.primary
-                                            : Colors.white,
+                                            : isAllowed
+                                                ? Colors.white
+                                                : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(8),
                                     border:
                                         Border.all(color: cs.primary),
@@ -1211,7 +1251,9 @@ class _BookNowPageState extends State<BookNowPage> {
                                     style: TextStyle(
                                       color: isSelected
                                           ? Colors.white
-                                          : cs.primary,
+                                          : isAllowed
+                                              ? cs.primary
+                                              : Colors.grey,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
                                     ),
@@ -1241,9 +1283,11 @@ class _BookNowPageState extends State<BookNowPage> {
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                   child: Form(
+                    key: _travelerFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       Text(
                         "Flight options",
                         style: TextStyle(
@@ -1258,7 +1302,13 @@ class _BookNowPageState extends State<BookNowPage> {
                         "Class",
                         selectedSeatClass,
                         seatClasses,
-                        (v) => setState(() => selectedSeatClass = v),
+                        (v) => setState(() {
+                          selectedSeatClass = v;
+
+                          if (!_isSeatAllowedForClass(selectedSeat, v)) {
+                            selectedSeat = null;
+                          }
+                        }),
                         (x) => x.name ?? "",
                       ),
                       const SizedBox(height: 10),
@@ -1269,6 +1319,103 @@ class _BookNowPageState extends State<BookNowPage> {
                         mealTypes,
                         (v) => setState(() => selectedMeal = v),
                         (x) => x.name ?? "",
+                      ),
+                      const SizedBox(height: 10),
+
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Passenger details",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: cs.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: _dobCtrl,
+                        decoration: const InputDecoration(
+                          labelText: "Date of birth",
+                          hintText: "DD/MM/YYYY",
+                        ),
+                        validator: (v) =>
+                            v == null || v.trim().isEmpty ? "Required" : null,
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: _addressCtrl,
+                        decoration: const InputDecoration(
+                          labelText: "Address",
+                        ),
+                        validator: (v) =>
+                            v == null || v.trim().isEmpty ? "Required" : null,
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _cityCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "City",
+                              ),
+                              validator: (v) => v == null || v.trim().isEmpty
+                                  ? "Required"
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _countryCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "Country",
+                              ),
+                              validator: (v) => v == null || v.trim().isEmpty
+                                  ? "Required"
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _passportCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "Passport number",
+                              ),
+                              validator: (v) => v == null || v.trim().isEmpty
+                                  ? "Required"
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _citizenshipCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "Citizenship",
+                              ),
+                              validator: (v) => v == null || v.trim().isEmpty
+                                  ? "Required"
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: _baggageCtrl,
+                        decoration: const InputDecoration(
+                          labelText: "Travel bag info",
+                          hintText: "e.g., 1 cabin bag, 1 checked bag",
+                        ),
+                        validator: (v) =>
+                            v == null || v.trim().isEmpty ? "Required" : null,
                       ),
                       const SizedBox(height: 10),
 
@@ -1319,9 +1466,38 @@ class _BookNowPageState extends State<BookNowPage> {
                     ],
                   ),
                 ),
+                ),
               ],
             ),
     );
+  }
+
+  Set<int> _allowedRowsForSeatClass(SeatClass? seatClass) {
+    final name = seatClass?.name?.toLowerCase() ?? '';
+
+    if (name.contains('first')) {
+      return {1, 2, 3};
+    }
+
+    if (name.contains('business')) {
+      return {4, 5, 6};
+    }
+
+    return {7, 8, 9, 10};
+  }
+
+  bool _isSeatAllowedForClass(String? seat, [SeatClass? seatClass]) {
+    if (seat == null || seat.isEmpty) {
+      return true;
+    }
+
+    final match = RegExp(r'^(\d+)').firstMatch(seat);
+    if (match == null) return false;
+
+    final row = int.tryParse(match.group(1) ?? '');
+    if (row == null) return false;
+
+    return _allowedRowsForSeatClass(seatClass ?? selectedSeatClass).contains(row);
   }
 
   Widget _dropdown<T>(

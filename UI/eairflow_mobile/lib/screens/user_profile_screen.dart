@@ -5,6 +5,7 @@ import 'package:eairflow_mobile/providers/user_provider.dart';
 import 'package:eairflow_mobile/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:eairflow_mobile/providers/reservation_provider.dart';
 
 class UserProfileMobile extends StatefulWidget {
   const UserProfileMobile({super.key});
@@ -17,6 +18,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   bool _loadingUser = true;
   bool _isEdit = false;
   bool _saving = false;
+  bool _hasActiveReservation = false;
 
   User? _user;
   String? _profileImageUrl;
@@ -56,6 +58,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
 
 
       AuthProvider.profileImageUrl = _profileImageUrl;
+
+      if (AuthProvider.userId != null) {
+        final reservationProvider = ReservationProvider();
+        final reservations =
+            await reservationProvider.getByUser(AuthProvider.userId!);
+        _hasActiveReservation = reservations.any((r) =>
+            (r.flight?.stateMachine?.toLowerCase() ?? "") != "completed");
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -149,13 +159,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
         backgroundColor: cs.surface,
         elevation: 1,
         actions: [
-          if (!_loadingUser && !_isEdit)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () => setState(() => _isEdit = true),
-            ),
-          if (_isEdit)
-            IconButton(
+           if (!_loadingUser && !_isEdit)
+        IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed:
+                  _hasActiveReservation ? null : () => setState(() => _isEdit = true),
+        ),
+      if (_isEdit)
+        IconButton(
               icon: _saving
                   ? const SizedBox(
                       width: 18,
@@ -174,6 +185,30 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                   if (_hasActiveReservation)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: cs.secondaryContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.info_outline,
+                                      color: Colors.deepOrange),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      "Personal details are locked until the booked flight is completed.",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                   GestureDetector(
                     onTap: _pickImage,
                     child: CircleAvatar(
@@ -207,7 +242,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                       children: [
                         TextFormField(
                           controller: _nameCtrl,
-                          enabled: _isEdit,
+                           enabled: _isEdit && !_hasActiveReservation,
                           decoration: const InputDecoration(
                             labelText: "Name",
                             prefixIcon: Icon(Icons.person),
@@ -219,7 +254,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
 
                         TextFormField(
                           controller: _surnameCtrl,
-                          enabled: _isEdit,
+                           enabled: _isEdit && !_hasActiveReservation,
                           decoration: const InputDecoration(
                             labelText: "Surname",
                             prefixIcon: Icon(Icons.person_outline),
@@ -231,7 +266,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         const SizedBox(height: 12),
                         TextFormField(
                           controller: _emailCtrl,
-                          enabled: _isEdit,
+                           enabled: _isEdit && !_hasActiveReservation,
                           decoration: const InputDecoration(
                             labelText: "Email",
                             prefixIcon: Icon(Icons.email),
@@ -250,7 +285,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         const SizedBox(height: 12),
                         TextFormField(
                           controller: _phoneCtrl,
-                          enabled: _isEdit,
+                           enabled: _isEdit && !_hasActiveReservation,
                           decoration: const InputDecoration(
                             labelText: "Phone",
                             prefixIcon: Icon(Icons.phone),
@@ -288,7 +323,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _saving ? null : _save,
+                               onPressed:
+                                  _saving || !_hasActiveReservation ? null : _save,
                               child: _saving
                                   ? const CircularProgressIndicator(
                                       color: Colors.white)

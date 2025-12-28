@@ -37,7 +37,6 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
   bool descriptionError = false;
   bool airportError = false;
   bool imageError = false;
-  bool flightError = false;
   bool loadingData = true;
 
   @override
@@ -46,8 +45,13 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
     loadData();
   }
 
-   Future<void> loadData() async {
+  Future<void> loadData() async {
     try {
+      airports = await AirportProvider().getAll();
+      if (airports.isNotEmpty) {
+        selectedAirport = airports.first;
+      }
+
       final userId = AuthProvider.userId;
       if (userId != null) {
         checkIns = await CheckInProvider().getForUser(userId);
@@ -57,9 +61,10 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
                 c.reservationId != null && seenReservations.add(c.reservationId!))
             .toList();
         if (checkIns.isNotEmpty) {
-          selectedCheckIn = checkIns.first;
-          selectedAirport = selectedCheckIn?.reservation?.airport ??
-              selectedCheckIn?.reservation?.flight?.airport;
+           selectedCheckIn = checkIns
+              .firstWhere((c) => c.reservation?.flight != null, orElse: () => checkIns.first);
+              selectedCheckIn?.reservation?.flight?.airport ??
+              selectedAirport;
         }
       }
       airportError = checkIns.isNotEmpty && selectedAirport == null;
@@ -84,7 +89,6 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
       tagError = tagController.text.isEmpty;
       descriptionError = descriptionController.text.isEmpty;
       airportError = selectedAirport == null;
-      flightError = checkIns.isNotEmpty && selectedCheckIn == null;
       imageError = selectedImagePath == null;
     });
   }
@@ -92,37 +96,37 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
   Future<void> submit() async {
   validate();
 
-  if (tagError || descriptionError || airportError || flightError || imageError) {
-    return;
+  if (tagError || descriptionError || airportError || imageError) {
+      return;
   }
 
   final userId = AuthProvider.userId!;
-  setState(() => submitting = true);
-
-  final success = await LuggageProvider().reportLost(
-    userId: userId,
-    flightId: selectedCheckIn?.reservation?.flightId ?? 0,
-    description: "Tag ${tagController.text}: ${descriptionController.text}",
-    filePath: selectedImagePath!,
-    airportId: selectedAirport!.airportId!,
-  );
-
-  setState(() => submitting = false);
-
-  if (success) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Luggage successfully reported."),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-      ),
+    setState(() => submitting = true);
+  
+    final success = await LuggageProvider().reportLost(
+      userId: userId,
+      flightId: selectedCheckIn?.reservation?.flightId ?? 0,
+      description: "Tag ${tagController.text}: ${descriptionController.text}",
+      filePath: selectedImagePath!,
+      airportId: selectedAirport!.airportId!,
     );
 
-    Future.delayed(const Duration(milliseconds: 300), () {
-      Navigator.pop(context);
-      widget.onSubmitted?.call();
-    });
-  }
+     setState(() => submitting = false);
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Luggage successfully reported."),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Navigator.pop(context);
+        widget.onSubmitted?.call();
+      });
+    }
 }
 
 
@@ -138,131 +142,112 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
       final date = flight?.departureTime != null
           ? DateFormat('dd.MM.yyyy HH:mm').format(flight!.departureTime!)
           : "";
-      return "$departure → $arrival ${date.isNotEmpty ? "- $date" : ""} - $airport".trim();
+      return "$departure → $arrival ${date.isNotEmpty ? "- $date" : ""}".trim();
     }
 
     return AlertDialog(
       title: const Text("Report Lost Luggage"),
       content: SizedBox(
         width: 460,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-           if (loadingData)
-              const Center(child: CircularProgressIndicator())
-            else if (checkIns.isEmpty)
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                ),
-              ),
-           
+         child: loadingData
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (checkIns.isEmpty)
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          "You need a completed check-in to report lost luggage.",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
 
-            if (selectedAirport != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Airport: ${selectedAirport!.city} - ${selectedAirport!.name}",
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  if (selectedAirport != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "${selectedAirport!.city} - ${selectedAirport!.name}",
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+
+                  if (checkIns.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    InputDecorator(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "Flight",
+                      ),
+                      child: Text(
+                        selectedCheckIn != null
+                            ? flightLabel(selectedCheckIn!)
+                            : "No flight available",
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 12),
+
+                  TextField(
+                    controller: tagController,
+                    decoration: InputDecoration(
+                      labelText: "Tag number",
+                      errorText: tagError ? "Tag is required" : null,
+                    ),
                   ),
-                ),
-              ),
-
-            const SizedBox(height: 12),
-
-            if (loadingData)
-              const Center(child: CircularProgressIndicator())
-            else if (checkIns.isEmpty)
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    "You need a completed check-in to report lost luggage.",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              )
-            else
-              DropdownButtonFormField<CheckIn>(
-                hint: const Text("Select Flight"),
-                value: selectedCheckIn,
-                items: checkIns
-                    .map((c) => DropdownMenuItem(
-                          value: c,
-                          child: Text(flightLabel(c)),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() {
-                    selectedCheckIn = val;
-                    flightError = false;
-                  });
-                },
-                decoration: InputDecoration(
-                  errorText: flightError ? "Flight is required" : null,
-                ),
-              ),
 
             const SizedBox(height: 12),
 
             TextField(
-              controller: tagController,
-              decoration: InputDecoration(
-                labelText: "Tag number",
-                errorText: tagError ? "Tag is required" : null,
-              ),
-            ),
+                    controller: descriptionController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: "Description",
+                      errorText:
+                          descriptionError ? "Description is required" : null,
+                    ),
+                  ),
 
             const SizedBox(height: 12),
 
-            TextField(
-              controller: descriptionController,
-              maxLines: 3,
-              decoration: InputDecoration(
-                labelText: "Description",
-                errorText:
-                    descriptionError ? "Description is required" : null,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: pickImage,
-                  icon: const Icon(Icons.image),
-                  label: const Text("Choose Image"),
-                ),
-                const SizedBox(width: 10),
-                if (selectedImagePath != null)
-                  Image.file(
-                    File(selectedImagePath!),
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: pickImage,
+                        icon: const Icon(Icons.image),
+                        label: const Text("Choose Image"),
+                      ),
+                      const SizedBox(width: 10),
+                      if (selectedImagePath != null)
+                        Image.file(
+                          File(selectedImagePath!),
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
+                    ],
                   ),
-              ],
-            ),
-
-            if (imageError)
-              const Padding(
-                padding: EdgeInsets.only(top: 6),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Image is required",
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
+                  if (imageError)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 6),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Image is required",
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-          ],
         ),
-      ),
       actions: [
         TextButton(
           onPressed: submitting ? null : () => Navigator.pop(context),
