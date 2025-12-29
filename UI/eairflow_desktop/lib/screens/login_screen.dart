@@ -48,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     AuthProvider.email = user.email;
     AuthProvider.name = user.name;
     AuthProvider.surname = user.surname;
+    AuthProvider.phoneNumber = user.phoneNumber;
     AuthProvider.password = _passwordController.text;
 
     AuthProvider.roleId = user.roleId;

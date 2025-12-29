@@ -1010,6 +1010,10 @@ class _BookNowPageState extends State<BookNowPage> {
   final _passportCtrl = TextEditingController();
   final _citizenshipCtrl = TextEditingController();
   final _baggageCtrl = TextEditingController();
+  final _firstNameCtrl = TextEditingController();
+  final _lastNameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
 
   List<SeatClass> seatClasses = [];
   List<MealType> mealTypes = [];
@@ -1030,12 +1034,17 @@ class _BookNowPageState extends State<BookNowPage> {
     _passportCtrl.dispose();
     _citizenshipCtrl.dispose();
     _baggageCtrl.dispose();
+    _firstNameCtrl.dispose();
+    _lastNameCtrl.dispose();
+    _emailCtrl.dispose();
+    _phoneCtrl.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    _prefillPassengerFromProfile();
     _loadData();
   }
 
@@ -1072,6 +1081,35 @@ class _BookNowPageState extends State<BookNowPage> {
       print("ERROR LOADING DATA: $e");
       setState(() => isLoading = false);
     }
+  }
+
+  Future<void> _prefillPassengerFromProfile() async {
+    _firstNameCtrl.text = AuthProvider.name ?? "";
+    _lastNameCtrl.text = AuthProvider.surname ?? "";
+    _emailCtrl.text = AuthProvider.email ?? "";
+    _phoneCtrl.text = AuthProvider.phoneNumber ?? "";
+
+    if (AuthProvider.email == null) return;
+
+    try {
+      final userProvider = UserProvider();
+      final res = await userProvider.get(filter: {"email": AuthProvider.email});
+
+      if (res.result.isNotEmpty) {
+        final user = res.result.first;
+        setState(() {
+          _firstNameCtrl.text = user.name ?? "";
+          _lastNameCtrl.text = user.surname ?? "";
+          _emailCtrl.text = user.email ?? "";
+          _phoneCtrl.text = user.phoneNumber ?? "";
+        });
+
+        AuthProvider.name = user.name;
+        AuthProvider.surname = user.surname;
+        AuthProvider.email = user.email;
+        AuthProvider.phoneNumber = user.phoneNumber;
+      }
+    } catch (_) {}
   }
 
   double get totalPrice {
@@ -1173,304 +1211,374 @@ class _BookNowPageState extends State<BookNowPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final allowedRows = _allowedRowsForSeatClass(selectedSeatClass);
+Widget build(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+  final allowedRows = _allowedRowsForSeatClass(selectedSeatClass);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Select seat",
-          style: TextStyle(color: cs.onSurface),
-        ),
-        backgroundColor: cs.surface,
-        iconTheme: IconThemeData(color: cs.primary),
-        elevation: 1,
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(
+        "Select seat",
+        style: TextStyle(color: cs.onSurface),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  flex: 6,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Text(
-                          "${widget.airlineName}  •  ${widget.flight.departureLocation} → ${widget.flight.arrivalLocation}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: cs.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
+      backgroundColor: cs.surface,
+      iconTheme: IconThemeData(color: cs.primary),
+      elevation: 1,
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Column(
+            children: [
+              /// ================= SEAT GRID =================
+              Expanded(
+                flex: 6,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${widget.airlineName} • ${widget.flight.departureLocation} → ${widget.flight.arrivalLocation}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: cs.primary,
+                          fontWeight: FontWeight.w600,
                         ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 6,
-                              crossAxisSpacing: 6,
-                              mainAxisSpacing: 6,
-                            ),
-                            itemCount: 60,
-                            itemBuilder: (_, i) {
-                              final row = (i ~/ 6) + 1;
-                              final col =
-                                  String.fromCharCode(65 + (i % 6));
-                              final seat = "$row$col";
-                              final isOccupied =
-                                  occupiedSeats.contains(seat);
-                              final isSelected = selectedSeat == seat;
-                              final isAllowed = allowedRows.contains(row);
-                              final isSelectable = isAllowed && !isOccupied;
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
 
-                              return GestureDetector(
-                                onTap: isSelectable
-                                    ? () => setState(
-                                        () => selectedSeat = seat)
-                                    : null,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: isOccupied
-                                        ? Colors.grey.shade400
-                                        : isSelected
-                                            ? cs.primary
-                                            : isAllowed
-                                                ? Colors.white
-                                                : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border:
-                                        Border.all(color: cs.primary),
-                                  ),
-                                  child: Text(
-                                    seat,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? Colors.white
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 6,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
+                          itemCount: 60,
+                          itemBuilder: (_, i) {
+                            final row = (i ~/ 6) + 1;
+                            final col =
+                                String.fromCharCode(65 + (i % 6));
+                            final seat = "$row$col";
+
+                            final isOccupied =
+                                occupiedSeats.contains(seat);
+                            final isSelected =
+                                selectedSeat == seat;
+                            final isAllowed =
+                                allowedRows.contains(row);
+                            final isSelectable =
+                                isAllowed && !isOccupied;
+
+                            return GestureDetector(
+                              behavior:
+                                  HitTestBehavior.opaque,
+                              onTap: isSelectable
+                                  ? () => setState(
+                                      () => selectedSeat = seat)
+                                  : null,
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: isOccupied
+                                      ? Colors.grey.shade400
+                                      : isSelected
+                                          ? cs.primary
                                           : isAllowed
-                                              ? cs.primary
-                                              : Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                              ? Colors.white
+                                              : Colors.grey.shade200,
+                                  borderRadius:
+                                      BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: cs.primary),
+                                ),
+                                child: Text(
+                                  seat,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : isAllowed
+                                            ? cs.primary
+                                            : Colors.grey,
+                                    fontWeight:
+                                        FontWeight.bold,
+                                    fontSize: 12,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              /// ================= FORM =================
+              Expanded(
+                child: SingleChildScrollView(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: cs.primary.withOpacity(0.03),
+                      borderRadius:
+                          const BorderRadius.vertical(
+                        top: Radius.circular(18),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, -2),
                         ),
                       ],
                     ),
-                  ),
-                ),
-
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: cs.primary.withOpacity(0.03),
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(18),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                   child: Form(
-                    key: _travelerFormKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Text(
-                        "Flight options",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: cs.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      _dropdown<SeatClass>(
-                        "Class",
-                        selectedSeatClass,
-                        seatClasses,
-                        (v) => setState(() {
-                          selectedSeatClass = v;
-
-                          if (!_isSeatAllowedForClass(selectedSeat, v)) {
-                            selectedSeat = null;
-                          }
-                        }),
-                        (x) => x.name ?? "",
-                      ),
-                      const SizedBox(height: 10),
-
-                      _dropdown<MealType>(
-                        "Meal",
-                        selectedMeal,
-                        mealTypes,
-                        (v) => setState(() => selectedMeal = v),
-                        (x) => x.name ?? "",
-                      ),
-                      const SizedBox(height: 10),
-
-                      const Divider(),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Passenger details",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: cs.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _dobCtrl,
-                        decoration: const InputDecoration(
-                          labelText: "Date of birth",
-                          hintText: "DD/MM/YYYY",
-                        ),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _addressCtrl,
-                        decoration: const InputDecoration(
-                          labelText: "Address",
-                        ),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _cityCtrl,
-                              decoration: const InputDecoration(
-                                labelText: "City",
-                              ),
-                              validator: (v) => v == null || v.trim().isEmpty
-                                  ? "Required"
-                                  : null,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _countryCtrl,
-                              decoration: const InputDecoration(
-                                labelText: "Country",
-                              ),
-                              validator: (v) => v == null || v.trim().isEmpty
-                                  ? "Required"
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _passportCtrl,
-                              decoration: const InputDecoration(
-                                labelText: "Passport number",
-                              ),
-                              validator: (v) => v == null || v.trim().isEmpty
-                                  ? "Required"
-                                  : null,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _citizenshipCtrl,
-                              decoration: const InputDecoration(
-                                labelText: "Citizenship",
-                              ),
-                              validator: (v) => v == null || v.trim().isEmpty
-                                  ? "Required"
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _baggageCtrl,
-                        decoration: const InputDecoration(
-                          labelText: "Travel bag info",
-                          hintText: "e.g., 1 cabin bag, 1 checked bag",
-                        ),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Required" : null,
-                      ),
-                      const SizedBox(height: 10),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Form(
+                      key: _travelerFormKey,
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Total:",
+                            "Flight options",
                             style: TextStyle(
                               fontSize: 16,
                               color: cs.primary,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
+                          const SizedBox(height: 10),
+
+                          _dropdown<SeatClass>(
+                            "Class",
+                            selectedSeatClass,
+                            seatClasses,
+                            (v) => setState(() {
+                              selectedSeatClass = v;
+                              if (!_isSeatAllowedForClass(
+                                  selectedSeat, v)) {
+                                selectedSeat = null;
+                              }
+                            }),
+                            (x) => x.name ?? "",
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          _dropdown<MealType>(
+                            "Meal",
+                            selectedMeal,
+                            mealTypes,
+                            (v) => setState(
+                                () => selectedMeal = v),
+                            (x) => x.name ?? "",
+                          ),
+
+                          const Divider(),
+                          const SizedBox(height: 8),
+
                           Text(
-                            "\$${totalPrice.toStringAsFixed(2)}",
+                            "Passenger details",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               color: cs.primary,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _firstNameCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Name"),
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _lastNameCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Surname"),
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _emailCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Email"),
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _phoneCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Phone"),
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _dobCtrl,
+                            decoration: const InputDecoration(
+                              labelText: "Date of birth",
+                              hintText: "DD/MM/YYYY",
+                            ),
+                            validator: (v) =>
+                                v == null || v.trim().isEmpty
+                                    ? "Required"
+                                    : null,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _addressCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Address"),
+                            validator: (v) =>
+                                v == null || v.trim().isEmpty
+                                    ? "Required"
+                                    : null,
+                          ),
+                          const SizedBox(height: 10),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _cityCtrl,
+                                  decoration:
+                                      const InputDecoration(
+                                          labelText: "City"),
+                                  validator: (v) =>
+                                      v == null ||
+                                              v.trim().isEmpty
+                                          ? "Required"
+                                          : null,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _countryCtrl,
+                                  decoration:
+                                      const InputDecoration(
+                                          labelText: "Country"),
+                                  validator: (v) =>
+                                      v == null ||
+                                              v.trim().isEmpty
+                                          ? "Required"
+                                          : null,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _passportCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Passport number"),
+                            validator: (v) =>
+                                v == null || v.trim().isEmpty
+                                    ? "Required"
+                                    : null,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _citizenshipCtrl,
+                            decoration: const InputDecoration(
+                                labelText: "Citizenship"),
+                            validator: (v) =>
+                                v == null || v.trim().isEmpty
+                                    ? "Required"
+                                    : null,
+                          ),
+                          const SizedBox(height: 10),
+
+                          TextFormField(
+                            controller: _baggageCtrl,
+                            decoration: const InputDecoration(
+                              labelText: "Travel bag info",
+                              hintText:
+                                  "e.g., 1 cabin bag, 1 checked bag",
+                            ),
+                            validator: (v) =>
+                                v == null || v.trim().isEmpty
+                                    ? "Required"
+                                    : null,
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Total:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: cs.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                "\$${totalPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: cs.primary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: selectedSeat == null
+                                  ? null
+                                  : _confirmBooking,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: cs.primary,
+                                shape:
+                                    RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: const Text(
+                                "Confirm & pay",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight:
+                                      FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed:
-                              selectedSeat == null ? null : _confirmBooking,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: cs.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          child: const Text(
-                            "Confirm & pay",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
                 ),
-                ),
-              ],
-            ),
-    );
-  }
+              ),
+            ],
+          ),
+  );
+}
+
 
   Set<int> _allowedRowsForSeatClass(SeatClass? seatClass) {
     final name = seatClass?.name?.toLowerCase() ?? '';

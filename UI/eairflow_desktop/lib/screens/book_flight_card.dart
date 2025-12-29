@@ -118,6 +118,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
   setState(() => loadingRecommendations = false);
 }
 
+
   Future<void> _loadAirports() async {
     try {
       final p = AirportProvider();
@@ -400,10 +401,12 @@ class _BookFlightCardState extends State<BookFlightCard> {
                               );
                           
                               if (result == true && context.mounted) {
-                                widget.onFlightBooked();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Flight booked successfully")),
-                                );
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  widget.onFlightBooked();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Flight booked successfully")),
+                                  );
+                                });
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -999,6 +1002,10 @@ class _BookNowDialogState extends State<BookNowDialog> {
   final _passportCtrl = TextEditingController();
   final _citizenshipCtrl = TextEditingController();
   final _baggageCtrl = TextEditingController();
+  final _firstNameCtrl = TextEditingController();
+  final _lastNameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
 
   List<SeatClass> seatClasses = [];
   List<MealType> mealTypes = [];
@@ -1019,12 +1026,17 @@ class _BookNowDialogState extends State<BookNowDialog> {
     _passportCtrl.dispose();
     _citizenshipCtrl.dispose();
     _baggageCtrl.dispose();
+    _firstNameCtrl.dispose();
+    _lastNameCtrl.dispose();
+    _emailCtrl.dispose();
+    _phoneCtrl.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+     _prefillPassengerFromProfile();
     _loadData();
   }
 
@@ -1119,8 +1131,10 @@ class _BookNowDialogState extends State<BookNowDialog> {
       );
       
       if (result == true) {
-        Navigator.pop(context, true); 
-      }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Navigator.pop(context, true);
+  });
+}
 
     } catch (e) {
       print("ERROR: $e");
@@ -1128,6 +1142,35 @@ class _BookNowDialogState extends State<BookNowDialog> {
         SnackBar(content: Text("Reservation failed: $e")),
       );
     }
+  }
+
+  Future<void> _prefillPassengerFromProfile() async {
+    _firstNameCtrl.text = AuthProvider.name ?? "";
+    _lastNameCtrl.text = AuthProvider.surname ?? "";
+    _emailCtrl.text = AuthProvider.email ?? "";
+    _phoneCtrl.text = AuthProvider.phoneNumber ?? "";
+
+    if (AuthProvider.email == null) return;
+
+    try {
+      final userProvider = UserProvider();
+      final res = await userProvider.get(filter: {"email": AuthProvider.email});
+
+      if (res.result.isNotEmpty) {
+        final user = res.result.first;
+        setState(() {
+          _firstNameCtrl.text = user.name ?? "";
+          _lastNameCtrl.text = user.surname ?? "";
+          _emailCtrl.text = user.email ?? "";
+          _phoneCtrl.text = user.phoneNumber ?? "";
+        });
+
+        AuthProvider.name = user.name;
+        AuthProvider.surname = user.surname;
+        AuthProvider.email = user.email;
+        AuthProvider.phoneNumber = user.phoneNumber;
+      }
+    } catch (_) {}
   }
 
   @override
@@ -1302,6 +1345,38 @@ class _BookNowDialogState extends State<BookNowDialog> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              controller: _firstNameCtrl,
+              decoration: const InputDecoration(
+                labelText: "Name",
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _lastNameCtrl,
+              decoration: const InputDecoration(
+                labelText: "Surname",
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(
+                labelText: "Email",
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _phoneCtrl,
+              decoration: const InputDecoration(
+                labelText: "Phone",
+              ),
+              enabled: false,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
               controller: _dobCtrl,
               decoration: const InputDecoration(
                 labelText: "Date of birth",
@@ -1379,12 +1454,16 @@ class _BookNowDialogState extends State<BookNowDialog> {
               validator: (v) => v == null || v.trim().isEmpty ? "Required" : null,
             ),
 
-            const Spacer(),
+            const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
 
-            Text("Total: \$${totalPrice.toStringAsFixed(2)}",
-              style: TextStyle(fontSize: 20, color: cs.primary)),
+            Text(
+              "Total: \$${totalPrice.toStringAsFixed(2)}",
+              style: TextStyle(fontSize: 20, color: cs.primary),
+            ),
+
+            const SizedBox(height: 12),
 
           SizedBox(
               width: double.infinity,

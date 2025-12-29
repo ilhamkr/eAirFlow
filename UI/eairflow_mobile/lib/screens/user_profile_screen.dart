@@ -136,6 +136,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
       AuthProvider.name = updated.name;
       AuthProvider.surname = updated.surname;
       AuthProvider.email = updated.email;
+      AuthProvider.phoneNumber = updated.phoneNumber;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Profile updated")),

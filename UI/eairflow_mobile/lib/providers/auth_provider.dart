@@ -5,6 +5,7 @@ class AuthProvider {
   static String? email;
   static String? name;
   static String? surname;
+  static String? phoneNumber;
   static String? password;
   static String? profileImageUrl;
   static int? roleId;
@@ -28,6 +29,7 @@ class AuthProvider {
     name = null;
     surname = null;
     email = null;
+    phoneNumber = null;
     password = null;
     roleId = null;
     profileImageUrl = null;

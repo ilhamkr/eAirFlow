@@ -44,6 +44,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
     AuthProvider.password = _passCtrl.text;
     AuthProvider.name = user.name;
     AuthProvider.surname = user.surname;
+    AuthProvider.phoneNumber = user.phoneNumber;
     AuthProvider.roleId = user.roleId;
     AuthProvider.positionId = user.employee?.positionId;
     AuthProvider.employeeId = user.employee?.employeeId;
