@@ -6,6 +6,7 @@ import 'package:eairflow_desktop/models/flight.dart';
 import 'package:eairflow_desktop/models/airlines.dart';
 import 'package:eairflow_desktop/models/airport.dart';
 import 'package:eairflow_desktop/utils/timezone_helper.dart';
+import 'package:intl/intl.dart';
 
 class AdminFlightsScreen extends StatefulWidget {
   const AdminFlightsScreen({super.key});
@@ -17,6 +18,8 @@ class AdminFlightsScreen extends StatefulWidget {
 class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
+
+  final _dateTimeFormatter = DateFormat('yyyy-MM-dd HH:mm');
 
   List<Flight> flights = [];
   List<Airline> airlines = [];
@@ -32,28 +35,53 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
   Map<String, List<Flight>> groupedFlights = {};
 
+  String _formatDateTime(DateTime? dt) {
+    if (dt == null) return '';
+    return _dateTimeFormatter.format(dt);
+  }
+
+  DateTime? _tryParseDateTime(String value) {
+    try {
+      return _dateTimeFormatter.parseStrict(value);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool _isBeforeToday(DateTime value) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dateOnly = DateTime(value.year, value.month, value.day);
+
+    return dateOnly.isBefore(today);
+  }
+
   void showSuccess(String msg) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg),
-      backgroundColor: Colors.green,
-    ),
-  );
-}
+   ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
 
   Future<bool> confirmDelete(String title) async {
   return await showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: const Text("Confirm"),
-      content: Text(title),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-        ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
-      ],
-    ),
-  );
-}
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Confirm"),
+        content: Text(title),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel")),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("Delete")),
+        ],
+      ),
+    );
+  }
 
   Map<String, List<Flight>> groupFlightsByDay(List<Flight> list) {
     Map<String, List<Flight>> map = {
@@ -100,35 +128,36 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   }
 
  Future<void> pickDateTime(TextEditingController controller,
-    {DateTime? minDate}) async {
-  final now = DateTime.now();
+      {DateTime? minDate}) async {
+    final now = DateTime.now();
 
   final effectiveMin = minDate ?? now;
 
   final date = await showDatePicker(
-    context: context,
-    initialDate: effectiveMin,
-    firstDate: effectiveMin,
-    lastDate: DateTime(now.year + 5),
-  );
-
-  if (date == null) return;
-
-  TimeOfDay? time;
-  while (true) {
-    time = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(effectiveMin),
+      initialDate: effectiveMin,
+      firstDate: effectiveMin,
+      lastDate: DateTime(now.year + 5),
     );
+
+    if (date == null) return;
+
+    TimeOfDay? time;
+    while (true) {
+      time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(effectiveMin),
+      );
 
     if (time == null) return;
 
-    final dt = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+     final dt =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
 
-    controller.text = dt.toIso8601String();
-    return;
+      controller.text = _dateTimeFormatter.format(dt);
+      return;
+    }
   }
-}
 
 
 
@@ -385,25 +414,25 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
   void addFlightDialog() {
   final dep = TextEditingController();
-  final arr = TextEditingController();
-  final price = TextEditingController();
-  final depTime = TextEditingController();
-  final arrTime = TextEditingController();
+    final arr = TextEditingController();
+    final price = TextEditingController();
+    final depTime = TextEditingController();
+    final arrTime = TextEditingController();
 
-  String? depError;
-  String? arrError;
-  String? priceError;
+    String? depError;
+    String? arrError;
+    String? priceError;
 
-  int? selectedAirline;
+    int? selectedAirline;
 
-  showDialog(
-    context: context,
-    builder: (_) => StatefulBuilder(builder: (context, setLocal) {
-      return AlertDialog(
-        title: const Text("Add New Flight"),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(builder: (context, setLocal) {
+        return AlertDialog(
+          title: const Text("Add New Flight"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
 
               TextField(
                 controller: dep,
@@ -448,10 +477,10 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 ),
                 onTap: () async {
                   await pickDateTime(depTime);
-                  final dt = DateTime.tryParse(depTime.text);
+                  final dt = _tryParseDateTime(depTime.text);
 
                   setLocal(() {
-                    depError = (dt == null || dt.isBefore(DateTime.now()))
+                     depError = (dt == null || _isBeforeToday(dt))
                         ? "Departure cannot be in the past"
                         : null;
                   });
@@ -469,8 +498,8 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 onTap: () async {
                   await pickDateTime(arrTime);
 
-                  final depDT = DateTime.tryParse(depTime.text);
-                  final arrDT = DateTime.tryParse(arrTime.text);
+                  final depDT = _tryParseDateTime(depTime.text);
+                  final arrDT = _tryParseDateTime(arrTime.text);
 
                   setLocal(() {
                     arrError =
@@ -520,12 +549,17 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 return;
               }
 
+              final departureDate = _tryParseDateTime(depTime.text);
+              final arrivalDate = _tryParseDateTime(arrTime.text);
+
+              if (departureDate == null || arrivalDate == null) return;
+
               await flightProv.insertAdmin({
                 "departureLocation": dep.text,
                 "arrivalLocation": arr.text,
                 "price": int.parse(price.text),
-                "departureTime": depTime.text,
-                "arrivalTime": arrTime.text,
+                "departureTime": departureDate.toIso8601String(),
+                "arrivalTime": arrivalDate.toIso8601String(),
                 "airlineId": selectedAirline,
               });
 
@@ -542,27 +576,29 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
 
 
-  void editFlightDialog(Flight flight) {
-  final dep = TextEditingController(text: flight.departureLocation);
-  final arr = TextEditingController(text: flight.arrivalLocation);
-  final price = TextEditingController(text: flight.price?.toString());
-  final depTime = TextEditingController(text: flight.departureTime?.toIso8601String());
-  final arrTime = TextEditingController(text: flight.arrivalTime?.toIso8601String());
+    void editFlightDialog(Flight flight) {
+    final dep = TextEditingController(text: flight.departureLocation);
+    final arr = TextEditingController(text: flight.arrivalLocation);
+    final price = TextEditingController(text: flight.price?.toString());
+    final depTime =
+        TextEditingController(text: _formatDateTime(flight.departureTime));
+    final arrTime =
+        TextEditingController(text: _formatDateTime(flight.arrivalTime));
 
-  String? depError;
-  String? arrError;
+    String? depError;
+    String? arrError;
 
-  int? selectedAirline = flight.airlineId;
-  final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
+    int? selectedAirline = flight.airlineId;
+    final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
 
-  showDialog(
-    context: context,
-    builder: (_) => StatefulBuilder(builder: (context, setLocal) {
-      return AlertDialog(
-        title: const Text("Edit Flight"),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(builder: (context, setLocal) {
+        return AlertDialog(
+          title: const Text("Edit Flight"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
 
               if (isLocked)
                 Container(
@@ -620,10 +656,10 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                   if (isLocked) return;
 
                   await pickDateTime(depTime);
-                  final dt = DateTime.tryParse(depTime.text);
+                 final dt = _tryParseDateTime(depTime.text);
 
                   setLocal(() {
-                    depError = (dt == null || dt.isBefore(DateTime.now()))
+                    depError = (dt == null || _isBeforeToday(dt))
                         ? "Departure cannot be in the past"
                         : null;
                   });
@@ -644,8 +680,8 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                   await pickDateTime(arrTime);
 
-                  final depDT = DateTime.tryParse(depTime.text);
-                  final arrDT = DateTime.tryParse(arrTime.text);
+                  final depDT = _tryParseDateTime(depTime.text);
+                  final arrDT = _tryParseDateTime(arrTime.text);
 
                   setLocal(() {
                     arrError =
@@ -688,12 +724,17 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                     if (depError != null || arrError != null) return;
 
+                     final departureDate = _tryParseDateTime(depTime.text);
+                    final arrivalDate = _tryParseDateTime(arrTime.text);
+
+                    if (departureDate == null || arrivalDate == null) return;
+
                     await flightProv.update(flight.flightId!, {
                       "departureLocation": dep.text,
                       "arrivalLocation": arr.text,
                       "price": int.tryParse(price.text),
-                      "departureTime": depTime.text,
-                      "arrivalTime": arrTime.text,
+                      "departureTime": departureDate.toIso8601String(),
+                      "arrivalTime": arrivalDate.toIso8601String(),
                       "airlineId": selectedAirline,
                     });
 
