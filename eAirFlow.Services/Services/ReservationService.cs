@@ -61,10 +61,37 @@ namespace eAirFlow.Services.Services
 
         public override Reservation Insert(ReservationInsertRequest request)
         {
-            if (request.AirplaneId == null)
-                throw new Exception("AirplaneId is missing!");
+            Database.Seat? seat = null;
 
-            var seat = _context.Seats.FirstOrDefault(s =>
+            if (request.SeatId.HasValue)
+            {
+                seat = _context.Seats.FirstOrDefault(s => s.SeatId == request.SeatId.Value);
+
+                if (seat == null)
+                    throw new Exception("Selected seat does not exist!");
+
+                if (request.AirplaneId == null && seat.AirplaneId.HasValue)
+                    request.AirplaneId = seat.AirplaneId;
+
+                if (request.SelectedSeat == null)
+                    request.SelectedSeat = seat.SeatNumber;
+            }
+
+            if (request.AirplaneId == null && request.FlightId.HasValue)
+            {
+                var flightAirplaneId = _context.Flights
+                    .Where(f => f.FlightId == request.FlightId.Value)
+                    .Select(f => f.AirplaneId)
+                    .FirstOrDefault();
+
+                if (flightAirplaneId.HasValue)
+                    request.AirplaneId = flightAirplaneId;
+            }
+
+            if (request.AirplaneId == null)
+                throw new Exception("AirplaneId is missing or the flight does not have an airplane assigned!");
+
+            seat ??= _context.Seats.FirstOrDefault(s =>
                 s.SeatNumber == request.SelectedSeat &&
                 s.AirplaneId == request.AirplaneId.Value
             );

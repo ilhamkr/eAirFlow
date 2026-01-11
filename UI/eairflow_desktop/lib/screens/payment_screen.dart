@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
+import 'package:eairflow_desktop/layouts/master_screen.dart';
+import 'package:eairflow_desktop/screens/my_trips_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final int reservationId;
@@ -174,8 +176,8 @@ Widget build(BuildContext context) {
           const SizedBox(height: 30),
 
           ElevatedButton.icon(
-            icon: const Icon(Icons.arrow_back),
-            label: const Text("Back to Dashboard"),
+            icon: const Icon(Icons.airplane_ticket),
+            label: const Text("See Your Ticket"),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
@@ -184,7 +186,12 @@ Widget build(BuildContext context) {
               ),
             ),
             onPressed: () {
-              Navigator.pop(context, true);
+               Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => MasterScreen(1, const MyTripsScreen()),
+                ),
+                (_) => false,
+              );
             },
           ),
         ],

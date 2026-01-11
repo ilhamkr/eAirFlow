@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
+import 'package:eairflow_mobile/layouts/masterscreen.dart';
+import 'package:eairflow_mobile/screens/my_trips_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final int reservationId;
@@ -160,11 +162,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
                   backgroundColor: Colors.green.shade600,
                 ),
-                onPressed: () {  
-                  Navigator.pop(context, true); 
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => MasterScreenMobile(1, const MyTripsMobile()),
+                    ),
+                    (_) => false,
+                  ); 
                 },
                 child: const Text(
-                  "Done",
+                  "See Your Ticket",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               )

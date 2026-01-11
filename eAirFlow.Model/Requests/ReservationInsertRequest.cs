@@ -16,6 +16,13 @@ namespace eAirFlow.Model.Requests
         public int MealTypeId { get; set; }
         public int? AirportId { get; set; }
         public int? AirplaneId { get; set; }
+        public string? DateOfBirth { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? Country { get; set; }
+        public string? PassportNumber { get; set; }
+        public string? Citizenship { get; set; }
+        public string? BaggageInfo { get; set; }
 
     }
 }
