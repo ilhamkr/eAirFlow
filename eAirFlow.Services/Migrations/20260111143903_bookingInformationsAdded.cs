@@ -53,12 +53,6 @@ namespace eAirFlow.Services.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "TimeZoneId",
-                table: "Airports",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
 
             migrationBuilder.UpdateData(
                 table: "Airports",

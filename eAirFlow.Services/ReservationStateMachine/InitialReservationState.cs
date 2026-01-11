@@ -20,6 +20,13 @@ namespace eAirFlow.Services.ReservationStateMachine
             var entity = Mapper.Map<eAirFlow.Services.Database.Reservation>(request);
             entity.AirportId = request.AirportId;
             entity.StateMachine = "initial";
+            entity.DateOfBirth = request.DateOfBirth;
+            entity.Address = request.Address;
+            entity.City = request.City;
+            entity.Country = request.Country;
+            entity.PassportNumber = request.PassportNumber;
+            entity.Citizenship = request.Citizenship;
+            entity.BaggageInfo = request.BaggageInfo;
             Context.Reservations.Add(entity);
             Context.SaveChanges();
             return Mapper.Map<Model.Models.Reservation>(entity);

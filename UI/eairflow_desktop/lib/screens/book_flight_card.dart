@@ -43,7 +43,12 @@ Duration? _calculateFlightDuration(Flight flight) {
     _arrivalTimeZone(flight),
   );
 }
-
+final RegExp _dobRegex =
+    RegExp(r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$');
+final RegExp _lettersOnlyRegex = RegExp(r"^[A-Za-zÀ-ž' -]{2,}$");
+final RegExp _addressRegex = RegExp(
+   r'^(?=.*[A-Za-zÀ-ž])[A-Za-zÀ-ž0-9\s,.\-/#]+$',);
+final RegExp _passportRegex = RegExp(r'^[A-Za-z0-9]{6,20}$');
 class BookFlightCard extends StatefulWidget {
   final VoidCallback onFlightBooked;
   const BookFlightCard({super.key, required this.onFlightBooked});
@@ -396,7 +401,9 @@ class _BookFlightCardState extends State<BookFlightCard> {
                                 builder: (_) => BookNowDialog(
                                   flight: f,
                                   airlineName: f.airline?.name ?? "Airline",
-                                  airportId: selectedAirportId,
+                                  airportId: f.airport?.airportId ??
+                                      f.airline?.airportId ??
+                                      f.airline?.airport?.airportId,
                                 ),
                               );
                           
@@ -1082,9 +1089,7 @@ class _BookNowDialogState extends State<BookNowDialog> {
 
   Future<void> _confirmBooking() async {
     if (!_passengerFormKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please complete passenger details")),
-      );
+      
       return;
     }
 
@@ -1382,7 +1387,14 @@ class _BookNowDialogState extends State<BookNowDialog> {
                 labelText: "Date of birth",
                 hintText: "DD/MM/YYYY",
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? "Required" : null,
+              validator: (v) {
+                final value = v?.trim() ?? "";
+                if (value.isEmpty) return "Required";
+                if (!_dobRegex.hasMatch(value)) {
+                  return "Use DD/MM/YYYY";
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -1390,7 +1402,14 @@ class _BookNowDialogState extends State<BookNowDialog> {
               decoration: const InputDecoration(
                 labelText: "Address",
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? "Required" : null,
+              validator: (v) {
+                final value = v?.trim() ?? "";
+                if (value.isEmpty) return "Required";
+                if (!_addressRegex.hasMatch(value)) {
+                  return "Invalid street name";
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             Row(
@@ -1401,8 +1420,14 @@ class _BookNowDialogState extends State<BookNowDialog> {
                     decoration: const InputDecoration(
                       labelText: "City",
                     ),
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? "Required" : null,
+                    validator: (v) {
+                      final value = v?.trim() ?? "";
+                      if (value.isEmpty) return "Required";
+                      if (!_lettersOnlyRegex.hasMatch(value)) {
+                        return "Letters only";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1412,8 +1437,14 @@ class _BookNowDialogState extends State<BookNowDialog> {
                     decoration: const InputDecoration(
                       labelText: "Country",
                     ),
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? "Required" : null,
+                    validator: (v) {
+                      final value = v?.trim() ?? "";
+                      if (value.isEmpty) return "Required";
+                      if (!_lettersOnlyRegex.hasMatch(value)) {
+                        return "Letters only";
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ],
@@ -1427,8 +1458,14 @@ class _BookNowDialogState extends State<BookNowDialog> {
                     decoration: const InputDecoration(
                       labelText: "Passport number",
                     ),
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? "Required" : null,
+                    validator: (v) {
+                      final value = v?.trim() ?? "";
+                      if (value.isEmpty) return "Required";
+                      if (!_passportRegex.hasMatch(value)) {
+                        return "6-20 letters/numbers";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),

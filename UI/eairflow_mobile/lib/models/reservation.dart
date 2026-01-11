@@ -28,6 +28,14 @@ class Reservation {
   CheckIn? checkIn;
   Payment? payment;
 
+  String? dateOfBirth;
+  String? address;
+  String? city;
+  String? country;
+  String? passportNumber;
+  String? citizenship;
+  String? baggageInfo;
+
 
   Reservation();
 
@@ -48,6 +56,13 @@ class Reservation {
           : null
       ..luggageOption = json['luggageOption']
       ..qrCodeBase64 = json['qrCodeBase64']
+      ..dateOfBirth = json['dateOfBirth']
+      ..address = json['address']
+      ..city = json['city']
+      ..country = json['country']
+      ..passportNumber = json['passportNumber']
+      ..citizenship = json['citizenship']
+      ..baggageInfo = json['baggageInfo']
       ..flight =
           json['flight'] != null ? Flight.fromJson(json['flight']) : null
       ..airport = json['airport'] != null ? Airport.fromJson(json['airport']) : null

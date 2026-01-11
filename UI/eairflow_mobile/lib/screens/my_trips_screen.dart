@@ -99,6 +99,70 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
     }
   }
 
+  Widget _infoChip(IconData icon, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.blueGrey.shade600),
+          const SizedBox(width: 6),
+          Text(
+            "$label: ",
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPassengerDetails(List<Widget> infoItems) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.blueGrey.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Passenger details",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: infoItems,
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> cancelReservation(BuildContext context, int id) async {
   final confirm = await showDialog<bool>(
     context: context,
@@ -179,6 +243,24 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
           final reservationDateText = r.reservationDate != null
               ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZoneId)
               : "N/A";
+          final addressParts = [
+            r.address,
+            r.city,
+            r.country,
+          ].where((value) => value != null && value.trim().isNotEmpty).toList();
+          final addressLine = addressParts.join(", ");
+          final infoItems = <Widget>[
+            if (r.dateOfBirth != null && r.dateOfBirth!.trim().isNotEmpty)
+              _infoChip(Icons.cake, "Date of birth", r.dateOfBirth!),
+            if (addressLine.isNotEmpty)
+              _infoChip(Icons.location_on, "Address", addressLine),
+            if (r.passportNumber != null && r.passportNumber!.trim().isNotEmpty)
+              _infoChip(Icons.badge, "Passport", r.passportNumber!),
+            if (r.citizenship != null && r.citizenship!.trim().isNotEmpty)
+              _infoChip(Icons.public, "Citizenship", r.citizenship!),
+            if (r.baggageInfo != null && r.baggageInfo!.trim().isNotEmpty)
+              _infoChip(Icons.luggage, "Baggage", r.baggageInfo!),
+          ];
           if (!popupShown &&
               r.flight?.stateMachine?.toLowerCase() == "completed" &&
               !alreadyReviewed) {
@@ -296,6 +378,11 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
                         ),
 
                   const SizedBox(height: 10),
+
+                  if (infoItems.isNotEmpty) ...[
+                    _buildPassengerDetails(infoItems),
+                    const SizedBox(height: 10),
+                  ],
 
                   Container(
                     padding:

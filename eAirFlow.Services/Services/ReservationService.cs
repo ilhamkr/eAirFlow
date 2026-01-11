@@ -104,6 +104,13 @@ namespace eAirFlow.Services.Services
             entity.SeatId = seat.SeatId;
             entity.StateMachine = "initial";
             entity.ReservationDate = DateTime.Now;
+            entity.DateOfBirth = request.DateOfBirth;
+            entity.Address = request.Address;
+            entity.City = request.City;
+            entity.Country = request.Country;
+            entity.PassportNumber = request.PassportNumber;
+            entity.Citizenship = request.Citizenship;
+            entity.BaggageInfo = request.BaggageInfo;
 
             if (request.MealTypeId != null)
                 entity.MealTypeId = request.MealTypeId;
