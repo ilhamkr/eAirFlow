@@ -3,14 +3,14 @@ class Airport {
   String? name;
   String? city;
   String? country;
-  String? timeZoneId;
+  String? timeZone;
 
   Airport({
     this.airportId,
     this.name,
     this.city,
     this.country,
-    this.timeZoneId,
+    this.timeZone,
   });
 
   factory Airport.fromJson(Map<String, dynamic> json) => Airport(
@@ -18,7 +18,7 @@ class Airport {
         name: json['name'] as String?,
         city: json['city'] as String?,
         country: json['country'] as String?,
-        timeZoneId: json['timeZoneId'] as String?,
+        timeZone: json['timeZone'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -26,6 +26,6 @@ class Airport {
         'name': name,
         'city': city,
         'country': country,
-        'timeZoneId': timeZoneId,
+        'timeZone': timeZone,
       };
 }

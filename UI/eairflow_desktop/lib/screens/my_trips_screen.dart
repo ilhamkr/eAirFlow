@@ -275,10 +275,10 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
         itemCount: reservations.length,
         itemBuilder: (context, index) {
           final r = reservations[index];
-          final timeZoneId = r.airport?.timeZoneId ?? r.flight?.airport?.timeZoneId;
-          final departureText = formatDateInTimeZone(r.flight?.departureTime, timeZoneId);
+          final timeZone = r.airport?.timeZone ?? r.flight?.airport?.timeZone;
+          final departureText = formatDateInTimeZone(r.flight?.departureTime, timeZone);
           final reservationDateText = r.reservationDate != null
-              ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZoneId)
+              ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZone)
               : 'N/A';
           final addressParts = [
             r.address,

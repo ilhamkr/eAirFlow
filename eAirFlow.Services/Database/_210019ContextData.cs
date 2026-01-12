@@ -22,15 +22,10 @@ namespace eAirFlow.Services.Database
             new Position { PositionId = 2, Name = "Gate Agent", Description = "Manages boarding and gate activities" },
             new Position { PositionId = 3, Name = "Security Officer", Description = "Ensures passenger and airport security" });
 
-            modelBuilder.Entity<TimeZone>().HasData(
-                new TimeZone { TimeZoneId = "Europe/Sarajevo", DisplayName = "European" },
-                new TimeZone { TimeZoneId = "America/New_York", DisplayName = "American" },
-                new TimeZone { TimeZoneId = "Africa/Johannesburg", DisplayName = "African" },
-                new TimeZone { TimeZoneId = "Asia/Tokyo", DisplayName = "Asian" });
 
             modelBuilder.Entity<Airport>().HasData(
-                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina", TimeZoneId = "Europe/Sarajevo" },
-                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina", TimeZoneId = "Europe/Sarajevo" });
+                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina", TimeZone=""},
+                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina", TimeZone = "" });
 
             modelBuilder.Entity<Airline>().HasData(
                 new Airline { AirlineId = 1, Name = "Turkish Airlines", Country = "Turkey", AirportId = 1 },

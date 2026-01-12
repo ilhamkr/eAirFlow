@@ -51,7 +51,6 @@ public partial class _210019Context : DbContext
     public virtual DbSet<Airport> Airports { get; set; }
     public virtual DbSet<EmailConfirmation> EmailConfirmations { get; set; }
     public virtual DbSet<MealType> MealTypes { get; set; }
-    public virtual DbSet<TimeZone> TimeZones { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -173,23 +172,6 @@ public partial class _210019Context : DbContext
             entity.HasOne(d => d.SeatClass).WithMany(p => p.Seats)
                 .HasForeignKey(d => d.SeatClassId);
              
-        });
-
-        modelBuilder.Entity<Airport>(entity =>
-        {
-            entity.Property(e => e.TimeZoneId)
-                .HasMaxLength(128);
-
-            entity.HasOne(d => d.TimeZone)
-                .WithMany(p => p.Airports)
-                .HasForeignKey(d => d.TimeZoneId)
-                .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<TimeZone>(entity =>
-        {
-            entity.HasKey(e => e.TimeZoneId);
-            entity.Property(e => e.TimeZoneId).HasMaxLength(128);
         });
 
 

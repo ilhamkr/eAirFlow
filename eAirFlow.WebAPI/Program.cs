@@ -84,7 +84,6 @@ builder.Services.AddScoped<IReservationStateMachine, ReservationStateMachine>();
 builder.Services.AddScoped<IAirportService, AirportService>();
 builder.Services.AddScoped<IMealTypeService, MealTypeService>();
 builder.Services.AddScoped<IFlightRecommenderService, FlightRecommenderService>();
-builder.Services.AddScoped<ITimeZoneService, TimeZoneService>();
 
 builder.Services.AddScoped<BaseFlightState>();
 builder.Services.AddScoped<BoardingFlightState>();

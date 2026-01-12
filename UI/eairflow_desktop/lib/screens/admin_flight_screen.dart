@@ -8,7 +8,6 @@ import 'package:eairflow_desktop/models/airport.dart';
 import 'package:eairflow_desktop/utils/timezone_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:eairflow_desktop/models/time_zone.dart';
-import 'package:eairflow_desktop/providers/time_zone_provider.dart';
 import 'package:eairflow_desktop/providers/airplane_provider.dart';
 import 'package:eairflow_desktop/models/airplane.dart';
 
@@ -29,17 +28,70 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   List<Flight> flights = [];
   List<Airline> airlines = [];
   List<Airport> airports = [];
-  List<TimeZoneInfo> timeZones = [];
+
+  final List<TimeZoneInfo> timeZones = [
+    TimeZoneInfo(timeZoneId: "Pacific/Baker", displayName: "GMT-12 (Baker Island)"),
+    TimeZoneInfo(
+        timeZoneId: "Pacific/Pago_Pago", displayName: "GMT-11 (Samoa)"),
+    TimeZoneInfo(timeZoneId: "Pacific/Honolulu", displayName: "GMT-10 (Hawaii)"),
+    TimeZoneInfo(timeZoneId: "America/Anchorage", displayName: "GMT-9 (Alaska)"),
+    TimeZoneInfo(
+        timeZoneId: "America/Los_Angeles",
+        displayName: "GMT-8 (Los Angeles, Vancouver)"),
+    TimeZoneInfo(
+        timeZoneId: "America/Denver",
+        displayName: "GMT-7 (Denver, Phoenix)"),
+    TimeZoneInfo(
+        timeZoneId: "America/Chicago",
+        displayName: "GMT-6 (Chicago, Mexico City)"),
+    TimeZoneInfo(
+        timeZoneId: "America/New_York",
+        displayName: "GMT-5 (New York, Toronto)"),
+    TimeZoneInfo(
+        timeZoneId: "America/Caracas",
+        displayName: "GMT-4 (Caracas, Atlantic Time)"),
+    TimeZoneInfo(
+        timeZoneId: "America/Argentina/Buenos_Aires",
+        displayName: "GMT-3 (Buenos Aires)"),
+    TimeZoneInfo(
+        timeZoneId: "Atlantic/South_Georgia",
+        displayName: "GMT-2 (South Georgia)"),
+    TimeZoneInfo(
+        timeZoneId: "Atlantic/Azores", displayName: "GMT-1 (Azores)"),
+    TimeZoneInfo(timeZoneId: "Europe/London", displayName: "GMT (London, UTC)"),
+    TimeZoneInfo(
+        timeZoneId: "Europe/Sarajevo",
+        displayName: "GMT+1 (Sarajevo, Berlin)"),
+    TimeZoneInfo(
+        timeZoneId: "Europe/Athens", displayName: "GMT+2 (Athens, Cairo)"),
+    TimeZoneInfo(
+        timeZoneId: "Europe/Moscow", displayName: "GMT+3 (Moscow, Istanbul)"),
+    TimeZoneInfo(timeZoneId: "Asia/Dubai", displayName: "GMT+4 (Dubai)"),
+    TimeZoneInfo(timeZoneId: "Asia/Karachi", displayName: "GMT+5 (Pakistan)"),
+    TimeZoneInfo(timeZoneId: "Asia/Dhaka", displayName: "GMT+6 (Bangladesh)"),
+    TimeZoneInfo(timeZoneId: "Asia/Bangkok", displayName: "GMT+7 (Thailand)"),
+    TimeZoneInfo(
+        timeZoneId: "Asia/Singapore",
+        displayName: "GMT+8 (China, Singapore)"),
+    TimeZoneInfo(timeZoneId: "Asia/Tokyo", displayName: "GMT+9 (Japan)"),
+    TimeZoneInfo(
+        timeZoneId: "Australia/Sydney", displayName: "GMT+10 (Sydney)"),
+    TimeZoneInfo(
+        timeZoneId: "Pacific/Guadalcanal",
+        displayName: "GMT+11 (Solomon Islands)"),
+    TimeZoneInfo(
+        timeZoneId: "Pacific/Auckland", displayName: "GMT+12 (New Zealand)"),
+  ];
 
   bool loadingFlights = true;
   bool loadingAirlines = true;
   bool loadingAirports = true;
-  bool loadingTimeZones = true;
 
   final flightProv = FlightProvider();
   final airlineProv = AirlinesProvider();
   final airportProv = AirportProvider();
-  final timeZoneProv = TimeZoneProvider();
+
+  
 
   Map<String, List<Flight>> groupedFlights = {};
 
@@ -179,7 +231,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     loadFlights();
     loadAirlines();
     loadAirports();
-    loadTimeZones();
   }
 
   Future<void> loadFlights() async {
@@ -214,15 +265,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     } catch (_) {}
   }
 
-  Future<void> loadTimeZones() async {
-    try {
-      final data = await timeZoneProv.getAll();
-      setState(() {
-        timeZones = data;
-        loadingTimeZones = false;
-      });
-    } catch (_) {}
-  }
 
   void addAirportDialog() {
     final name = TextEditingController();
@@ -297,7 +339,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     final name = TextEditingController(text: airport.name);
     final city = TextEditingController(text: airport.city);
     final country = TextEditingController(text: airport.country);
-    String? selectedTimeZoneId = airport.timeZoneId;
+    String? selectedTimeZoneId = airport.timeZone;
 
     showDialog(
       context: context,
@@ -932,7 +974,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       children: list.map((f) {
-        final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+        final timeZoneId = f.airport?.timeZone ?? f.airline?.airport?.timeZone;
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
