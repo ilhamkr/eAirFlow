@@ -11,6 +11,7 @@ namespace eAirFlow.Model.Models
         public string City { get; set; }
         public string Country { get; set; }
         public string? TimeZoneId { get; set; }
+        public TimeZone? TimeZone { get; set; }
 
     }
 }

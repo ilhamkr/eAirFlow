@@ -3,6 +3,7 @@ using eAirFlow.Model.Requests;
 using eAirFlow.Model.SearchObjects;
 using eAirFlow.Services.Interfaces;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,10 @@ namespace eAirFlow.Services.Services
         {
         }
 
+        public override IQueryable<Database.Airport> AddInclude(IQueryable<Database.Airport> query)
+        {
+            return query.Include(a => a.TimeZone);
+        }
         public override IQueryable<Database.Airport> AddFilter(AirportSearchObject search, IQueryable<Database.Airport> query)
         {
             if (search == null)

@@ -10,5 +10,6 @@ namespace eAirFlow.Services.Database
     {
         public string TimeZoneId { get; set; }
         public string DisplayName { get; set; }
+        public virtual ICollection<Airport> Airports { get; set; } = new List<Airport>();
     }
 }

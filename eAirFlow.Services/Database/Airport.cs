@@ -13,6 +13,7 @@ namespace eAirFlow.Services.Database
         public string City { get; set; }
         public string Country { get; set; }
         public string TimeZoneId { get; set; }
+        public virtual TimeZone TimeZone { get; set; }
 
         public virtual ICollection<Airline> Airlines { get; set; } = new List<Airline>();
         public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
