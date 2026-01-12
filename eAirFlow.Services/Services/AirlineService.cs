@@ -50,15 +50,44 @@ namespace eAirFlow.Services.Services
 
         public void Delete(int id)
         {
+            var airline = _context.Airlines.FirstOrDefault(a => a.AirlineId == id);
+            if (airline == null)
+                throw new Exception("Airline not found");
+
+            var flightIds = _context.Flights
+                .Where(f => f.AirlineId == id)
+                .Select(f => f.FlightId)
+                .ToList();
+
+            var reservations = _context.Reservations
+                .Where(r => r.FlightId != null && flightIds.Contains(r.FlightId.Value))
+                .ToList();
+            var reservationIds = reservations.Select(r => r.ReservationId).ToList();
+
+            var checkins = _context.CheckIns
+               .Where(c => c.ReservationId != null && reservationIds.Contains(c.ReservationId.Value))
+               .ToList();
+            _context.CheckIns.RemoveRange(checkins);
+
+            _context.Reservations.RemoveRange(reservations);
+
+            var reviews = _context.FlightReviews
+                .Where(fr => fr.FlightId != null && flightIds.Contains(fr.FlightId.Value))
+                .ToList();
+            _context.FlightReviews.RemoveRange(reviews);
+
+            var flights = _context.Flights
+                .Where(f => f.AirlineId == id)
+                .ToList();
+            _context.Flights.RemoveRange(flights);
+
             var airplanes = _context.Airplanes
                 .Where(x => x.AirlineId == id)
                 .ToList();
-
-            _context.Airplanes.RemoveRange(airplanes);
-
-            var airline = _context.Airlines.Find(id);
-            if (airline == null)
-                throw new Exception("Airline not found");
+            foreach (var airplane in airplanes)
+            {
+                airplane.AirlineId = null;
+            }
 
             _context.Airlines.Remove(airline);
             _context.SaveChanges();

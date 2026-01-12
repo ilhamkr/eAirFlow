@@ -349,8 +349,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   void addAirlineDialog() {
     final name = TextEditingController();
     final country = TextEditingController();
-    final airplaneModel = TextEditingController();
-    final totalSeats = TextEditingController();
     int? selectedAirport;
     int? selectedAirplaneId;
     final airplaneProv = AirplaneProvider();
@@ -364,7 +362,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
       });
 
       try {
-        final airplanes = await airplaneProv.getUnassigned();
+        final airplanes = await airplaneProv.getAll();
         availableAirplanes
           ..clear()
           ..addAll(airplanes);
@@ -403,7 +401,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: "Assign Existing Airplane"),
+                decoration: const InputDecoration(labelText: "Assign Airplane"),
                 items: availableAirplanes
                     .map((a) => DropdownMenuItem(
                           value: a.airplaneId!,
@@ -433,8 +431,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
               onPressed: () async {
                 if (name.text.isEmpty ||
                     country.text.isEmpty ||
-                    selectedAirport == null ||
-                    selectedAirplaneId == null) {
+                    selectedAirport == null) {
                   showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
@@ -454,13 +451,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                   "airportId": selectedAirport
                 });
 
-                final selected = availableAirplanes
-                    .firstWhere((a) => a.airplaneId == selectedAirplaneId);
-                await airplaneProv.update(selected.airplaneId!, {
-                  "model": selected.model ?? "Unknown",
-                  "totalSeats": selected.totalSeats,
-                  "airlineId": airline.airlineId
-                });
+                 if (selectedAirplaneId != null) {
+                  final selected = availableAirplanes
+                      .firstWhere((a) => a.airplaneId == selectedAirplaneId);
+                  await airplaneProv.update(selected.airplaneId!, {
+                    "model": selected.model ?? "Unknown",
+                    "totalSeats": selected.totalSeats,
+                    "airlineId": airline.airlineId
+                  });
+                }
 
                 Navigator.pop(context);
                 loadAirlines();

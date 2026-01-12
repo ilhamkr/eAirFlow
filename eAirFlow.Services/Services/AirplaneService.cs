@@ -30,6 +30,11 @@ namespace eAirFlow.Services.Services
                 query = query.Where(x => x.AirlineId == search.AirlineId);
             }
 
+            if (search?.UnassignedOnly == true)
+            {
+                query = query.Where(x => x.AirlineId == null);
+            }
+
 
             return base.AddFilter(search, query);
         }
