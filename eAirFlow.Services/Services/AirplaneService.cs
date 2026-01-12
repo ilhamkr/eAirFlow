@@ -25,6 +25,11 @@ namespace eAirFlow.Services.Services
                 query = query.Where(x => x.Model.StartsWith(search.ModelGTE));
             }
 
+            if (search?.AirlineId != null)
+            {
+                query = query.Where(x => x.AirlineId == search.AirlineId);
+            }
+
 
             return base.AddFilter(search, query);
         }

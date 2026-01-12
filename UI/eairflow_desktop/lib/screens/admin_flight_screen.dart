@@ -9,6 +9,9 @@ import 'package:eairflow_desktop/utils/timezone_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:eairflow_desktop/models/time_zone.dart';
 import 'package:eairflow_desktop/providers/time_zone_provider.dart';
+import 'package:eairflow_desktop/providers/airplane_provider.dart';
+import 'package:eairflow_desktop/models/airplane.dart';
+
 
 class AdminFlightsScreen extends StatefulWidget {
   const AdminFlightsScreen({super.key});
@@ -346,63 +349,126 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   void addAirlineDialog() {
     final name = TextEditingController();
     final country = TextEditingController();
+    final airplaneModel = TextEditingController();
+    final totalSeats = TextEditingController();
     int? selectedAirport;
+    int? selectedAirplaneId;
+    final airplaneProv = AirplaneProvider();
+    final List<Airplane> availableAirplanes = [];
+    bool loadingAirplanes = false;
+    bool loadedAirplanes = false;
+
+    Future<void> loadAvailableAirplanes(void Function(void Function()) setLocal) async {
+      setLocal(() {
+        loadingAirplanes = true;
+      });
+
+      try {
+        final airplanes = await airplaneProv.getUnassigned();
+        availableAirplanes
+          ..clear()
+          ..addAll(airplanes);
+      } catch (_) {
+        availableAirplanes.clear();
+      }
+
+      setLocal(() {
+        loadingAirplanes = false;
+      });
+    }
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Add Airline"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
-            TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
-            DropdownButtonFormField<int>(
-              decoration: const InputDecoration(labelText: "Airport"),
-              items: airports
-                  .map((a) => DropdownMenuItem(
-                        value: a.airportId!,
-                        child: Text(a.name ?? ""),
-                      ))
-                  .toList(),
-              onChanged: (v) => selectedAirport = v,
+        builder: (_) => StatefulBuilder(builder: (context, setLocal) {
+        if (!loadedAirplanes) {
+          loadedAirplanes = true;
+          loadAvailableAirplanes(setLocal);
+        }
+         return AlertDialog(
+          title: const Text("Add Airline"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
+              TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
+              DropdownButtonFormField<int>(
+                decoration: const InputDecoration(labelText: "Airport"),
+                items: airports
+                    .map((a) => DropdownMenuItem(
+                          value: a.airportId!,
+                          child: Text(a.name ?? ""),
+                        ))
+                    .toList(),
+                onChanged: (v) => selectedAirport = v,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<int>(
+                decoration: const InputDecoration(labelText: "Assign Existing Airplane"),
+                items: availableAirplanes
+                    .map((a) => DropdownMenuItem(
+                          value: a.airplaneId!,
+                          child: Text(a.model ?? "Airplane #${a.airplaneId}"),
+                        ))
+                    .toList(),
+                onChanged: loadingAirplanes ? null : (v) {
+                  setLocal(() {
+                    selectedAirplaneId = v;
+                  });
+                },
+              ),
+              if (loadingAirplanes)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: LinearProgressIndicator(),
+                ),
+            ], 
+            ),
+        actions: [
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            ElevatedButton(
+              child: const Text("Save"),
+              onPressed: () async {
+                if (name.text.isEmpty ||
+                    country.text.isEmpty ||
+                    selectedAirport == null ||
+                    selectedAirplaneId == null) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Error"),
+                      content: const Text("All fields are required."),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
+                      ],
+                    ),
+                  );
+                  return;
+                }
+
+                final airline = await airlineProv.insert({
+                  "name": name.text,
+                  "country": country.text,
+                  "airportId": selectedAirport
+                });
+
+                final selected = availableAirplanes
+                    .firstWhere((a) => a.airplaneId == selectedAirplaneId);
+                await airplaneProv.update(selected.airplaneId!, {
+                  "model": selected.model ?? "Unknown",
+                  "totalSeats": selected.totalSeats,
+                  "airlineId": airline.airlineId
+                });
+
+                Navigator.pop(context);
+                loadAirlines();
+              },
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("Cancel"),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            child: const Text("Save"),
-            onPressed: () async {
-              if (name.text.isEmpty || country.text.isEmpty || selectedAirport == null) {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Error"),
-                    content: const Text("All fields are required."),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
-                    ],
-                  ),
-                );
-                return;
-              }
-
-              await airlineProv.insert({
-                "name": name.text,
-                "country": country.text,
-                "airportId": selectedAirport
-              });
-
-              Navigator.pop(context);
-              loadAirlines();
-            },
-          ),
-        ],
-      ),
+        );
+      }),
     );
   }
 

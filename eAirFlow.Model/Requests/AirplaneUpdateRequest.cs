@@ -8,5 +8,6 @@ namespace eAirFlow.Model.Requests
     {
         public string Model {  get; set; }
         public int? TotalSeats { get; set; }
+        public int? AirlineId { get; set; }
     }
 }

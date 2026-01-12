@@ -11,7 +11,6 @@ namespace eAirFlow.Model.Requests
         public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
         public int? AirlineId { get; set; }
-        public int? AirplaneId { get; set; }
         public int? Price { get; set; }
     }
 }

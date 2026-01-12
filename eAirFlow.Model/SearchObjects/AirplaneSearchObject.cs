@@ -7,5 +7,6 @@ namespace eAirFlow.Model.SearchObjects
     public class AirplaneSearchObject : BaseSearchObject
     {
         public string? ModelGTE {  get; set; }
+        public int? AirlineId { get; set; }
     }
 }

@@ -286,6 +286,7 @@ namespace eAirFlow.Services.Services
             if (airline == null)
                 throw new Exception("Airline not found");
 
+
             var airplane = airline.Airplanes.FirstOrDefault();
 
             if (airplane == null)
@@ -298,7 +299,6 @@ namespace eAirFlow.Services.Services
                 DepartureTime = request.DepartureTime,
                 ArrivalTime = request.ArrivalTime,
                 AirlineId = request.AirlineId,
-                AirplaneId = airplane.AirplaneId,
                 Price = request.Price,
                 StateMachine = "scheduled"
             };
