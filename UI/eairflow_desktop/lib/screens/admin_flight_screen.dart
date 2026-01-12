@@ -7,6 +7,8 @@ import 'package:eairflow_desktop/models/airlines.dart';
 import 'package:eairflow_desktop/models/airport.dart';
 import 'package:eairflow_desktop/utils/timezone_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:eairflow_desktop/models/time_zone.dart';
+import 'package:eairflow_desktop/providers/time_zone_provider.dart';
 
 class AdminFlightsScreen extends StatefulWidget {
   const AdminFlightsScreen({super.key});
@@ -24,14 +26,17 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   List<Flight> flights = [];
   List<Airline> airlines = [];
   List<Airport> airports = [];
+  List<TimeZoneInfo> timeZones = [];
 
   bool loadingFlights = true;
   bool loadingAirlines = true;
   bool loadingAirports = true;
+  bool loadingTimeZones = true;
 
   final flightProv = FlightProvider();
   final airlineProv = AirlinesProvider();
   final airportProv = AirportProvider();
+  final timeZoneProv = TimeZoneProvider();
 
   Map<String, List<Flight>> groupedFlights = {};
 
@@ -171,6 +176,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     loadFlights();
     loadAirlines();
     loadAirports();
+    loadTimeZones();
   }
 
   Future<void> loadFlights() async {
@@ -205,10 +211,21 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     } catch (_) {}
   }
 
+  Future<void> loadTimeZones() async {
+    try {
+      final data = await timeZoneProv.getAll();
+      setState(() {
+        timeZones = data;
+        loadingTimeZones = false;
+      });
+    } catch (_) {}
+  }
+
   void addAirportDialog() {
     final name = TextEditingController();
     final city = TextEditingController();
     final country = TextEditingController();
+    String? selectedTimeZoneId;
 
     showDialog(
       context: context,
@@ -220,6 +237,16 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
             TextField(controller: city, decoration: const InputDecoration(labelText: "City")),
             TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: "Time zone"),
+              items: timeZones
+                  .map((tz) => DropdownMenuItem(
+                        value: tz.timeZoneId,
+                        child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                      ))
+                  .toList(),
+              onChanged: (value) => selectedTimeZoneId = value,
+            ),
           ],
         ),
         actions: [
@@ -230,7 +257,10 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
           ElevatedButton(
             child: const Text("Save"),
             onPressed: () async {
-              if (name.text.isEmpty || city.text.isEmpty || country.text.isEmpty) {
+              if (name.text.isEmpty ||
+                  city.text.isEmpty ||
+                  country.text.isEmpty ||
+                  selectedTimeZoneId == null) {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
@@ -248,6 +278,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 "name": name.text,
                 "city": city.text,
                 "country": country.text,
+                "timeZoneId": selectedTimeZoneId,
               });
 
               Navigator.pop(context);
@@ -263,6 +294,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     final name = TextEditingController(text: airport.name);
     final city = TextEditingController(text: airport.city);
     final country = TextEditingController(text: airport.country);
+    String? selectedTimeZoneId = airport.timeZoneId;
 
     showDialog(
       context: context,
@@ -274,6 +306,17 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
             TextField(controller: city, decoration: const InputDecoration(labelText: "City")),
             TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
+            DropdownButtonFormField<String>(
+              value: selectedTimeZoneId,
+              decoration: const InputDecoration(labelText: "Time zone"),
+              items: timeZones
+                  .map((tz) => DropdownMenuItem(
+                        value: tz.timeZoneId,
+                        child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                      ))
+                  .toList(),
+              onChanged: (value) => selectedTimeZoneId = value,
+            ),
           ],
         ),
         actions: [
@@ -288,6 +331,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 "name": name.text,
                 "city": city.text,
                 "country": country.text,
+                "timeZoneId": selectedTimeZoneId,
               });
 
               Navigator.pop(context);

@@ -394,7 +394,9 @@ class _BookFlightCardState extends State<BookFlightCard> {
                   builder: (_) => BookNowPage(
                     flight: f,
                     airlineName: f.airline?.name ?? "Airline",
-                    airportId: f.airline?.airportId,
+                    airportId: f.airport?.airportId ??
+                          f.airline?.airportId ??
+                          f.airline?.airport?.airportId,
                   ),
                 ),
               );
