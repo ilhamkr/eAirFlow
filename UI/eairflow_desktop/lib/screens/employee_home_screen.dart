@@ -119,7 +119,7 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
           const SizedBox(height: 12),
 
           ...activeOperations.map((f) {
-            final timeZone = f.airport?.timeZone ?? f.airline?.airport?.timeZone;
+            final timeZone = f.departureTimeZone ?? "UTC";
 
            String subtitle = switch (f.stateMachine) {
               "boarding" =>

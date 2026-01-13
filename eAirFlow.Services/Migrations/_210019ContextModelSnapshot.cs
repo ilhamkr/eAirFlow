@@ -271,7 +271,7 @@ namespace eAirFlow.Services.Migrations
                             EmployeeId = 1,
                             AirportId = 1,
                             Email = "employee@example.com",
-                            HireDate = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(894),
+                            HireDate = new DateTime(2026, 1, 13, 17, 40, 8, 932, DateTimeKind.Utc).AddTicks(3693),
                             Name = "employee",
                             PhoneNumber = "555-555",
                             PositionId = 1,
@@ -7356,33 +7356,33 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(765),
+                            CreatedAt = new DateTime(2026, 1, 13, 17, 40, 8, 932, DateTimeKind.Utc).AddTicks(3593),
                             Email = "user@example.com",
                             Name = "User",
-                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
-                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
+                            PasswordHash = "Wwjipm1zzzD/wFESkFS7XjPXobR2aoD1F/WmB0cwTXg=",
+                            PasswordSalt = "WBK8UIHDgUifTke3sSEyjw==",
                             PhoneNumber = "555-555",
                             Surname = "User"
                         },
                         new
                         {
                             UserId = 2,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(789),
+                            CreatedAt = new DateTime(2026, 1, 13, 17, 40, 8, 932, DateTimeKind.Utc).AddTicks(3618),
                             Email = "employee@example.com",
                             Name = "Employee",
-                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
-                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
+                            PasswordHash = "Wwjipm1zzzD/wFESkFS7XjPXobR2aoD1F/WmB0cwTXg=",
+                            PasswordSalt = "WBK8UIHDgUifTke3sSEyjw==",
                             PhoneNumber = "555-555",
                             Surname = "Employee"
                         },
                         new
                         {
                             UserId = 3,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(805),
+                            CreatedAt = new DateTime(2026, 1, 13, 17, 40, 8, 932, DateTimeKind.Utc).AddTicks(3633),
                             Email = "admin@example.com",
                             Name = "Admin",
-                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
-                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
+                            PasswordHash = "Wwjipm1zzzD/wFESkFS7XjPXobR2aoD1F/WmB0cwTXg=",
+                            PasswordSalt = "WBK8UIHDgUifTke3sSEyjw==",
                             PhoneNumber = "555-555",
                             Surname = "Admin"
                         });

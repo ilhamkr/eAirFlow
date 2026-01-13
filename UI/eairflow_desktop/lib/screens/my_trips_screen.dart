@@ -275,7 +275,7 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
         itemCount: reservations.length,
         itemBuilder: (context, index) {
           final r = reservations[index];
-          final timeZone = r.airport?.timeZone ?? r.flight?.airport?.timeZone;
+           final timeZone = r.flight?.departureTimeZone ?? "UTC";
           final departureText = formatDateInTimeZone(r.flight?.departureTime, timeZone);
           final reservationDateText = r.reservationDate != null
               ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZone)

@@ -15,6 +15,14 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
   bool loading = true;
   List<Flight> flights = [];
 
+   String _departureTimeZone(Flight flight) {
+    return flight.departureTimeZone ?? "UTC";
+  }
+
+  String _arrivalTimeZone(Flight flight) {
+    return flight.arrivalTimeZone ?? "UTC";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,14 +79,15 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
 Widget _flightCard(BuildContext context, Flight f) {
   String airportName = f.airline?.airport?.name ?? "Unknown Airport";
 
-  final timeZone = f.airport?.timeZone ?? f.airline?.airport?.timeZone;
-  final departureText = formatDateInTimeZone(f.departureTime, timeZone);
-  final arrivalText = formatDateInTimeZone(f.arrivalTime, timeZone);
+  final departureTimeZoneId = _departureTimeZone(f);
+  final arrivalTimeZoneId = _arrivalTimeZone(f);
+  final departureText = formatDateInTimeZone(f.departureTime, departureTimeZoneId);
+  final arrivalText = formatDateInTimeZone(f.arrivalTime, arrivalTimeZoneId);
   final duration = calculateDurationWithTimeZones(
     f.departureTime,
-    timeZone,
+    departureTimeZoneId,
     f.arrivalTime,
-    timeZone,
+    arrivalTimeZoneId,
   );
 
   Color statusColor;

@@ -95,9 +95,20 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
   Map<String, List<Flight>> groupedFlights = {};
 
-  String _formatDateTime(DateTime? dt) {
-    if (dt == null) return '';
-    return _dateTimeFormatter.format(dt);
+  String _departureTimeZone(Flight flight) {
+    return flight.departureTimeZone ?? "UTC";
+  }
+
+  String _arrivalTimeZone(Flight flight) {
+    return flight.arrivalTimeZone ?? "UTC";
+  }
+
+  String _formatDateTimeForInput(DateTime? dt, String? timeZoneId) {
+    return formatDateInTimeZone(
+      dt,
+      timeZoneId,
+      includeTimeZoneName: false,
+    );
   }
 
   DateTime? _tryParseDateTime(String value) {
@@ -327,7 +338,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     final name = TextEditingController(text: airport.name);
     final city = TextEditingController(text: airport.city);
     final country = TextEditingController(text: airport.country);
-    String? selectedTimeZone = airport.timeZone;
 
     showDialog(
       context: context,
@@ -797,8 +807,14 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
 
   void editFlightDialog(Flight flight) {
-    final depTime = TextEditingController(text: _formatDateTime(flight.departureTime));
-    final arrTime = TextEditingController(text: _formatDateTime(flight.arrivalTime));
+    final departureTimeZoneId = _departureTimeZone(flight);
+    final arrivalTimeZoneId = _arrivalTimeZone(flight);
+    final depTime = TextEditingController(
+      text: _formatDateTimeForInput(flight.departureTime, departureTimeZoneId),
+    );
+    final arrTime = TextEditingController(
+      text: _formatDateTimeForInput(flight.arrivalTime, arrivalTimeZoneId),
+    );
     final price = TextEditingController(text: flight.price?.toString());
      final departureLocation =
         TextEditingController(text: flight.departureLocation ?? "");
@@ -1143,7 +1159,14 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       children: list.map((f) {
-        final timeZoneId = f.airport?.timeZone ?? f.airline?.airport?.timeZone;
+       final departureTimeZoneId = _departureTimeZone(f);
+        final arrivalTimeZoneId = _arrivalTimeZone(f);
+        final duration = calculateDurationWithTimeZones(
+          f.departureTime,
+          departureTimeZoneId,
+          f.arrivalTime,
+          arrivalTimeZoneId,
+        );
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1176,7 +1199,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       const Icon(Icons.access_time, color: Colors.black54, size: 20),
                       const SizedBox(width: 6),
                       const Text("Departure time: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(formatDateInTimeZone(f.departureTime, timeZoneId)),
+                       Text(formatDateInTimeZone(f.departureTime, departureTimeZoneId)),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -1186,11 +1209,23 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                       const Icon(Icons.timer, color: Colors.black54, size: 20),
                       const SizedBox(width: 6),
                       const Text("Arrival time: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(formatDateInTimeZone(f.arrivalTime, timeZoneId)),
+                      Text(formatDateInTimeZone(f.arrivalTime, arrivalTimeZoneId)),
                     ],
                   ),
                   const SizedBox(height: 6),
 
+                   if (duration != null) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.timelapse, color: Colors.black54, size: 20),
+                        const SizedBox(width: 6),
+                        const Text("Duration: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(formatDuration(duration)),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                  ],
+                  
                   Row(
                     children: [
                       const Icon(Icons.airlines, color: Colors.black54, size: 20),

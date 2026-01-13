@@ -94,7 +94,7 @@ class _EmployeeCheckInScreenState extends State<EmployeeCheckInScreen> {
         itemBuilder: (context, index) {
           final c = checkins[index];
           final r = c.reservation;
-          final timeZone = r?.airport?.timeZone ?? r?.flight?.airport?.timeZone;
+          final timeZone = r?.flight?.departureTimeZone ?? "UTC";
           final departureText =
               formatDateInTimeZone(r?.flight?.departureTime, timeZone);
           final paymentDateText =

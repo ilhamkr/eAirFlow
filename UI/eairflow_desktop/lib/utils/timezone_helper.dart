@@ -23,11 +23,18 @@ tz.Location _safeLocation(String? timeZoneId) {
   }
 }
 
-String formatDateInTimeZone(DateTime? dateTime, String? timeZoneId,
-    {String pattern = "yyyy-MM-dd HH:mm"}) {
+String formatDateInTimeZone(
+  DateTime? dateTime,
+  String? timeZoneId, {
+  String pattern = "yyyy-MM-dd HH:mm",
+  bool includeTimeZoneName = true,
+}) {
   if (dateTime == null) return "N/A";
   final tzDate = _toTimeZoneDateTime(dateTime, timeZoneId);
   final formatted = DateFormat(pattern).format(tzDate);
+  if (!includeTimeZoneName) {
+    return formatted;
+  }
   return "$formatted (${tzDate.timeZoneName})";
 }
 
