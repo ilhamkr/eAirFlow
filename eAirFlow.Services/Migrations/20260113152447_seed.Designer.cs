@@ -12,8 +12,8 @@ using eAirFlow.Services.Database;
 namespace eAirFlow.Services.Migrations
 {
     [DbContext(typeof(_210019Context))]
-    [Migration("20260113145402_seedfixed")]
-    partial class seedfixed
+    [Migration("20260113152447_seed")]
+    partial class seed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,17 +65,10 @@ namespace eAirFlow.Services.Migrations
                         },
                         new
                         {
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirportId = 2,
                             Country = "Germany",
                             Name = "Lufthansa"
-                        },
-                        new
-                        {
-                            AirlineId = 10,
-                            AirportId = 1,
-                            Country = "Hungary",
-                            Name = "WizzAir"
                         });
                 });
 
@@ -120,16 +113,9 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             AirplaneId = 3,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             Model = "Boeing 777",
                             TotalSeats = 300
-                        },
-                        new
-                        {
-                            AirplaneId = 4,
-                            AirlineId = 10,
-                            Model = "Airbus A321",
-                            TotalSeats = 200
                         });
                 });
 
@@ -294,7 +280,7 @@ namespace eAirFlow.Services.Migrations
                             EmployeeId = 1,
                             AirportId = 1,
                             Email = "employee@example.com",
-                            HireDate = new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4158),
+                            HireDate = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4211),
                             Name = "employee",
                             PhoneNumber = "555-555",
                             PositionId = 1,
@@ -463,7 +449,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 9,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 13, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -477,7 +463,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 10,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 13, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -603,7 +589,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 19,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 14, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -617,7 +603,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 20,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 14, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -743,7 +729,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 29,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 15, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -757,7 +743,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 30,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 15, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -883,7 +869,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 39,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 16, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -897,7 +883,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 40,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1023,7 +1009,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 49,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 17, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1037,7 +1023,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 50,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1163,7 +1149,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 59,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 18, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1177,7 +1163,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 60,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 18, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1303,7 +1289,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 69,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 19, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1317,7 +1303,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 70,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 19, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1443,7 +1429,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 79,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 20, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1457,7 +1443,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 80,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 20, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1583,7 +1569,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 89,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 21, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1597,7 +1583,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 90,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 21, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1723,7 +1709,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 99,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 22, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1737,7 +1723,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 100,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 22, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1863,7 +1849,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 109,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 23, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1877,7 +1863,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 110,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 23, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2003,7 +1989,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 119,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 24, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2017,7 +2003,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 120,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 24, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2143,7 +2129,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 129,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 25, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2157,7 +2143,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 130,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 25, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2283,7 +2269,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 139,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 26, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2297,7 +2283,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 140,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 26, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2423,7 +2409,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 149,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 27, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2437,7 +2423,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 150,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 27, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2563,7 +2549,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 159,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 28, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2577,7 +2563,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 160,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 28, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2703,7 +2689,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 169,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 29, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2717,7 +2703,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 170,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 29, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2843,7 +2829,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 179,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 30, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2857,7 +2843,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 180,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 30, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2983,7 +2969,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 189,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 1, 31, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -2997,7 +2983,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 190,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -3123,7 +3109,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 199,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Munich",
                             ArrivalTime = new DateTime(2026, 2, 1, 13, 30, 0, 0, DateTimeKind.Unspecified),
@@ -3137,7 +3123,7 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             FlightId = 200,
-                            AirlineId = 7,
+                            AirlineId = 3,
                             AirplaneId = 3,
                             ArrivalLocation = "Frankfurt",
                             ArrivalTime = new DateTime(2026, 2, 1, 15, 0, 0, 0, DateTimeKind.Unspecified),
@@ -7379,33 +7365,33 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4060),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4118),
                             Email = "user@example.com",
                             Name = "User",
-                            PasswordHash = "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=",
-                            PasswordSalt = "agB87CEIe3JaRYOaOW/Zow==",
+                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
+                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
                             PhoneNumber = "555-555",
                             Surname = "User"
                         },
                         new
                         {
                             UserId = 2,
-                            CreatedAt = new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4083),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4140),
                             Email = "employee@example.com",
                             Name = "Employee",
-                            PasswordHash = "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=",
-                            PasswordSalt = "agB87CEIe3JaRYOaOW/Zow==",
+                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
+                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
                             PhoneNumber = "555-555",
                             Surname = "Employee"
                         },
                         new
                         {
                             UserId = 3,
-                            CreatedAt = new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4097),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4154),
                             Email = "admin@example.com",
                             Name = "Admin",
-                            PasswordHash = "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=",
-                            PasswordSalt = "agB87CEIe3JaRYOaOW/Zow==",
+                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
+                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
                             PhoneNumber = "555-555",
                             Surname = "Admin"
                         });

@@ -30,14 +30,12 @@ namespace eAirFlow.Services.Database
             modelBuilder.Entity<Airline>().HasData(
                 new Airline { AirlineId = 1, Name = "Turkish Airlines", Country = "Turkey", AirportId = 1 },
                 new Airline { AirlineId = 2, Name = "Ryanair", Country = "Republic of Ireland", AirportId = 1 },
-                new Airline { AirlineId = 7, Name = "Lufthansa", Country = "Germany", AirportId = 2 },
-                new Airline { AirlineId = 10, Name = "WizzAir", Country = "Hungary", AirportId = 1 });
+                new Airline { AirlineId = 3, Name = "Lufthansa", Country = "Germany", AirportId = 2 });
 
             modelBuilder.Entity<Airplane>().HasData(
                 new Airplane { AirplaneId = 1, Model = "Boeing 737", TotalSeats = 180, AirlineId = 1 },
                 new Airplane { AirplaneId = 2, Model = "Airbus A320", TotalSeats = 160, AirlineId = 2 },
-                new Airplane { AirplaneId = 3, Model = "Boeing 777", TotalSeats = 300, AirlineId = 7 },
-                new Airplane { AirplaneId = 4, Model = "Airbus A321", TotalSeats = 200, AirlineId = 10 });
+                new Airplane { AirplaneId = 3, Model = "Boeing 777", TotalSeats = 300, AirlineId = 3 });
 
             modelBuilder.Entity<SeatClass>().HasData(
                 new SeatClass { SeatClassId = 1, Name = "Economy" },
@@ -153,7 +151,7 @@ namespace eAirFlow.Services.Database
 
             int turkishId = 1;
             int ryanairId = 2;  
-            int lufthansaId = 7; 
+            int lufthansaId = 3; 
 
             DateTime start = DateTime.UtcNow.Date;
 

@@ -8,32 +8,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eAirFlow.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class seedfixed : Migration
+    public partial class seed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "Airlines",
-                keyColumn: "AirlineId",
-                keyValue: 3);
-
-            migrationBuilder.InsertData(
-                table: "Airlines",
-                columns: new[] { "AirlineId", "AirportId", "Country", "Name" },
-                values: new object[,]
-                {
-                    { 7, 2, "Germany", "Lufthansa" },
-                    { 10, 1, "Hungary", "WizzAir" }
-                });
-
-            migrationBuilder.UpdateData(
-                table: "Airplanes",
-                keyColumn: "AirplaneId",
-                keyValue: 3,
-                column: "AirlineId",
-                value: 7);
-
             migrationBuilder.UpdateData(
                 table: "Airports",
                 keyColumn: "AirportId",
@@ -53,7 +32,7 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "EmployeeId",
                 keyValue: 1,
                 column: "HireDate",
-                value: new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4158));
+                value: new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4211));
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -115,15 +94,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 9,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, "Munich", new DateTime(2026, 1, 13, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 13, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Munich", new DateTime(2026, 1, 13, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 13, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 10,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 13, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 13, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 13, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 13, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -186,14 +165,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 19,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 14, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 14, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 14, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 14, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 20,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 14, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 14, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 14, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 14, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -256,14 +235,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 29,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 15, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 15, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 15, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 30,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 15, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 15, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 15, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 15, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -326,14 +305,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 39,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 16, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 16, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 16, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 40,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 16, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 16, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -396,14 +375,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 49,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 17, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 17, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 17, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 17, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 50,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 17, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 17, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 17, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 17, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -466,14 +445,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 59,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 18, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 18, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 18, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 18, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 60,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 18, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 18, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 18, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 18, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -536,14 +515,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 69,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 19, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 19, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 19, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 19, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 70,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 19, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 19, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 19, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 19, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -606,14 +585,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 79,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 20, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 20, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 20, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 20, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 80,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, "Frankfurt", new DateTime(2026, 1, 20, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 20, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Frankfurt", new DateTime(2026, 1, 20, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 20, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -675,15 +654,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 89,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTimeZone" },
-                values: new object[] { 7, new DateTime(2026, 1, 21, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Europe/Sarajevo" });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 21, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Europe/Sarajevo" });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 90,
-                columns: new[] { "AirlineId", "ArrivalTimeZone", "DepartureTimeZone" },
-                values: new object[] { 7, "Europe/Sarajevo", "Europe/Sarajevo" });
+                columns: new[] { "ArrivalTimeZone", "DepartureTimeZone" },
+                values: new object[] { "Europe/Sarajevo", "Europe/Sarajevo" });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -745,15 +724,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 99,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, "Munich", new DateTime(2026, 1, 22, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 22, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Munich", new DateTime(2026, 1, 22, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 22, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 100,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 22, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 22, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 22, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 22, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -816,14 +795,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 109,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 23, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 23, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 23, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 23, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 110,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 23, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 23, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 23, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 23, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -886,14 +865,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 119,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 24, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 24, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 24, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 24, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 120,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 24, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 24, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 24, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 24, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -956,14 +935,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 129,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 25, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 25, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 25, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 25, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 130,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 25, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 25, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 25, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 25, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1026,14 +1005,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 139,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 26, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 26, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 26, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 26, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 140,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 26, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 26, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 26, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 26, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1096,14 +1075,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 149,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 27, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 27, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 27, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 27, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 150,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 27, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 27, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 27, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 27, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1166,14 +1145,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 159,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 28, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 28, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 28, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 28, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 160,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Frankfurt", new DateTime(2026, 1, 28, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 28, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                values: new object[] { 3, 3, "Frankfurt", new DateTime(2026, 1, 28, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 28, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1236,14 +1215,14 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 169,
                 columns: new[] { "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, 3, "Munich", new DateTime(2026, 1, 29, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 29, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
+                values: new object[] { 3, 3, "Munich", new DateTime(2026, 1, 29, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 29, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 170,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 7, "Frankfurt", new DateTime(2026, 1, 29, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 29, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Frankfurt", new DateTime(2026, 1, 29, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 29, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1305,15 +1284,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 179,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
-                values: new object[] { 7, new DateTime(2026, 1, 30, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 30, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo" });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 30, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 30, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo" });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 180,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
-                values: new object[] { 7, new DateTime(2026, 1, 30, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 30, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo" });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 30, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", new DateTime(2026, 1, 30, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo" });
 
             migrationBuilder.InsertData(
                 table: "Flights",
@@ -1328,6 +1307,8 @@ namespace eAirFlow.Services.Migrations
                     { 186, 2, 2, "Berlin", new DateTime(2026, 1, 31, 17, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 90, "scheduled" },
                     { 187, 2, 2, "Rome", new DateTime(2026, 1, 31, 18, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 1, 31, 16, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 97, "scheduled" },
                     { 188, 2, 2, "Paris", new DateTime(2026, 1, 31, 19, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 1, 31, 17, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 104, "scheduled" },
+                    { 189, 3, 3, "Munich", new DateTime(2026, 1, 31, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 31, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130, "scheduled" },
+                    { 190, 3, 3, "Frankfurt", new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 31, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140, "scheduled" },
                     { 191, 1, 1, "Istanbul", new DateTime(2026, 2, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Moscow", "Sarajevo", new DateTime(2026, 2, 1, 8, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 150, "scheduled" },
                     { 192, 1, 1, "Berlin", new DateTime(2026, 2, 1, 11, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 9, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 155, "scheduled" },
                     { 193, 1, 1, "Rome", new DateTime(2026, 2, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 10, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 160, "scheduled" },
@@ -1335,7 +1316,9 @@ namespace eAirFlow.Services.Migrations
                     { 195, 1, 1, "New York", new DateTime(2026, 2, 1, 16, 0, 0, 0, DateTimeKind.Unspecified), "America/New_York", "Sarajevo", new DateTime(2026, 2, 1, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 170, "scheduled" },
                     { 196, 2, 2, "Berlin", new DateTime(2026, 2, 1, 17, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 15, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 90, "scheduled" },
                     { 197, 2, 2, "Rome", new DateTime(2026, 2, 1, 18, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 16, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 97, "scheduled" },
-                    { 198, 2, 2, "Paris", new DateTime(2026, 2, 1, 19, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 17, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 104, "scheduled" }
+                    { 198, 2, 2, "Paris", new DateTime(2026, 2, 1, 19, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Sarajevo", new DateTime(2026, 2, 1, 17, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 104, "scheduled" },
+                    { 199, 3, 3, "Munich", new DateTime(2026, 2, 1, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 2, 1, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130, "scheduled" },
+                    { 200, 3, 3, "Frankfurt", new DateTime(2026, 2, 1, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 2, 1, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140, "scheduled" }
                 });
 
             migrationBuilder.UpdateData(
@@ -1343,47 +1326,26 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "UserId",
                 keyValue: 1,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4060), "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=", "agB87CEIe3JaRYOaOW/Zow==" });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4118), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "UserId",
                 keyValue: 2,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4083), "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=", "agB87CEIe3JaRYOaOW/Zow==" });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4140), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "UserId",
                 keyValue: 3,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 14, 54, 1, 904, DateTimeKind.Utc).AddTicks(4097), "gef3w2wlvcMs9OULRp/FfYBiOYsheGUlXXxtwQ7ZMIA=", "agB87CEIe3JaRYOaOW/Zow==" });
-
-            migrationBuilder.InsertData(
-                table: "Airplanes",
-                columns: new[] { "AirplaneId", "AirlineId", "Model", "TotalSeats" },
-                values: new object[] { 4, 10, "Airbus A321", 200 });
-
-            migrationBuilder.InsertData(
-                table: "Flights",
-                columns: new[] { "FlightId", "AirlineId", "AirplaneId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureLocation", "DepartureTime", "DepartureTimeZone", "Price", "StateMachine" },
-                values: new object[,]
-                {
-                    { 189, 7, 3, "Munich", new DateTime(2026, 1, 31, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 31, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130, "scheduled" },
-                    { 190, 7, 3, "Frankfurt", new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 1, 31, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140, "scheduled" },
-                    { 199, 7, 3, "Munich", new DateTime(2026, 2, 1, 13, 30, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 2, 1, 12, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 130, "scheduled" },
-                    { 200, 7, 3, "Frankfurt", new DateTime(2026, 2, 1, 15, 0, 0, 0, DateTimeKind.Unspecified), "Europe/Sarajevo", "Mostar", new DateTime(2026, 2, 1, 13, 0, 0, 0, DateTimeKind.Utc), "Europe/Sarajevo", 140, "scheduled" }
-                });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4154), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "Airplanes",
-                keyColumn: "AirplaneId",
-                keyValue: 4);
-
             migrationBuilder.DeleteData(
                 table: "Flights",
                 keyColumn: "FlightId",
@@ -1484,28 +1446,6 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "FlightId",
                 keyValue: 200);
 
-            migrationBuilder.DeleteData(
-                table: "Airlines",
-                keyColumn: "AirlineId",
-                keyValue: 7);
-
-            migrationBuilder.DeleteData(
-                table: "Airlines",
-                keyColumn: "AirlineId",
-                keyValue: 10);
-
-            migrationBuilder.InsertData(
-                table: "Airlines",
-                columns: new[] { "AirlineId", "AirportId", "Country", "Name" },
-                values: new object[] { 3, 2, "Germany", "Lufthansa" });
-
-            migrationBuilder.UpdateData(
-                table: "Airplanes",
-                keyColumn: "AirplaneId",
-                keyValue: 3,
-                column: "AirlineId",
-                value: 3);
-
             migrationBuilder.UpdateData(
                 table: "Airports",
                 keyColumn: "AirportId",
@@ -1587,8 +1527,8 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 9,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 3, "Frankfurt", new DateTime(2026, 1, 12, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 12, 13, 0, 0, 0, DateTimeKind.Utc), null, 140 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Frankfurt", new DateTime(2026, 1, 12, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 12, 13, 0, 0, 0, DateTimeKind.Utc), null, 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -2084,8 +2024,8 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 80,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 3, "Munich", new DateTime(2026, 1, 20, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 20, 12, 0, 0, 0, DateTimeKind.Utc), null, 130 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Munich", new DateTime(2026, 1, 20, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 20, 12, 0, 0, 0, DateTimeKind.Utc), null, 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -2147,15 +2087,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 89,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTimeZone" },
-                values: new object[] { 3, new DateTime(2026, 1, 21, 14, 0, 0, 0, DateTimeKind.Utc), null, null });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 21, 14, 0, 0, 0, DateTimeKind.Utc), null, null });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 90,
-                columns: new[] { "AirlineId", "ArrivalTimeZone", "DepartureTimeZone" },
-                values: new object[] { 3, null, null });
+                columns: new[] { "ArrivalTimeZone", "DepartureTimeZone" },
+                values: new object[] { null, null });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -2217,8 +2157,8 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 99,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 3, "Frankfurt", new DateTime(2026, 1, 22, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 22, 13, 0, 0, 0, DateTimeKind.Utc), null, 140 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Frankfurt", new DateTime(2026, 1, 22, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 22, 13, 0, 0, 0, DateTimeKind.Utc), null, 140 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -2714,8 +2654,8 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 170,
-                columns: new[] { "AirlineId", "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
-                values: new object[] { 3, "Munich", new DateTime(2026, 1, 30, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 30, 12, 0, 0, 0, DateTimeKind.Utc), null, 130 });
+                columns: new[] { "ArrivalLocation", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone", "Price" },
+                values: new object[] { "Munich", new DateTime(2026, 1, 30, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 30, 12, 0, 0, 0, DateTimeKind.Utc), null, 130 });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -2777,15 +2717,15 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 179,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
-                values: new object[] { 3, new DateTime(2026, 1, 31, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 31, 12, 0, 0, 0, DateTimeKind.Utc), null });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 31, 14, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 31, 12, 0, 0, 0, DateTimeKind.Utc), null });
 
             migrationBuilder.UpdateData(
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 180,
-                columns: new[] { "AirlineId", "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
-                values: new object[] { 3, new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 31, 13, 0, 0, 0, DateTimeKind.Utc), null });
+                columns: new[] { "ArrivalTime", "ArrivalTimeZone", "DepartureTime", "DepartureTimeZone" },
+                values: new object[] { new DateTime(2026, 1, 31, 15, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 31, 13, 0, 0, 0, DateTimeKind.Utc), null });
 
             migrationBuilder.UpdateData(
                 table: "Users",
