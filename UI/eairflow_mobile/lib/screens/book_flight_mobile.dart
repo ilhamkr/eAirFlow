@@ -16,13 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:eairflow_mobile/utils/timezone_helper.dart';
 
 String _departureTimeZone(Flight flight) {
-  return flight.airport?.timeZoneId ??
+  return flight.departureTimeZone ??
+      flight.airport?.timeZoneId ??
       flight.airline?.airport?.timeZoneId ??
       'UTC';
 }
 
 String _arrivalTimeZone(Flight flight) {
-  return flight.airline?.airport?.timeZoneId ??
+   return flight.arrivalTimeZone ??
+      flight.airline?.airport?.timeZoneId ??
       flight.airport?.timeZoneId ??
       'UTC';
 }

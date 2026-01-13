@@ -62,14 +62,17 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
   Widget _flightCard(BuildContext context, Flight f) {
     String airportName =
         f.airline?.airport?.name ?? f.departureLocation ?? "Unknown Airport";
-        final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
-    final departureText = formatDateInTimeZone(f.departureTime, timeZoneId);
-    final arrivalText = formatDateInTimeZone(f.arrivalTime, timeZoneId);
+         final departureTimeZoneId =
+        f.departureTimeZone ?? f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+    final arrivalTimeZoneId =
+        f.arrivalTimeZone ?? f.airline?.airport?.timeZoneId ?? f.airport?.timeZoneId;
+    final departureText = formatDateInTimeZone(f.departureTime, departureTimeZoneId);
+    final arrivalText = formatDateInTimeZone(f.arrivalTime, arrivalTimeZoneId);
     final duration = calculateDurationWithTimeZones(
       f.departureTime,
-      timeZoneId,
+      departureTimeZoneId,
       f.arrivalTime,
-      timeZoneId,
+      arrivalTimeZoneId,
     );
 
     Color statusColor;

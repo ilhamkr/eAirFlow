@@ -12,8 +12,10 @@ class Flight {
   int? price;
   String? stateMachine;
   Airline? airline;
+  String? departureTimeZone;
+  String? arrivalTimeZone;
 
-   Airport? airport;
+  Airport? airport;
 
   Flight({
     this.flightId,
@@ -27,6 +29,8 @@ class Flight {
     this.stateMachine,
     this.airline,
     this.airport,
+    this.departureTimeZone,
+    this.arrivalTimeZone,
   });
 
   factory Flight.fromJson(Map<String, dynamic> json) => Flight(
@@ -49,5 +53,7 @@ class Flight {
         airport: json['airport'] != null
             ? Airport.fromJson(json['airport'])
             : null,
+        departureTimeZone: json['departureTimeZone'] as String?,
+        arrivalTimeZone: json['arrivalTimeZone'] as String?,
       );
 }
