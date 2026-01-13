@@ -241,6 +241,8 @@ namespace eAirFlow.Services.Services
 
         public override ModelFlight Insert(FlightInsertRequest request)
         {
+            request.DepartureTime = NormalizeToUtc(request.DepartureTime, request.DepartureTimeZone);
+            request.ArrivalTime = NormalizeToUtc(request.ArrivalTime, request.ArrivalTimeZone);
             var baseState = new BaseFlightState(_context, _mapper, _provider);
             var state = baseState.CreateState("scheduled");
             return state.Insert(request);
@@ -279,6 +281,8 @@ namespace eAirFlow.Services.Services
 
         public ModelFlight AdminInsert(FlightInsertRequest request)
         {
+            request.DepartureTime = NormalizeToUtc(request.DepartureTime, request.DepartureTimeZone);
+            request.ArrivalTime = NormalizeToUtc(request.ArrivalTime, request.ArrivalTimeZone);
             var airline = _context.Airlines
                 .Include(a => a.Airplanes)
                 .FirstOrDefault(a => a.AirlineId == request.AirlineId);
@@ -298,6 +302,8 @@ namespace eAirFlow.Services.Services
                 ArrivalLocation = request.ArrivalLocation,
                 DepartureTime = request.DepartureTime,
                 ArrivalTime = request.ArrivalTime,
+                DepartureTimeZone = request.DepartureTimeZone,
+                ArrivalTimeZone = request.ArrivalTimeZone,
                 AirlineId = request.AirlineId,
                 Price = request.Price,
                 StateMachine = "scheduled"
@@ -307,6 +313,34 @@ namespace eAirFlow.Services.Services
             _context.SaveChanges();
 
             return _mapper.Map<ModelFlight>(db);
+        }
+
+        private static DateTime? NormalizeToUtc(DateTime? dateTime, string? timeZoneId)
+        {
+            if (dateTime == null)
+                return null;
+
+            if (dateTime.Value.Kind == DateTimeKind.Utc)
+                return dateTime;
+
+            if (string.IsNullOrWhiteSpace(timeZoneId))
+                return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+
+            try
+            {
+                var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                return TimeZoneInfo.ConvertTimeToUtc(
+                    DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Unspecified),
+                    timeZone);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+            }
+            catch (InvalidTimeZoneException)
+            {
+                return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+            }
         }
 
         public Dictionary<string, List<string>> GetFutureLocations(int airlineId)
@@ -342,6 +376,8 @@ namespace eAirFlow.Services.Services
 
         public override ModelFlight Update(int id, FlightUpdateRequest request)
         {
+            request.DepartureTime = NormalizeToUtc(request.DepartureTime, request.DepartureTimeZone);
+            request.ArrivalTime = NormalizeToUtc(request.ArrivalTime, request.ArrivalTimeZone);
             var dbEntity = GetDbEntity(id);
             var state = GetState(dbEntity);
             return state.Update(id, request);

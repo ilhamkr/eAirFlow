@@ -19,6 +19,8 @@ namespace eAirFlow.Services.Mapping
                 .Map(dest => dest.ArrivalLocation, src => src.ArrivalLocation)
                 .Map(dest => dest.DepartureTime, src => src.DepartureTime)
                 .Map(dest => dest.ArrivalTime, src => src.ArrivalTime)
+                .Map(dest => dest.DepartureTimeZone, src => src.DepartureTimeZone)
+                .Map(dest => dest.ArrivalTimeZone, src => src.ArrivalTimeZone)
                 .Map(dest => dest.Price, src => src.Price)
                 .Map(dest => dest.StateMachine, src => src.StateMachine)
                 .Map(dest => dest.Airline, src => src.Airline);

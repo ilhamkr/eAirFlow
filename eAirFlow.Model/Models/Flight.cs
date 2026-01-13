@@ -15,6 +15,8 @@ namespace eAirFlow.Model.Models
         public DateTime? DepartureTime { get; set; }
 
         public DateTime? ArrivalTime { get; set; }
+        public string? DepartureTimeZone { get; set; }
+        public string? ArrivalTimeZone { get; set; }
 
         public int? AirlineId { get; set; }
 

@@ -50,6 +50,23 @@ tz.TZDateTime _toTimeZoneDateTime(DateTime dateTime, String? timeZoneId) {
   );
 }
 
+DateTime toUtcFromTimeZone(DateTime dateTime, String? timeZoneId) {
+  final location = _safeLocation(timeZoneId);
+  final tzDate = tz.TZDateTime(
+    location,
+    dateTime.year,
+    dateTime.month,
+    dateTime.day,
+    dateTime.hour,
+    dateTime.minute,
+    dateTime.second,
+    dateTime.millisecond,
+    dateTime.microsecond,
+  );
+
+  return tzDate.toUtc();
+}
+
 Duration? calculateDurationWithTimeZones(
     DateTime? departure,
     String? departureTimeZone,

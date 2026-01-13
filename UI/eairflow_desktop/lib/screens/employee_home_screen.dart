@@ -119,17 +119,17 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
           const SizedBox(height: 12),
 
           ...activeOperations.map((f) {
-            final timeZoneId = f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+            final timeZone = f.airport?.timeZone ?? f.airline?.airport?.timeZone;
 
            String subtitle = switch (f.stateMachine) {
               "boarding" =>
                   "Flight - ${f.departureLocation ?? ""} → ${f.arrivalLocation ?? ""} • Boarding now",
             
               "delayed" =>
-                  "New departure: ${formatDateInTimeZone(f.departureTime, timeZoneId)}",
+                  "New departure: ${formatDateInTimeZone(f.departureTime, timeZone)}",
             
               "scheduled" =>
-                  "Departure: ${formatDateInTimeZone(f.departureTime, timeZoneId)}",
+                  "Departure: ${formatDateInTimeZone(f.departureTime, timeZone)}",
             
               _ => "",
             };

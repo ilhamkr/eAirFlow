@@ -16,13 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:eairflow_desktop/utils/timezone_helper.dart';
 
 String _departureTimeZone(Flight flight) {
-  return flight.airport?.timeZone ??
+   return flight.departureTimeZone ??
+      flight.airport?.timeZone ??
       flight.airline?.airport?.timeZone ??
       'UTC';
 }
 
 String _arrivalTimeZone(Flight flight) {
-  return flight.airline?.airport?.timeZone ??
+  return flight.arrivalTimeZone ??
+      flight.airline?.airport?.timeZone ??
       flight.airport?.timeZone ??
       'UTC';
 }
@@ -216,8 +218,8 @@ class _BookFlightCardState extends State<BookFlightCard> {
   Future<void> _searchFlights() async {
     if (selectedAirportId == null ||
         selectedAirlineId == null ||
-        _fromCtrl.text.trim().isEmpty ||
-        _toCtrl.text.trim().isEmpty ||
+        selectedFrom == null ||
+        selectedTo == null ||
         selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all fields")),
@@ -237,8 +239,8 @@ class _BookFlightCardState extends State<BookFlightCard> {
 
       final res = await fp.get(filter: {
         "airlineId": selectedAirlineId,
-        "departureLocation": _fromCtrl.text,
-        "arrivalLocation": _toCtrl.text,
+        "departureLocation": selectedFrom,
+        "arrivalLocation": selectedTo,
         "date": dateStr,
       });
 
@@ -767,35 +769,22 @@ class FlightResultCard extends StatelessWidget {
     required this.reservations,
   });
 
-  String _formatDate(DateTime d) {
-    final months = [
-      "Jan","Feb","Mar","Apr","May","Jun",
-      "Jul","Aug","Sep","Oct","Nov","Dec"
-    ];
-    final h = d.hour.toString().padLeft(2, '0');
-    final m = d.minute.toString().padLeft(2, '0');
-    return "${d.day} ${months[d.month - 1]} ${d.year}  $h:$m";
-  }
-
   Duration? get _duration {
-  if (flight.departureTime == null || flight.arrivalTime == null) return null;
-
-  DateTime dep = flight.departureTime!;
-  DateTime arr = flight.arrivalTime!;
-
-  if (arr.isBefore(dep)) {
-    arr = arr.add(const Duration(days: 1));
-  }
-
-  return arr.difference(dep);
+  return calculateDurationWithTimeZones(
+      flight.departureTime,
+      _departureTimeZone(flight),
+      flight.arrivalTime,
+      _arrivalTimeZone(flight),
+    );
 }
 
 
   String get _durationText {
     final d = _duration;
     if (d == null) return "";
-    final h = d.inHours;
-    final m = d.inMinutes.remainder(60);
+    final duration = d.isNegative ? d.abs() : d;
+    final h = duration.inHours;
+    final m = duration.inMinutes.remainder(60);
     return "${h}h ${m}m";
   }
 
@@ -849,7 +838,7 @@ Widget build(BuildContext context) {
                 child: _locationBlock(
                   title: flight.departureLocation ?? "-",
                   time: flight.departureTime != null
-                      ? _formatDate(flight.departureTime!)
+                      ? _formatFlightDateTime(flight, flight.departureTime)
                       : "-",
                   alignEnd: false,
                 ),
@@ -880,7 +869,7 @@ Widget build(BuildContext context) {
                 child: _locationBlock(
                   title: flight.arrivalLocation ?? "-",
                   time: flight.arrivalTime != null
-                      ? _formatDate(flight.arrivalTime!)
+                      ? _formatFlightDateTime(flight, flight.arrivalTime, isArrival: true)
                       : "-",
                   alignEnd: true,
                 ),

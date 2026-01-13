@@ -24,8 +24,8 @@ namespace eAirFlow.Services.Database
 
 
             modelBuilder.Entity<Airport>().HasData(
-                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina", TimeZone=""},
-                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina", TimeZone = "" });
+                new Airport { AirportId = 1, Name = "Sarajevo International Airport", City = "Sarajevo", Country = "Bosnia and Herzegovina", TimeZone="Europe/Sarajevo"},
+                new Airport { AirportId = 2, Name = "Mostar International Airport", City = "Mostar", Country = "Bosnia and Herzegovina", TimeZone = "Europe/Sarajevo" });
 
             modelBuilder.Entity<Airline>().HasData(
                 new Airline { AirlineId = 1, Name = "Turkish Airlines", Country = "Turkey", AirportId = 1 },
@@ -155,18 +155,69 @@ namespace eAirFlow.Services.Database
 
             DateTime start = DateTime.UtcNow.Date;
 
-            string[] sarajevoDest = { "Istanbul", "Berlin", "Roma", "Paris" };
+            string departureSarajevoTimeZone = "Europe/Sarajevo";
+            string departureMostarTimeZone = "Europe/Sarajevo";
+
+            string[] sarajevoDest = { "Istanbul", "Berlin", "Rome", "Paris", "New York" };
+            string[] sarajevoDestTimeZone = {
+                "Europe/Moscow",
+                "Europe/Sarajevo",
+                "Europe/Sarajevo",
+                "Europe/Sarakevo",
+                "America/New_York"
+            };
+            TimeSpan[] sarajevoDurations = {
+                TimeSpan.FromHours(2),
+                TimeSpan.FromHours(2.5),
+                TimeSpan.FromHours(2),
+                TimeSpan.FromHours(2.5),
+                TimeSpan.FromHours(10)
+            };
+            
             string[] mostarDest = { "Munich", "Frankfurt" };
+            string[] mostarDestTimeZone = { "Europe/Sarajevo", "Europe/Sarajevo" };
+            TimeSpan[] mostarDurations = { TimeSpan.FromHours(1.5), TimeSpan.FromHours(2) };
+
+            TimeZoneInfo ResolveTimeZone(string timeZoneId)
+            {
+                if (string.IsNullOrWhiteSpace(timeZoneId))
+                {
+                    return TimeZoneInfo.Utc;
+                }
+
+                try
+                {
+                    return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                }
+                catch
+                {
+                    return TimeZoneInfo.Utc;
+                }
+            }
+
+            DateTime CalculateArrivalLocal(DateTime departureLocal, string departureTimeZone, string arrivalTimeZone, TimeSpan duration)
+            {
+                var departureZone = ResolveTimeZone(departureTimeZone);
+                var arrivalZone = ResolveTimeZone(arrivalTimeZone);
+                var departureUnspecified = DateTime.SpecifyKind(departureLocal, DateTimeKind.Unspecified);
+                var departureOffset = new DateTimeOffset(departureUnspecified, departureZone.GetUtcOffset(departureUnspecified));
+                var arrivalUtc = departureOffset.ToUniversalTime().Add(duration);
+                var arrivalLocal = TimeZoneInfo.ConvertTime(arrivalUtc, arrivalZone);
+                return arrivalLocal.DateTime;
+            }
 
             for (int day = 0; day < 20; day++)
             {
                 DateTime date = start.AddDays(day);
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < sarajevoDest.Length; i++)
                 {
-                    string dest = sarajevoDest[i % sarajevoDest.Length];
+                    int index = i % sarajevoDest.Length;
+                    string dest = sarajevoDest[index];
+                    string arrivalTimeZone = sarajevoDestTimeZone[index];
+                    TimeSpan duration = sarajevoDurations[index];
                     DateTime dep = date.AddHours(8 + i);
-                    DateTime arr = date.AddHours(10 + i);
+                    DateTime arr = CalculateArrivalLocal(dep, departureSarajevoTimeZone, arrivalTimeZone, duration);
                     int price = 150 + i * 5;
 
                     flights.Add(new Flight
@@ -176,6 +227,8 @@ namespace eAirFlow.Services.Database
                         ArrivalLocation = dest,
                         DepartureTime = dep,
                         ArrivalTime = arr,
+                        DepartureTimeZone = departureSarajevoTimeZone,
+                        ArrivalTimeZone = arrivalTimeZone,
                         AirlineId = turkishId,
                         AirplaneId = 1,
                         Price = price,
@@ -185,9 +238,12 @@ namespace eAirFlow.Services.Database
 
                 for (int i = 0; i < 3; i++)
                 {
-                    string dest = sarajevoDest[(i + 1) % sarajevoDest.Length];
+                    int index = (i + 1) % sarajevoDest.Length;
+                    string dest = sarajevoDest[index];
+                    string arrivalTimeZone = sarajevoDestTimeZone[index];
+                    TimeSpan duration = sarajevoDurations[index];
                     DateTime dep = date.AddHours(15 + i);
-                    DateTime arr = date.AddHours(17 + i);
+                    DateTime arr = CalculateArrivalLocal(dep, departureSarajevoTimeZone, arrivalTimeZone, duration);
                     int price = 90 + i * 7;
 
                     flights.Add(new Flight
@@ -197,6 +253,8 @@ namespace eAirFlow.Services.Database
                         ArrivalLocation = dest,
                         DepartureTime = dep,
                         ArrivalTime = arr,
+                        DepartureTimeZone = departureSarajevoTimeZone,
+                        ArrivalTimeZone = arrivalTimeZone,
                         AirlineId = ryanairId,
                         AirplaneId = 2,
                         Price = price,
@@ -206,9 +264,12 @@ namespace eAirFlow.Services.Database
 
                 for (int i = 0; i < 2; i++)
                 {
-                    string dest = mostarDest[i % mostarDest.Length];
+                    int index = i % mostarDest.Length;
+                    string dest = mostarDest[index];
+                    string arrivalTimeZone = mostarDestTimeZone[index];
+                    TimeSpan duration = mostarDurations[index];
                     DateTime dep = date.AddHours(12 + i);
-                    DateTime arr = date.AddHours(14 + i);
+                    DateTime arr = CalculateArrivalLocal(dep, departureMostarTimeZone, arrivalTimeZone, duration);
                     int price = 130 + i * 10;
 
                     flights.Add(new Flight
@@ -218,6 +279,8 @@ namespace eAirFlow.Services.Database
                         ArrivalLocation = dest,
                         DepartureTime = dep,
                         ArrivalTime = arr,
+                        DepartureTimeZone = departureMostarTimeZone,
+                        ArrivalTimeZone = arrivalTimeZone,
                         AirlineId = lufthansaId,
                         AirplaneId = 3,
                         Price = price,

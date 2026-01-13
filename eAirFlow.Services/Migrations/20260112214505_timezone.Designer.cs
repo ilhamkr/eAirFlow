@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eAirFlow.Services.Database;
 
@@ -11,9 +12,11 @@ using eAirFlow.Services.Database;
 namespace eAirFlow.Services.Migrations
 {
     [DbContext(typeof(_210019Context))]
-    partial class _210019ContextModelSnapshot : ModelSnapshot
+    [Migration("20260112214505_timezone")]
+    partial class timezone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

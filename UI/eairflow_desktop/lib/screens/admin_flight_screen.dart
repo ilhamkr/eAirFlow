@@ -282,16 +282,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
             TextField(controller: city, decoration: const InputDecoration(labelText: "City")),
             TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: "Time zone"),
-              items: timeZones
-                  .map((tz) => DropdownMenuItem(
-                        value: tz.timeZoneId,
-                        child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
-                      ))
-                  .toList(),
-              onChanged: (value) => selectedTimeZoneId = value,
-            ),
           ],
         ),
         actions: [
@@ -304,8 +294,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             onPressed: () async {
               if (name.text.isEmpty ||
                   city.text.isEmpty ||
-                  country.text.isEmpty ||
-                  selectedTimeZoneId == null) {
+                  country.text.isEmpty) {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
@@ -323,7 +312,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 "name": name.text,
                 "city": city.text,
                 "country": country.text,
-                "timeZoneId": selectedTimeZoneId,
               });
 
               Navigator.pop(context);
@@ -339,7 +327,7 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     final name = TextEditingController(text: airport.name);
     final city = TextEditingController(text: airport.city);
     final country = TextEditingController(text: airport.country);
-    String? selectedTimeZoneId = airport.timeZone;
+    String? selectedTimeZone = airport.timeZone;
 
     showDialog(
       context: context,
@@ -351,17 +339,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             TextField(controller: name, decoration: const InputDecoration(labelText: "Name")),
             TextField(controller: city, decoration: const InputDecoration(labelText: "City")),
             TextField(controller: country, decoration: const InputDecoration(labelText: "Country")),
-            DropdownButtonFormField<String>(
-              value: selectedTimeZoneId,
-              decoration: const InputDecoration(labelText: "Time zone"),
-              items: timeZones
-                  .map((tz) => DropdownMenuItem(
-                        value: tz.timeZoneId,
-                        child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
-                      ))
-                  .toList(),
-              onChanged: (value) => selectedTimeZoneId = value,
-            ),
           ],
         ),
         actions: [
@@ -376,7 +353,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 "name": name.text,
                 "city": city.text,
                 "country": country.text,
-                "timeZoneId": selectedTimeZoneId,
               });
 
               Navigator.pop(context);
@@ -564,8 +540,6 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   }
 
   void addFlightDialog() {
-  final dep = TextEditingController();
-    final arr = TextEditingController();
     final price = TextEditingController();
     final depTime = TextEditingController();
     final arrTime = TextEditingController();
@@ -573,8 +547,16 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     String? depError;
     String? arrError;
     String? priceError;
+    String? departureAirportError;
+    String? arrivalAirportError;
+    String? departureTimeZoneError;
+    String? arrivalTimeZoneError;
 
     int? selectedAirline;
+    int? selectedDepartureAirport;
+    int? selectedArrivalAirport;
+    String? selectedDepartureTimeZoneId;
+    String? selectedArrivalTimeZoneId;
 
     showDialog(
       context: context,
@@ -584,21 +566,100 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
           content: SingleChildScrollView(
             child: Column(
               children: [
-
-              TextField(
-                controller: dep,
-                decoration: const InputDecoration(
-                  labelText: "Departure location",
-                  prefixIcon: Icon(Icons.flight_takeoff),
+                DropdownButtonFormField<int>(
+                value: selectedDepartureAirport,
+                decoration: InputDecoration(
+                  labelText: "Departure airport",
+                  prefixIcon: const Icon(Icons.flight_takeoff),
+                  errorText: departureAirportError,
                 ),
+                items: airports
+                    .map((airport) => DropdownMenuItem(
+                          value: airport.airportId,
+                          child: Text(
+                            "${airport.name ?? ""} (${airport.city ?? ""})",
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setLocal(() {
+                    selectedDepartureAirport = value;
+                    if (selectedArrivalAirport == value) {
+                      selectedArrivalAirport = null;
+                    }
+                    departureAirportError =
+                        value == null ? "Select a departure airport." : null;
+                  });
+                },
               ),
 
-              TextField(
-                controller: arr,
-                decoration: const InputDecoration(
-                  labelText: "Arrival location",
-                  prefixIcon: Icon(Icons.flight_land),
+              DropdownButtonFormField<int>(
+                value: selectedArrivalAirport,
+                decoration: InputDecoration(
+                  labelText: "Arrival airport",
+                  prefixIcon: const Icon(Icons.flight_land),
+                  errorText: arrivalAirportError,
                 ),
+                 items: airports
+                    .where((airport) => airport.airportId != selectedDepartureAirport)
+                    .map((airport) => DropdownMenuItem(
+                          value: airport.airportId,
+                          child: Text(
+                            "${airport.name ?? ""} (${airport.city ?? ""})",
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setLocal(() {
+                    selectedArrivalAirport = value;
+                    arrivalAirportError =
+                        value == null ? "Select an arrival airport." : null;
+                  });
+                },
+              ),
+
+               DropdownButtonFormField<String>(
+                value: selectedDepartureTimeZoneId,
+                decoration: InputDecoration(
+                  labelText: "Departure time zone",
+                  prefixIcon: const Icon(Icons.public),
+                  errorText: departureTimeZoneError,
+                ),
+                items: timeZones
+                    .map((tz) => DropdownMenuItem(
+                          value: tz.timeZoneId,
+                          child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setLocal(() {
+                    selectedDepartureTimeZoneId = value;
+                    departureTimeZoneError =
+                        value == null ? "Select a departure time zone." : null;
+                  });
+                },
+              ),
+
+              DropdownButtonFormField<String>(
+                value: selectedArrivalTimeZoneId,
+                decoration: InputDecoration(
+                  labelText: "Arrival time zone",
+                  prefixIcon: const Icon(Icons.public),
+                  errorText: arrivalTimeZoneError,
+                ),
+                items: timeZones
+                    .map((tz) => DropdownMenuItem(
+                          value: tz.timeZoneId,
+                          child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setLocal(() {
+                    selectedArrivalTimeZoneId = value;
+                    arrivalTimeZoneError =
+                        value == null ? "Select an arrival time zone." : null;
+                  });
+                },
               ),
 
               TextField(
@@ -687,16 +748,35 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
           ElevatedButton(
             child: const Text("Save"),
             onPressed: () async {
+              setLocal(() {
+                departureAirportError = selectedDepartureAirport == null
+                    ? "Select a departure airport."
+                    : null;
+                arrivalAirportError =
+                    selectedArrivalAirport == null ? "Select an arrival airport." : null;
+                departureTimeZoneError = selectedDepartureTimeZoneId == null
+                    ? "Select a departure time zone."
+                    : null;
+                arrivalTimeZoneError = selectedArrivalTimeZoneId == null
+                    ? "Select an arrival time zone."
+                    : null;
+              });
 
-              if (dep.text.isEmpty ||
-                  arr.text.isEmpty ||
-                  price.text.isEmpty ||
+              if (price.text.isEmpty ||
                   depTime.text.isEmpty ||
                   arrTime.text.isEmpty ||
                   selectedAirline == null ||
+                  selectedDepartureAirport == null ||
+                  selectedArrivalAirport == null ||
+                  selectedDepartureTimeZoneId == null ||
+                  selectedArrivalTimeZoneId == null ||
                   depError != null ||
                   arrError != null ||
-                  priceError != null) {
+                  priceError != null ||
+                  departureAirportError != null ||
+                  arrivalAirportError != null ||
+                  departureTimeZoneError != null ||
+                  arrivalTimeZoneError != null) {
                 return;
               }
 
@@ -705,12 +785,26 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               if (departureDate == null || arrivalDate == null) return;
 
+              final departureUtc =
+                  toUtcFromTimeZone(departureDate, selectedDepartureTimeZoneId);
+              final arrivalUtc =
+                  toUtcFromTimeZone(arrivalDate, selectedArrivalTimeZoneId);
+
+              final departureAirport = airports.firstWhere(
+                (airport) => airport.airportId == selectedDepartureAirport,
+              );
+              final arrivalAirport = airports.firstWhere(
+                (airport) => airport.airportId == selectedArrivalAirport,
+              );
+
               await flightProv.insertAdmin({
-                "departureLocation": dep.text,
-                "arrivalLocation": arr.text,
+                "departureLocation": departureAirport.name ?? "",
+                "arrivalLocation": arrivalAirport.name ?? "",
                 "price": int.parse(price.text),
-                "departureTime": departureDate.toIso8601String(),
-                "arrivalTime": arrivalDate.toIso8601String(),
+                "departureTime": departureUtc.toIso8601String(),
+                "arrivalTime": arrivalUtc.toIso8601String(),
+                "departureTimeZone": selectedDepartureTimeZoneId,
+                "arrivalTimeZone": selectedArrivalTimeZoneId,
                 "airlineId": selectedAirline,
               });
 
@@ -727,19 +821,37 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
 
 
-    void editFlightDialog(Flight flight) {
-    final dep = TextEditingController(text: flight.departureLocation);
-    final arr = TextEditingController(text: flight.arrivalLocation);
+  void editFlightDialog(Flight flight) {
+    final depTime = TextEditingController(text: _formatDateTime(flight.departureTime));
+    final arrTime = TextEditingController(text: _formatDateTime(flight.arrivalTime));
     final price = TextEditingController(text: flight.price?.toString());
-    final depTime =
-        TextEditingController(text: _formatDateTime(flight.departureTime));
-    final arrTime =
-        TextEditingController(text: _formatDateTime(flight.arrivalTime));
 
     String? depError;
     String? arrError;
+    String? departureAirportError;
+    String? arrivalAirportError;
+    String? departureTimeZoneError;
+    String? arrivalTimeZoneError;
 
     int? selectedAirline = flight.airlineId;
+     int? selectedDepartureAirport = airports
+        .firstWhere(
+          (airport) =>
+              airport.name == flight.departureLocation ||
+              airport.city == flight.departureLocation,
+          orElse: () => Airport(),
+        )
+        .airportId;
+    int? selectedArrivalAirport = airports
+        .firstWhere(
+          (airport) =>
+              airport.name == flight.arrivalLocation ||
+              airport.city == flight.arrivalLocation,
+          orElse: () => Airport(),
+        )
+        .airportId;
+    String? selectedDepartureTimeZoneId = flight.departureTimeZone;
+    String? selectedArrivalTimeZoneId = flight.arrivalTimeZone;
     final isLocked = flight.stateMachine?.toLowerCase() == "boarding";
 
     showDialog(
@@ -766,22 +878,108 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                   ),
                 ),
 
-              TextField(
-                controller: dep,
-                enabled: !isLocked,
-                decoration: const InputDecoration(
-                  labelText: "Departure location",
-                  prefixIcon: Icon(Icons.flight_takeoff),
+               DropdownButtonFormField<int>(
+                value: selectedDepartureAirport,
+                decoration: InputDecoration(
+                  labelText: "Departure airport",
+                  prefixIcon: const Icon(Icons.flight_takeoff),
+                  errorText: departureAirportError,
                 ),
+                items: airports
+                    .map((airport) => DropdownMenuItem(
+                          value: airport.airportId,
+                          child: Text(
+                            "${airport.name ?? ""} (${airport.city ?? ""})",
+                          ),
+                        ))
+                    .toList(),
+                onChanged: isLocked
+                    ? null
+                    : (value) {
+                        setLocal(() {
+                          selectedDepartureAirport = value;
+                          if (selectedArrivalAirport == value) {
+                            selectedArrivalAirport = null;
+                          }
+                          departureAirportError =
+                              value == null ? "Select a departure airport." : null;
+                        });
+                      },
               ),
 
-              TextField(
-                controller: arr,
-                enabled: !isLocked,
-                decoration: const InputDecoration(
-                  labelText: "Arrival location",
-                  prefixIcon: Icon(Icons.flight_land),
+               DropdownButtonFormField<int>(
+                value: selectedArrivalAirport,
+                decoration: InputDecoration(
+                  labelText: "Arrival airport",
+                  prefixIcon: const Icon(Icons.flight_land),
+                  errorText: arrivalAirportError,
                 ),
+                 items: airports
+                    .where((airport) => airport.airportId != selectedDepartureAirport)
+                    .map((airport) => DropdownMenuItem(
+                          value: airport.airportId,
+                          child: Text(
+                            "${airport.name ?? ""} (${airport.city ?? ""})",
+                          ),
+                        ))
+                    .toList(),
+                onChanged: isLocked
+                    ? null
+                    : (value) {
+                        setLocal(() {
+                          selectedArrivalAirport = value;
+                          arrivalAirportError =
+                              value == null ? "Select an arrival airport." : null;
+                        });
+                      },
+              ),
+
+              DropdownButtonFormField<String>(
+                value: selectedDepartureTimeZoneId,
+                decoration: InputDecoration(
+                  labelText: "Departure time zone",
+                  prefixIcon: const Icon(Icons.public),
+                  errorText: departureTimeZoneError,
+                ),
+                items: timeZones
+                    .map((tz) => DropdownMenuItem(
+                          value: tz.timeZoneId,
+                          child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                        ))
+                    .toList(),
+                onChanged: isLocked
+                    ? null
+                    : (value) {
+                        setLocal(() {
+                          selectedDepartureTimeZoneId = value;
+                          departureTimeZoneError =
+                              value == null ? "Select a departure time zone." : null;
+                        });
+                      },
+              ),
+
+              DropdownButtonFormField<String>(
+                value: selectedArrivalTimeZoneId,
+                decoration: InputDecoration(
+                  labelText: "Arrival time zone",
+                  prefixIcon: const Icon(Icons.public),
+                  errorText: arrivalTimeZoneError,
+                ),
+                items: timeZones
+                    .map((tz) => DropdownMenuItem(
+                          value: tz.timeZoneId,
+                          child: Text(tz.displayName ?? tz.timeZoneId ?? ""),
+                        ))
+                    .toList(),
+                onChanged: isLocked
+                    ? null
+                    : (value) {
+                        setLocal(() {
+                          selectedArrivalTimeZoneId = value;
+                          arrivalTimeZoneError =
+                              value == null ? "Select an arrival time zone." : null;
+                        });
+                      },
               ),
 
               TextField(
@@ -872,20 +1070,58 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
             onPressed: isLocked
                 ? null
                 : () async {
+                   setLocal(() {
+                      departureAirportError = selectedDepartureAirport == null
+                          ? "Select a departure airport."
+                          : null;
+                      arrivalAirportError =
+                          selectedArrivalAirport == null ? "Select an arrival airport." : null;
+                      departureTimeZoneError = selectedDepartureTimeZoneId == null
+                          ? "Select a departure time zone."
+                          : null;
+                      arrivalTimeZoneError = selectedArrivalTimeZoneId == null
+                          ? "Select an arrival time zone."
+                          : null;
+                    });
 
-                    if (depError != null || arrError != null) return;
+                   if (depError != null ||
+                        arrError != null ||
+                        selectedDepartureAirport == null ||
+                        selectedArrivalAirport == null ||
+                        selectedDepartureTimeZoneId == null ||
+                        selectedArrivalTimeZoneId == null ||
+                        departureAirportError != null ||
+                        arrivalAirportError != null ||
+                        departureTimeZoneError != null ||
+                        arrivalTimeZoneError != null) {
+                      return;
+                    }
 
-                     final departureDate = _tryParseDateTime(depTime.text);
+                    final departureDate = _tryParseDateTime(depTime.text);
                     final arrivalDate = _tryParseDateTime(arrTime.text);
 
                     if (departureDate == null || arrivalDate == null) return;
 
+                    final departureUtc =
+                        toUtcFromTimeZone(departureDate, selectedDepartureTimeZoneId);
+                    final arrivalUtc =
+                        toUtcFromTimeZone(arrivalDate, selectedArrivalTimeZoneId);
+
+                    final departureAirport = airports.firstWhere(
+                      (airport) => airport.airportId == selectedDepartureAirport,
+                    );
+                    final arrivalAirport = airports.firstWhere(
+                      (airport) => airport.airportId == selectedArrivalAirport,
+                    );
+
                     await flightProv.update(flight.flightId!, {
-                      "departureLocation": dep.text,
-                      "arrivalLocation": arr.text,
+                      "departureLocation": departureAirport.name ?? "",
+                      "arrivalLocation": arrivalAirport.name ?? "",
                       "price": int.tryParse(price.text),
-                      "departureTime": departureDate.toIso8601String(),
-                      "arrivalTime": arrivalDate.toIso8601String(),
+                      "departureTime": departureUtc.toIso8601String(),
+                      "arrivalTime": arrivalUtc.toIso8601String(),
+                      "departureTimeZone": selectedDepartureTimeZoneId,
+                      "arrivalTimeZone": selectedArrivalTimeZoneId,
                       "airlineId": selectedAirline,
                     });
 

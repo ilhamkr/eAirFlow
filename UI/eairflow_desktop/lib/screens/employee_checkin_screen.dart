@@ -94,11 +94,11 @@ class _EmployeeCheckInScreenState extends State<EmployeeCheckInScreen> {
         itemBuilder: (context, index) {
           final c = checkins[index];
           final r = c.reservation;
-          final timeZoneId = r?.airport?.timeZoneId ?? r?.flight?.airport?.timeZoneId;
+          final timeZone = r?.airport?.timeZone ?? r?.flight?.airport?.timeZone;
           final departureText =
-              formatDateInTimeZone(r?.flight?.departureTime, timeZoneId);
+              formatDateInTimeZone(r?.flight?.departureTime, timeZone);
           final paymentDateText =
-              formatDateInTimeZone(r?.payment?.transactionDate, timeZoneId);
+              formatDateInTimeZone(r?.payment?.transactionDate, timeZone);
 
           return Card(
             elevation: 6,

@@ -10,6 +10,8 @@ namespace eAirFlow.Model.Requests
         public string? ArrivalLocation { get; set; }
         public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
+        public string? DepartureTimeZone { get; set; }
+        public string? ArrivalTimeZone { get; set; }
         public int? AirlineId { get; set; }
         public int? Price { get; set; }
 
