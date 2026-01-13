@@ -32,16 +32,14 @@ class Flight {
     this.arrivalTimeZone,
   });
 
+  
+
   factory Flight.fromJson(Map<String, dynamic> json) => Flight(
         flightId: json['flightId'] as int?,
         departureLocation: json['departureLocation'] as String?,
         arrivalLocation: json['arrivalLocation'] as String?,
-        departureTime: json['departureTime'] != null
-            ? DateTime.tryParse(json['departureTime'])
-            : null,
-        arrivalTime: json['arrivalTime'] != null
-            ? DateTime.tryParse(json['arrivalTime'])
-            : null,
+         departureTime: _parseUtcDateTime(json['departureTime']),
+        arrivalTime: _parseUtcDateTime(json['arrivalTime']),
         airlineId: json['airlineId'] as int?,
         airplaneId: json['airplaneId'] as int?,
         price: json['price'] as int?,
@@ -55,4 +53,22 @@ class Flight {
         departureTimeZone: json['departureTimeZone'] as String?,
         arrivalTimeZone: json['arrivalTimeZone'] as String?,
       );
+      
+}
+
+DateTime? _parseUtcDateTime(dynamic value) {
+  if (value == null) return null;
+  final parsed = DateTime.tryParse(value.toString());
+  if (parsed == null) return null;
+  if (parsed.isUtc) return parsed;
+  return DateTime.utc(
+    parsed.year,
+    parsed.month,
+    parsed.day,
+    parsed.hour,
+    parsed.minute,
+    parsed.second,
+    parsed.millisecond,
+    parsed.microsecond,
+  );
 }

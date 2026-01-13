@@ -192,8 +192,7 @@ class _EmployeeHomeScreenMobileState extends State<EmployeeHomeScreen> {
 
             ...activeOperations.map((f) {
               String subtitle = "";
-              final timeZoneId =
-                  f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
+               final timeZoneId = f.departureTimeZone ?? "UTC";
               final departureText =
                   formatDateInTimeZone(f.departureTime, timeZoneId);
 

@@ -92,7 +92,7 @@ class _EmployeeCheckInScreenMobileState
       itemBuilder: (context, index) {
         final c = checkins[index];
         final r = c.reservation;
-        final timeZoneId = r?.airport?.timeZoneId ?? r?.flight?.airport?.timeZoneId;
+        final timeZoneId = r?.flight?.departureTimeZone ?? "UTC";
         final departureText =
             formatDateInTimeZone(r?.flight?.departureTime, timeZoneId);
         final paymentDateText =

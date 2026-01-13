@@ -60,12 +60,9 @@ class _EmployeeFlightsScreenState extends State<EmployeeFlightsScreen> {
   }
 
   Widget _flightCard(BuildContext context, Flight f) {
-    String airportName =
-        f.airline?.airport?.name ?? f.departureLocation ?? "Unknown Airport";
-         final departureTimeZoneId =
-        f.departureTimeZone ?? f.airport?.timeZoneId ?? f.airline?.airport?.timeZoneId;
-    final arrivalTimeZoneId =
-        f.arrivalTimeZone ?? f.airline?.airport?.timeZoneId ?? f.airport?.timeZoneId;
+    String airportName = f.airline?.airport?.name ?? f.departureLocation ?? "Unknown Airport";
+    final departureTimeZoneId =f.departureTimeZone ?? "UTC";
+    final arrivalTimeZoneId = f.arrivalTimeZone ?? "UTC";
     final departureText = formatDateInTimeZone(f.departureTime, departureTimeZoneId);
     final arrivalText = formatDateInTimeZone(f.arrivalTime, arrivalTimeZoneId);
     final duration = calculateDurationWithTimeZones(

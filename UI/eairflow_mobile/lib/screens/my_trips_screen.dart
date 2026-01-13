@@ -236,8 +236,7 @@ class _MyTripsMobileState extends State<MyTripsMobile> {
           bool alreadyReviewed =
               userReviews.any((rev) => rev.flightId == r.flightId);
 
-          final timeZoneId =
-              r.airport?.timeZoneId ?? r.flight?.airport?.timeZoneId;
+          final timeZoneId = r.flight?.departureTimeZone ?? "UTC";
           final departureText =
               formatDateInTimeZone(r.flight?.departureTime, timeZoneId);
           final reservationDateText = r.reservationDate != null
