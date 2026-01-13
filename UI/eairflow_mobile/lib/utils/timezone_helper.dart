@@ -46,7 +46,8 @@ Duration? calculateDurationWithTimeZones(
   final depTime = tz.TZDateTime.from(departure, depLocation).toUtc();
   final arrTime = tz.TZDateTime.from(arrival, arrLocation).toUtc();
 
-  return arrTime.difference(depTime);
+  final diff = arrTime.difference(depTime);
+  return diff.isNegative ? diff.abs() : diff;
 }
 
 String formatDuration(Duration? duration) {

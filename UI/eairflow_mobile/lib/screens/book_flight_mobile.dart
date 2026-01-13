@@ -292,7 +292,7 @@ class _BookFlightCardState extends State<BookFlightCard> {
   
 
   return Container(
-    width: 300,
+    width: 320,
     padding: const EdgeInsets.all(14),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(16),
@@ -347,14 +347,17 @@ class _BookFlightCardState extends State<BookFlightCard> {
         Row(
           children: [
             const Icon(Icons.access_time, size: 20, color: Colors.black54),
-            const Text(
-              " Departure time:",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            ),
             const SizedBox(width: 6),
-            Text(
-              _formatFlightDateTime(f, f.departureTime),
-              style: const TextStyle(fontSize: 14),
+            Expanded(
+              child: Text(
+                "Departure: ${_formatFlightDateTime(f, f.departureTime)}",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
@@ -376,9 +379,9 @@ class _BookFlightCardState extends State<BookFlightCard> {
           ],
         ),
 
-        const SizedBox(height: 14),
+        const SizedBox(height: 5),
         Divider(color: Colors.grey.shade300),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
 
         SizedBox(
           width: double.infinity,
