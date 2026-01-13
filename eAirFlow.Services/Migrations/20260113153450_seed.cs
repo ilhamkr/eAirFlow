@@ -13,26 +13,16 @@ namespace eAirFlow.Services.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.UpdateData(
-                table: "Airports",
-                keyColumn: "AirportId",
-                keyValue: 1,
-                column: "TimeZone",
-                value: "Europe/Sarajevo");
-
-            migrationBuilder.UpdateData(
-                table: "Airports",
-                keyColumn: "AirportId",
-                keyValue: 2,
-                column: "TimeZone",
-                value: "Europe/Sarajevo");
+            migrationBuilder.DropColumn(
+                name: "TimeZone",
+                table: "Airports");
 
             migrationBuilder.UpdateData(
                 table: "Employees",
                 keyColumn: "EmployeeId",
                 keyValue: 1,
                 column: "HireDate",
-                value: new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4211));
+                value: new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(894));
 
             migrationBuilder.UpdateData(
                 table: "Flights",
@@ -1326,21 +1316,21 @@ namespace eAirFlow.Services.Migrations
                 keyColumn: "UserId",
                 keyValue: 1,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4118), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(765), "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=", "WxeXewiXEaATZ6QSxbqyhw==" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "UserId",
                 keyValue: 2,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4140), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(789), "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=", "WxeXewiXEaATZ6QSxbqyhw==" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "UserId",
                 keyValue: 3,
                 columns: new[] { "CreatedAt", "PasswordHash", "PasswordSalt" },
-                values: new object[] { new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4154), "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=", "8BXzJyj/O4uxhnkLmu8AgA==" });
+                values: new object[] { new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(805), "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=", "WxeXewiXEaATZ6QSxbqyhw==" });
         }
 
         /// <inheritdoc />
@@ -1445,6 +1435,13 @@ namespace eAirFlow.Services.Migrations
                 table: "Flights",
                 keyColumn: "FlightId",
                 keyValue: 200);
+
+            migrationBuilder.AddColumn<string>(
+                name: "TimeZone",
+                table: "Airports",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.UpdateData(
                 table: "Airports",

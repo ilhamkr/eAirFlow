@@ -12,7 +12,7 @@ using eAirFlow.Services.Database;
 namespace eAirFlow.Services.Migrations
 {
     [DbContext(typeof(_210019Context))]
-    [Migration("20260113152447_seed")]
+    [Migration("20260113153450_seed")]
     partial class seed
     {
         /// <inheritdoc />
@@ -139,10 +139,6 @@ namespace eAirFlow.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TimeZone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("AirportId");
 
                     b.ToTable("Airports");
@@ -153,16 +149,14 @@ namespace eAirFlow.Services.Migrations
                             AirportId = 1,
                             City = "Sarajevo",
                             Country = "Bosnia and Herzegovina",
-                            Name = "Sarajevo International Airport",
-                            TimeZone = "Europe/Sarajevo"
+                            Name = "Sarajevo International Airport"
                         },
                         new
                         {
                             AirportId = 2,
                             City = "Mostar",
                             Country = "Bosnia and Herzegovina",
-                            Name = "Mostar International Airport",
-                            TimeZone = "Europe/Sarajevo"
+                            Name = "Mostar International Airport"
                         });
                 });
 
@@ -280,7 +274,7 @@ namespace eAirFlow.Services.Migrations
                             EmployeeId = 1,
                             AirportId = 1,
                             Email = "employee@example.com",
-                            HireDate = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4211),
+                            HireDate = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(894),
                             Name = "employee",
                             PhoneNumber = "555-555",
                             PositionId = 1,
@@ -7365,33 +7359,33 @@ namespace eAirFlow.Services.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4118),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(765),
                             Email = "user@example.com",
                             Name = "User",
-                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
-                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
+                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
+                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
                             PhoneNumber = "555-555",
                             Surname = "User"
                         },
                         new
                         {
                             UserId = 2,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4140),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(789),
                             Email = "employee@example.com",
                             Name = "Employee",
-                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
-                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
+                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
+                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
                             PhoneNumber = "555-555",
                             Surname = "Employee"
                         },
                         new
                         {
                             UserId = 3,
-                            CreatedAt = new DateTime(2026, 1, 13, 15, 24, 46, 284, DateTimeKind.Utc).AddTicks(4154),
+                            CreatedAt = new DateTime(2026, 1, 13, 15, 34, 49, 344, DateTimeKind.Utc).AddTicks(805),
                             Email = "admin@example.com",
                             Name = "Admin",
-                            PasswordHash = "cX0uxJ0ifZumvAB1q1fQaS6wzjRK4ev8QUXGI7+JHRY=",
-                            PasswordSalt = "8BXzJyj/O4uxhnkLmu8AgA==",
+                            PasswordHash = "UcJiNBVXkRdxjoAhbXyb9+AuIgHQKigaAgsnlUJwX/g=",
+                            PasswordSalt = "WxeXewiXEaATZ6QSxbqyhw==",
                             PhoneNumber = "555-555",
                             Surname = "Admin"
                         });
