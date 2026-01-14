@@ -1011,7 +1011,19 @@ class _BookNowDialogState extends State<BookNowDialog> {
   bool isLoading = true;
 
   String _normalizeSeatNumber(String seat) {
-    return seat.trim().toUpperCase();
+     final trimmed = seat.trim();
+    final noWhitespace = trimmed.replaceAll(RegExp(r'\s+'), '');
+    final normalized = noWhitespace.toUpperCase();
+    final match = RegExp(r'^0*(\d+)([A-Z]+)$').firstMatch(normalized);
+    if (match == null) {
+      return normalized;
+    }
+    final row = int.tryParse(match.group(1) ?? '');
+    final column = match.group(2) ?? '';
+    if (row == null) {
+      return normalized;
+    }
+    return '$row$column';
   }
 
   @override
@@ -1046,8 +1058,6 @@ class _BookNowDialogState extends State<BookNowDialog> {
 
       final seatPaged = await seatProvider.get();
       final mealPaged = await mealProvider.get();
-       final airplaneSeatList =
-          await airplaneSeatProvider.getByAirplane(widget.flight.airplaneId!);
 
       List<String> occupiedSeatList = [];
       List<Seat> airplaneSeatList = [];
@@ -1066,10 +1076,11 @@ class _BookNowDialogState extends State<BookNowDialog> {
       }
 
       setState(() {
-         occupiedSeats = occupiedSeatList.toSet();
+        occupiedSeats =
+            occupiedSeatList.map(_normalizeSeatNumber).toSet();
         seatClasses = seatPaged.result;
         mealTypes = mealPaged.result;
-          seatIdsByNumber = {
+        seatIdsByNumber = {
           for (final seat in airplaneSeatList)
             if (seat.seatNumber != null && seat.seatId != null)
               _normalizeSeatNumber(seat.seatNumber!): seat.seatId!,
@@ -1246,7 +1257,8 @@ class _BookNowDialogState extends State<BookNowDialog> {
               itemBuilder: (_, i) {
                 final row = (i ~/ 6) + 1;
                 final col = String.fromCharCode(65 + (i % 6));
-                final seat = "$row$col";
+                final seatLabel = "$row$col";
+                final seat = _normalizeSeatNumber(seatLabel);
                 final isOccupied = occupiedSeats.contains(seat);
                 final isSelected = selectedSeat == seat;
                 final isAllowed = allowedRows.contains(row);
@@ -1270,7 +1282,7 @@ class _BookNowDialogState extends State<BookNowDialog> {
                       border: Border.all(color: cs.primary),
                     ),
                     child: Text(
-                      seat,
+                      seatLabel,
                       style: TextStyle(
                         color: isSelected
                             ? Colors.white
