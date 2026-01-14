@@ -639,6 +639,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                     selectedDepartureTimeZoneId = value;
                     departureTimeZoneError =
                         value == null ? "Select a departure time zone." : null;
+                        final depDT = _tryParseDateTime(depTime.text);
+                    final arrDT = _tryParseDateTime(arrTime.text);
+                    arrError = _isArrivalBeforeDeparture(
+                            depDT,
+                            selectedDepartureTimeZoneId,
+                            arrDT,
+                            selectedArrivalTimeZoneId)
+                        ? "Arrival must be after departure"
+                        : null;
                   });
                 },
               ),
@@ -661,6 +670,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                     selectedArrivalTimeZoneId = value;
                     arrivalTimeZoneError =
                         value == null ? "Select an arrival time zone." : null;
+                        final depDT = _tryParseDateTime(depTime.text);
+                    final arrDT = _tryParseDateTime(arrTime.text);
+                    arrError = _isArrivalBeforeDeparture(
+                            depDT,
+                            selectedDepartureTimeZoneId,
+                            arrDT,
+                            selectedArrivalTimeZoneId)
+                        ? "Arrival must be after departure"
+                        : null;
                   });
                 },
               ),
@@ -935,6 +953,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                           selectedDepartureTimeZoneId = value;
                           departureTimeZoneError =
                               value == null ? "Select a departure time zone." : null;
+                              final depDT = _tryParseDateTime(depTime.text);
+                          final arrDT = _tryParseDateTime(arrTime.text);
+                          arrError = _isArrivalBeforeDeparture(
+                                  depDT,
+                                  selectedDepartureTimeZoneId,
+                                  arrDT,
+                                  selectedArrivalTimeZoneId)
+                              ? "Arrival must be after departure"
+                              : null;
                         });
                       },
               ),
@@ -959,6 +986,15 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                           selectedArrivalTimeZoneId = value;
                           arrivalTimeZoneError =
                               value == null ? "Select an arrival time zone." : null;
+                              final depDT = _tryParseDateTime(depTime.text);
+                          final arrDT = _tryParseDateTime(arrTime.text);
+                          arrError = _isArrivalBeforeDeparture(
+                                  depDT,
+                                  selectedDepartureTimeZoneId,
+                                  arrDT,
+                                  selectedArrivalTimeZoneId)
+                              ? "Arrival must be after departure"
+                              : null;
                         });
                       },
               ),
