@@ -135,7 +135,12 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
   ) {
     if (departure == null || arrival == null) return false;
     final departureUtc = toUtcFromTimeZone(departure, departureTimeZoneId);
-    final arrivalUtc = toUtcFromTimeZone(arrival, arrivalTimeZoneId);
+    final arrivalUtc = normalizeArrivalUtc(
+      departure,
+      departureTimeZoneId,
+      arrival,
+      arrivalTimeZoneId,
+    );
     return arrivalUtc.isBefore(departureUtc);
   }
 
@@ -819,8 +824,12 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
               final departureUtc =
                   toUtcFromTimeZone(departureDate, selectedDepartureTimeZoneId);
-              final arrivalUtc =
-                  toUtcFromTimeZone(arrivalDate, selectedArrivalTimeZoneId);
+              final arrivalUtc = normalizeArrivalUtc(
+                departureDate,
+                selectedDepartureTimeZoneId,
+                arrivalDate,
+                selectedArrivalTimeZoneId,
+              );
 
               
 
@@ -1132,8 +1141,12 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                     final departureUtc =
                         toUtcFromTimeZone(departureDate, selectedDepartureTimeZoneId);
-                    final arrivalUtc =
-                        toUtcFromTimeZone(arrivalDate, selectedArrivalTimeZoneId);
+                    final arrivalUtc = normalizeArrivalUtc(
+                      departureDate,
+                      selectedDepartureTimeZoneId,
+                      arrivalDate,
+                      selectedArrivalTimeZoneId,
+                    );
 
                     await flightProv.update(flight.flightId!, {
                      "departureLocation": departureLocation.text.trim(),

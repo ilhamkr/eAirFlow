@@ -74,6 +74,35 @@ DateTime toUtcFromTimeZone(DateTime dateTime, String? timeZoneId) {
   return tzDate.toUtc();
 }
 
+DateTime normalizeArrivalUtc(
+  DateTime departureLocal,
+  String? departureTimeZone,
+  DateTime arrivalLocal,
+  String? arrivalTimeZone,
+) {
+  final departureUtc = toUtcFromTimeZone(departureLocal, departureTimeZone);
+  final arrivalLocation = _safeLocation(arrivalTimeZone);
+  var arrivalTzDate = tz.TZDateTime(
+    arrivalLocation,
+    arrivalLocal.year,
+    arrivalLocal.month,
+    arrivalLocal.day,
+    arrivalLocal.hour,
+    arrivalLocal.minute,
+    arrivalLocal.second,
+    arrivalLocal.millisecond,
+    arrivalLocal.microsecond,
+  );
+  var arrivalUtc = arrivalTzDate.toUtc();
+
+  while (arrivalUtc.isBefore(departureUtc)) {
+    arrivalTzDate = arrivalTzDate.add(const Duration(days: 1));
+    arrivalUtc = arrivalTzDate.toUtc();
+  }
+
+  return arrivalUtc;
+}
+
 Duration? calculateDurationWithTimeZones(
     DateTime? departure,
     String? departureTimeZone,
