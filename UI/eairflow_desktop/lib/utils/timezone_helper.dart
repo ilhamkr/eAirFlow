@@ -82,10 +82,8 @@ Duration? calculateDurationWithTimeZones(
     ) {
   if (departure == null || arrival == null) return null;
 
-  final depTime = _toTimeZoneDateTime(departure, departureTimeZone).toUtc();
-  final arrTime = _toTimeZoneDateTime(arrival, arrivalTimeZone).toUtc();
-
-  return arrTime.difference(depTime);
+   final diff = arrival.difference(departure);
+  return diff.isNegative ? diff.abs() : diff;
 }
 
 String formatDuration(Duration? duration) {

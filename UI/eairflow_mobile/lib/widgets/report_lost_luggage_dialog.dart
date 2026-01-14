@@ -31,6 +31,7 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
   bool loadingData = true;
   bool submitting = false;
 
+  List<Airport> allAirports = [];
   List<Airport> airports = [];
   List<CheckIn> checkIns = [];
 
@@ -42,10 +43,8 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
 
    Future<void> loadData() async {
     try {
-      airports = await AirportProvider().getAll();
-      if (airports.isNotEmpty) {
-        selectedAirport = airports.first;
-      }
+      allAirports = await AirportProvider().getAll();
+      airports = allAirports;
 
       final userId = AuthProvider.userId;
       if (userId != null) {
@@ -55,9 +54,44 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
           selectedCheckIn = checkIns.first;
         }
       }
+      _syncAirportForCheckIn();
     } finally {
       if (mounted) setState(() => loadingData = false);
     }
+  }
+
+  void _syncAirportForCheckIn() {
+    if (selectedCheckIn == null) {
+      airports = allAirports;
+      selectedAirport = airports.isNotEmpty ? airports.first : null;
+      return;
+    }
+
+    final flight = selectedCheckIn?.reservation?.flight;
+    final preferredAirport = flight?.airport ??
+        flight?.airline?.airport ??
+        selectedCheckIn?.reservation?.airport;
+    List<Airport> filtered = allAirports;
+
+    if (preferredAirport?.airportId != null) {
+      filtered = allAirports
+          .where((a) => a.airportId == preferredAirport!.airportId)
+          .toList();
+    }
+
+    if (filtered.isEmpty && flight?.departureLocation?.isNotEmpty == true) {
+      final departure = flight!.departureLocation!.trim().toLowerCase();
+      filtered = allAirports
+          .where((a) => (a.city ?? "").trim().toLowerCase() == departure)
+          .toList();
+    }
+
+    if (filtered.isEmpty && preferredAirport != null) {
+      filtered = [preferredAirport];
+    }
+
+    airports = filtered;
+    selectedAirport = airports.isNotEmpty ? airports.first : null;
   }
 
   Future<void> pickImage() async {
@@ -124,20 +158,16 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                DropdownButtonFormField<Airport>(
-                  isExpanded: true,
-                  value: selectedAirport,
+                InputDecorator(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "Airport",
                   ),
-                  items: airports.map((a) => DropdownMenuItem(
-                        value: a,
-                        child: Text("${a.city} - ${a.name}"),
-                      )).toList(),
-                  onChanged: (val) => setState(() => selectedAirport = val),
-                  validator: (v) =>
-                      v == null ? "Airport is required" : null,
+                 child: Text(
+                    selectedAirport != null
+                        ? "${selectedAirport!.city} - ${selectedAirport!.name}"
+                        : "No airport available",
+                  ),
                 ),
 
                 const SizedBox(height: 14),

@@ -305,6 +305,7 @@ namespace eAirFlow.Services.Services
                 DepartureTimeZone = request.DepartureTimeZone,
                 ArrivalTimeZone = request.ArrivalTimeZone,
                 AirlineId = request.AirlineId,
+                AirplaneId = airplane.AirplaneId,
                 Price = request.Price,
                 StateMachine = "scheduled"
             };

@@ -185,12 +185,16 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
     loadReservations();
   }
 
-  Future<void> loadReservations() async {
+  Future<void> loadReservations({bool showLoading = true}) async {
     final userId = AuthProvider.userId;
 
     if (userId == null) {
       setState(() => loading = false);
       return;
+    }
+
+     if (showLoading && mounted) {
+      setState(() => loading = true);
     }
 
     final reviewProv = FlightReviewProvider();
@@ -269,13 +273,16 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: ListView.builder(
-        itemCount: reservations.length,
-        itemBuilder: (context, index) {
-          final r = reservations[index];
-           final timeZone = r.flight?.departureTimeZone ?? "UTC";
+     return RefreshIndicator(
+      onRefresh: () => loadReservations(showLoading: false),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: reservations.length,
+          itemBuilder: (context, index) {
+            final r = reservations[index];
+            final timeZone = r.flight?.departureTimeZone ?? "UTC";
           final departureText = formatDateInTimeZone(r.flight?.departureTime, timeZone);
           final reservationDateText = r.reservationDate != null
               ? formatDateInTimeZone(DateTime.parse(r.reservationDate!), timeZone)
@@ -554,7 +561,8 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
               ),
             ),
           );
-        },
+          },
+        ),
       ),
     );
   }

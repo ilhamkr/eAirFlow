@@ -14,6 +14,8 @@ import 'package:eairflow_desktop/providers/user_provider.dart';
 import 'package:eairflow_desktop/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eairflow_desktop/utils/timezone_helper.dart';
+import 'package:eairflow_desktop/providers/seat_provider.dart';
+import 'package:eairflow_desktop/models/seat.dart';
 
 String _departureTimeZone(Flight flight) {
    return flight.departureTimeZone ?? 'UTC';
@@ -999,6 +1001,7 @@ class _BookNowDialogState extends State<BookNowDialog> {
 
   List<SeatClass> seatClasses = [];
   List<MealType> mealTypes = [];
+  Map<String, int> seatIdsByNumber = {};
 
   SeatClass? selectedSeatClass;
   MealType? selectedMeal;
@@ -1006,6 +1009,10 @@ class _BookNowDialogState extends State<BookNowDialog> {
   Set<String> occupiedSeats = {};
 
   bool isLoading = true;
+
+  String _normalizeSeatNumber(String seat) {
+    return seat.trim().toUpperCase();
+  }
 
   @override
   void dispose() {
@@ -1034,18 +1041,39 @@ class _BookNowDialogState extends State<BookNowDialog> {
     try {
       final seatProvider = SeatClassProvider();
       final mealProvider = MealTypeProvider();
+      final airplaneSeatProvider = SeatProvider();
+      final flightProv = FlightProvider();
 
       final seatPaged = await seatProvider.get();
       final mealPaged = await mealProvider.get();
+       final airplaneSeatList =
+          await airplaneSeatProvider.getByAirplane(widget.flight.airplaneId!);
 
+      List<String> occupiedSeatList = [];
+      List<Seat> airplaneSeatList = [];
 
-      final flightProv = FlightProvider();
-      final seats = await flightProv.getOccupiedSeats(widget.flight.flightId!);
+      try {
+        airplaneSeatList = await airplaneSeatProvider
+            .getByAirplane(widget.flight.airplaneId!);
+      } catch (e) {
+        print("ERROR LOADING AIRPLANE SEATS: $e");
+      }
+      try {
+        occupiedSeatList =
+            await flightProv.getOccupiedSeats(widget.flight.flightId!);
+      } catch (e) {
+        print("ERROR LOADING OCCUPIED SEATS: $e");
+      }
 
       setState(() {
-        occupiedSeats = seats.toSet();
+         occupiedSeats = occupiedSeatList.toSet();
         seatClasses = seatPaged.result;
         mealTypes = mealPaged.result;
+          seatIdsByNumber = {
+          for (final seat in airplaneSeatList)
+            if (seat.seatNumber != null && seat.seatId != null)
+              _normalizeSeatNumber(seat.seatNumber!): seat.seatId!,
+        };
 
         selectedSeatClass = seatClasses.firstWhere(
           (x) => x.name?.toLowerCase() == "economy",
@@ -1083,12 +1111,22 @@ class _BookNowDialogState extends State<BookNowDialog> {
       return;
     }
 
+    final seatKey = _normalizeSeatNumber(selectedSeat!);
+    final seatId = seatIdsByNumber[seatKey];
+    if (seatId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Selected seat is invalid")),
+      );
+      return;
+    }
+
+
     final reservationProvider = ReservationProvider();
 
     final request = {
   "userId": AuthProvider.userId,
   "flightId": widget.flight.flightId,
-  "seatId": selectedSeatClass?.seatClassId,
+  "seatId": seatId,
   "mealTypeId": selectedMeal?.mealTypeId,
   "selectedSeat": selectedSeat,
   "airportId": widget.airportId,

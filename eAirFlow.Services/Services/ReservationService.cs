@@ -245,7 +245,21 @@ namespace eAirFlow.Services.Services
         {
             var query = AddInclude(_context.Reservations)
                 .Where(r => r.UserId == userId)
+                .AsNoTracking()
                 .ToList();
+
+            var flightIds = query
+               .Select(r => r.FlightId)
+               .Where(id => id.HasValue)
+               .Select(id => id!.Value)
+               .Distinct()
+               .ToList();
+
+            var flightStateLookup = _context.Flights
+                .AsNoTracking()
+                .Where(f => flightIds.Contains(f.FlightId))
+                .Select(f => new { f.FlightId, f.StateMachine })
+                .ToDictionary(f => f.FlightId, f => f.StateMachine);
 
             var dtoList = new List<Reservation>();
 
@@ -258,6 +272,13 @@ namespace eAirFlow.Services.Services
                 dto.Airport = ef.Airport != null ? _mapper.Map<Airport>(ef.Airport) : null;
                 dto.Flight = ef.Flight != null ? _mapper.Map<Flight>(ef.Flight) : null;
                 dto.Payment = ef.Payment != null ? _mapper.Map<Payment>(ef.Payment) : null;
+
+                if (dto.Flight != null &&
+                   dto.Flight.FlightId != 0 &&
+                   flightStateLookup.TryGetValue(dto.Flight.FlightId, out var state))
+                {
+                    dto.Flight.StateMachine = state;
+                }
 
                 var lastCheckIn = ef.CheckIns
                 .OrderByDescending(c => c.CheckinId)

@@ -26,6 +26,7 @@ namespace eAirFlow.Services.Recommender
 
         public List<Flight> GetRecommendedFlights(int userId, int brojPreporuka = 3)
         {
+            var now = DateTime.Now;
             var userReservations = _context.Reservations
                 .Include(r => r.Flight)
                     .ThenInclude(f => f.Airline)
@@ -37,6 +38,7 @@ namespace eAirFlow.Services.Recommender
             {
                 var differentDestinations = _context.Flights
                     .Include(f => f.Airline)
+                    .Where(f => f.DepartureTime >= now)
                     .GroupBy(f => f.ArrivalLocation)
                     .Select(g => g.OrderBy(f => f.Price).First())
                     .Take(brojPreporuka)
@@ -54,7 +56,7 @@ namespace eAirFlow.Services.Recommender
 
             var candidateFlightsQuery = _context.Flights
                 .Include(f => f.Airline)
-                .Where(f => f.DepartureTime >= DateTime.Now);
+                 .Where(f => f.DepartureTime >= now);
 
             var reservedFlightIds = userReservations
                 .Select(r => r.FlightId)
@@ -70,15 +72,7 @@ namespace eAirFlow.Services.Recommender
 
             if (!candidateFlights.Any())
             {
-                var lastFlights = userReservations
-                    .OrderByDescending(r => r.ReservationDate)
-                    .Select(r => r.Flight!)
-                    .GroupBy(f => f.ArrivalLocation)
-                    .Select(g => g.First())
-                    .Take(brojPreporuka)
-                    .ToList();
-
-                return _mapper.Map<List<Flight>>(lastFlights);
+                return new List<Flight>();
             }
 
             var flightTextData = candidateFlights.Select(f => new FlightTextData

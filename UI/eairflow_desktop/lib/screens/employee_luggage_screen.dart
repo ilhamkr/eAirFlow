@@ -254,12 +254,22 @@ void _showPassengerPopup(BuildContext context, Luggage l) {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(80),
-              child: Image.network(
-                "${BaseProvider.baseUrl}${user.profileImageUrl}",
-                width: 140,
-                height: 140,
-                fit: BoxFit.cover,
-              ),
+               child: user.profileImageUrl == null
+                  ? CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.person,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : Image.network(
+                      "${BaseProvider.baseUrl}${user.profileImageUrl}",
+                      width: 140,
+                      height: 140,
+                      fit: BoxFit.cover,
+                    ),
             ),
 
             const SizedBox(height: 20),

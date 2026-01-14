@@ -40,13 +40,7 @@ Duration? calculateDurationWithTimeZones(
     ) {
   if (departure == null || arrival == null) return null;
 
-  final depLocation = _safeLocation(departureTimeZone);
-  final arrLocation = _safeLocation(arrivalTimeZone);
-
-  final depTime = tz.TZDateTime.from(departure, depLocation).toUtc();
-  final arrTime = tz.TZDateTime.from(arrival, arrLocation).toUtc();
-
-  final diff = arrTime.difference(depTime);
+  final diff = arrival.difference(departure);
   return diff.isNegative ? diff.abs() : diff;
 }
 
