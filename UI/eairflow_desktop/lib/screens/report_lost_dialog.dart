@@ -32,6 +32,7 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
   bool submitting = false;
   List<Airport> airports = [];
   List<CheckIn> checkIns = [];
+  List<Airport> allAirports = [];
 
   bool tagError = false;
   bool descriptionError = false;
@@ -45,12 +46,44 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
     loadData();
   }
 
+   void _syncAirportForCheckIn() {
+    if (selectedCheckIn == null) {
+      airports = allAirports;
+      selectedAirport = null;
+      return;
+    }
+
+    final flight = selectedCheckIn?.reservation?.flight;
+    final preferredAirport = flight?.airport ??
+        flight?.airline?.airport ??
+        selectedCheckIn?.reservation?.airport;
+    List<Airport> filtered = allAirports;
+
+    if (preferredAirport?.airportId != null) {
+      filtered = allAirports
+          .where((a) => a.airportId == preferredAirport!.airportId)
+          .toList();
+    }
+
+    if (filtered.isEmpty && flight?.departureLocation?.isNotEmpty == true) {
+      final departure = flight!.departureLocation!.trim().toLowerCase();
+      filtered = allAirports
+          .where((a) => (a.city ?? "").trim().toLowerCase() == departure)
+          .toList();
+    }
+
+    if (filtered.isEmpty && preferredAirport != null) {
+      filtered = [preferredAirport];
+    }
+
+    airports = filtered;
+    selectedAirport = airports.isNotEmpty ? airports.first : null;
+  }
+
   Future<void> loadData() async {
     try {
-      airports = await AirportProvider().getAll();
-      if (airports.isNotEmpty) {
-        selectedAirport = airports.first;
-      }
+      allAirports = await AirportProvider().getAll();
+      airports = allAirports;
 
       final userId = AuthProvider.userId;
       if (userId != null) {
@@ -61,12 +94,13 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
                 c.reservationId != null && seenReservations.add(c.reservationId!))
             .toList();
         if (checkIns.isNotEmpty) {
-           selectedCheckIn = checkIns
-              .firstWhere((c) => c.reservation?.flight != null, orElse: () => checkIns.first);
-              selectedCheckIn?.reservation?.flight?.airport ??
-              selectedAirport;
+           selectedCheckIn = checkIns.firstWhere(
+            (c) => c.reservation?.flight != null,
+            orElse: () => checkIns.first,
+          );
         }
       }
+       _syncAirportForCheckIn();
       airportError = checkIns.isNotEmpty && selectedAirport == null;
     } finally {
       setState(() => loadingData = false);
@@ -166,17 +200,18 @@ class _ReportLostDialogState extends State<ReportLostDialog> {
                       ),
                     ),
 
-                  if (selectedAirport != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "${selectedAirport!.city} - ${selectedAirport!.name}",
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
+                 Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        selectedAirport != null
+                            ? "${selectedAirport!.city} - ${selectedAirport!.name}"
+                            : "",
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
+                 ),
 
                   if (checkIns.isNotEmpty) ...[
                     const SizedBox(height: 12),

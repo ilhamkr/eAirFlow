@@ -63,7 +63,7 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
   void _syncAirportForCheckIn() {
     if (selectedCheckIn == null) {
       airports = allAirports;
-      selectedAirport = airports.isNotEmpty ? airports.first : null;
+      selectedAirport = null;
       return;
     }
 
@@ -163,10 +163,9 @@ class _ReportLostDialogMobileState extends State<ReportLostDialogMobile> {
                     border: OutlineInputBorder(),
                     labelText: "Airport",
                   ),
-                 child: Text(
+                  child: Text(
                     selectedAirport != null
-                        ? "${selectedAirport!.city} - ${selectedAirport!.name}"
-                        : "No airport available",
+                        ? "${selectedAirport!.city} - ${selectedAirport!.name}" : "",
                   ),
                 ),
 
