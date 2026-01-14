@@ -293,7 +293,19 @@ class _MyTripsScreenState extends State<MyTripsScreen> {
             r.country,
           ].where((value) => value != null && value.trim().isNotEmpty).toList();
           final addressLine = addressParts.join(", ");
+          final profileName = AuthProvider.name?.trim() ?? "";
+          final profileSurname = AuthProvider.surname?.trim() ?? "";
+          final profileEmail = AuthProvider.email?.trim() ?? "";
+          final profilePhone = AuthProvider.phoneNumber?.trim() ?? "";
           final infoItems = <Widget>[
+             if (profileName.isNotEmpty)
+              _infoChip(Icons.person, "Name", profileName),
+            if (profileSurname.isNotEmpty)
+              _infoChip(Icons.person_outline, "Surname", profileSurname),
+            if (profileEmail.isNotEmpty)
+              _infoChip(Icons.email, "Email", profileEmail),
+            if (profilePhone.isNotEmpty)
+              _infoChip(Icons.phone, "Phone", profilePhone),
             if (r.dateOfBirth != null && r.dateOfBirth!.trim().isNotEmpty)
               _infoChip(Icons.cake, "Date of birth", r.dateOfBirth!),
             if (addressLine.isNotEmpty)

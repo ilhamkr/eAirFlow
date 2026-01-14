@@ -1011,9 +1011,10 @@ class _BookNowDialogState extends State<BookNowDialog> {
   bool isLoading = true;
 
   String _normalizeSeatNumber(String seat) {
-     final trimmed = seat.trim();
+    final trimmed = seat.trim();
     final noWhitespace = trimmed.replaceAll(RegExp(r'\s+'), '');
-    final normalized = noWhitespace.toUpperCase();
+    final alphanumeric = noWhitespace.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
+    final normalized = alphanumeric.toUpperCase();
     final match = RegExp(r'^0*(\d+)([A-Z]+)$').firstMatch(normalized);
     if (match == null) {
       return normalized;
@@ -1124,12 +1125,6 @@ class _BookNowDialogState extends State<BookNowDialog> {
 
     final seatKey = _normalizeSeatNumber(selectedSeat!);
     final seatId = seatIdsByNumber[seatKey];
-    if (seatId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Selected seat is invalid")),
-      );
-      return;
-    }
 
 
     final reservationProvider = ReservationProvider();

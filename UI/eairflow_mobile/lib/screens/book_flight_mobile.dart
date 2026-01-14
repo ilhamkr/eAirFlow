@@ -14,6 +14,8 @@ import 'package:eairflow_mobile/providers/user_provider.dart';
 import 'package:eairflow_mobile/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eairflow_mobile/utils/timezone_helper.dart';
+import 'package:eairflow_mobile/models/seat.dart';
+import 'package:eairflow_mobile/providers/seat_provider.dart';
 
 String _departureTimeZone(Flight flight) {
   return flight.departureTimeZone ?? 'UTC';
@@ -1024,6 +1026,7 @@ class _BookNowPageState extends State<BookNowPage> {
 
   List<SeatClass> seatClasses = [];
   List<MealType> mealTypes = [];
+  Map<String, int> seatIdsByNumber = {};
 
   SeatClass? selectedSeatClass;
   MealType? selectedMeal;
@@ -1031,6 +1034,22 @@ class _BookNowPageState extends State<BookNowPage> {
   Set<String> occupiedSeats = {};
 
   bool isLoading = true;
+
+  String _normalizeSeatNumber(String seat) {
+    final trimmed = seat.trim();
+    final noWhitespace = trimmed.replaceAll(RegExp(r'\s+'), '');
+    final normalized = noWhitespace.toUpperCase();
+    final match = RegExp(r'^0*(\d+)([A-Z]+)$').firstMatch(normalized);
+    if (match == null) {
+      return normalized;
+    }
+    final row = int.tryParse(match.group(1) ?? '');
+    final column = match.group(2) ?? '';
+    if (row == null) {
+      return normalized;
+    }
+    return '$row$column';
+  }
 
   @override
   void dispose() {
@@ -1059,19 +1078,41 @@ class _BookNowPageState extends State<BookNowPage> {
     try {
       final seatProvider = SeatClassProvider();
       final mealProvider = MealTypeProvider();
+      final airplaneSeatProvider = SeatProvider();
 
       final seatPaged = await seatProvider.get();
       final mealPaged = await mealProvider.get();
 
       final flightProv = FlightProvider();
-      final seats = await flightProv.getOccupiedSeats(widget.flight.flightId!);
+      List<String> occupiedSeatList = [];
+      List<Seat> airplaneSeatList = [];
+
+      try {
+        airplaneSeatList = await airplaneSeatProvider
+            .getByAirplane(widget.flight.airplaneId!);
+      } catch (e) {
+        print("ERROR LOADING AIRPLANE SEATS: $e");
+      }
+
+      try {
+        occupiedSeatList =
+            await flightProv.getOccupiedSeats(widget.flight.flightId!);
+      } catch (e) {
+        print("ERROR LOADING OCCUPIED SEATS: $e");
+      }
 
       setState(() {
         seatClasses = seatPaged.result;
         mealTypes = mealPaged.result;
 
         if (seatClasses.isNotEmpty) {
-          occupiedSeats = seats.toSet();
+          occupiedSeats =
+              occupiedSeatList.map(_normalizeSeatNumber).toSet();
+          seatIdsByNumber = {
+            for (final seat in airplaneSeatList)
+              if (seat.seatNumber != null && seat.seatId != null)
+                _normalizeSeatNumber(seat.seatNumber!): seat.seatId!,
+          };
           selectedSeatClass = seatClasses.firstWhere(
             (x) => x.name?.toLowerCase() == "economy",
             orElse: () => seatClasses.first,
@@ -1170,11 +1211,13 @@ class _BookNowPageState extends State<BookNowPage> {
   }
 
     final reservationProvider = ReservationProvider();
+    final seatKey = _normalizeSeatNumber(selectedSeat!);
+    final seatId = seatIdsByNumber[seatKey];
 
     final request = {
       "userId": AuthProvider.userId,
       "flightId": widget.flight.flightId,
-      "seatId": selectedSeatClass?.seatClassId,
+      "seatId": seatId,
       "mealTypeId": selectedMeal?.mealTypeId,
       "selectedSeat": selectedSeat,
       "airportId": widget.airportId,
@@ -1238,7 +1281,7 @@ Widget build(BuildContext context) {
             children: [
               /// ================= SEAT GRID =================
               Expanded(
-                flex: 6,
+                flex: 5,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -1325,6 +1368,7 @@ Widget build(BuildContext context) {
 
               /// ================= FORM =================
               Expanded(
+                flex: 3,
                 child: SingleChildScrollView(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16),
