@@ -127,6 +127,18 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
     return dateOnly.isBefore(today);
   }
 
+  bool _isArrivalBeforeDeparture(
+    DateTime? departure,
+    String? departureTimeZoneId,
+    DateTime? arrival,
+    String? arrivalTimeZoneId,
+  ) {
+    if (departure == null || arrival == null) return false;
+    final departureUtc = toUtcFromTimeZone(departure, departureTimeZoneId);
+    final arrivalUtc = toUtcFromTimeZone(arrival, arrivalTimeZoneId);
+    return arrivalUtc.isBefore(departureUtc);
+  }
+
   void showSuccess(String msg) {
    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -681,10 +693,18 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
                 onTap: () async {
                   await pickDateTime(depTime);
                   final dt = _tryParseDateTime(depTime.text);
+                  final arrDT = _tryParseDateTime(arrTime.text);
 
                   setLocal(() {
                      depError = (dt == null || _isBeforeToday(dt))
                         ? "Departure cannot be in the past"
+                        : null;
+                        arrError = _isArrivalBeforeDeparture(
+                            dt,
+                            selectedDepartureTimeZoneId,
+                            arrDT,
+                            selectedArrivalTimeZoneId)
+                        ? "Arrival must be after departure"
                         : null;
                   });
                 },
@@ -706,7 +726,11 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                   setLocal(() {
                     arrError =
-                        (depDT != null && arrDT != null && arrDT.isBefore(depDT))
+                         _isArrivalBeforeDeparture(
+                                depDT,
+                                selectedDepartureTimeZoneId,
+                                arrDT,
+                                selectedArrivalTimeZoneId)
                             ? "Arrival must be after departure"
                             : null;
                   });
@@ -963,10 +987,18 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                   await pickDateTime(depTime);
                  final dt = _tryParseDateTime(depTime.text);
+                 final arrDT = _tryParseDateTime(arrTime.text);
 
                   setLocal(() {
                     depError = (dt == null || _isBeforeToday(dt))
                         ? "Departure cannot be in the past"
+                        : null;
+                        arrError = _isArrivalBeforeDeparture(
+                            dt,
+                            selectedDepartureTimeZoneId,
+                            arrDT,
+                            selectedArrivalTimeZoneId)
+                        ? "Arrival must be after departure"
                         : null;
                   });
                 },
@@ -991,7 +1023,11 @@ class _AdminFlightsScreenState extends State<AdminFlightsScreen>
 
                   setLocal(() {
                     arrError =
-                        (depDT != null && arrDT != null && arrDT.isBefore(depDT))
+                         _isArrivalBeforeDeparture(
+                                depDT,
+                                selectedDepartureTimeZoneId,
+                                arrDT,
+                                selectedArrivalTimeZoneId)
                             ? "Arrival must be after departure"
                             : null;
                   });

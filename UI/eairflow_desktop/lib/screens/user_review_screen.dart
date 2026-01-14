@@ -63,6 +63,7 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
             PendingReviewsList(
               reservations: completedReservations,
               reviews: reviews,
+              refresh: loadData,
             ),
             CompletedReviewsList(reviews: reviews),
           ],
@@ -76,11 +77,13 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
 class PendingReviewsList extends StatelessWidget {
   final List<Reservation> reservations;
   final List<FlightReview> reviews;
+  final Future<void> Function() refresh;
 
   const PendingReviewsList({
     super.key,
     required this.reservations,
     required this.reviews,
+    required this.refresh,
   });
 
   @override
@@ -101,8 +104,15 @@ class PendingReviewsList extends StatelessWidget {
         return ListTile(
           title: Text("${r.flight!.departureLocation} → ${r.flight!.arrivalLocation}"),
           trailing: ElevatedButton(
-            onPressed: () {
-              showRateDialog(context, AuthProvider.userId!, r.flight!);
+            onPressed: () async {
+              final submitted = await showRateDialog(
+                context,
+                AuthProvider.userId!,
+                r.flight!,
+              );
+              if (submitted == true) {
+                await refresh();
+              }
             },
             child: const Text("Rate"),
           ),

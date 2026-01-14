@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:eairflow_mobile/models/flight.dart';
 import 'package:eairflow_mobile/providers/flight_review_provider.dart';
 
-Future<void> showRateDialog(BuildContext context, int userId, Flight flight) {
+Future<bool?> showRateDialog(BuildContext context, int userId, Flight flight) {
   int rating = 0;
   final commentCtrl = TextEditingController();
 
-  return showModalBottomSheet(
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.white,
@@ -99,7 +99,7 @@ Future<void> showRateDialog(BuildContext context, int userId, Flight flight) {
                                     commentCtrl.text,
                                   );
 
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

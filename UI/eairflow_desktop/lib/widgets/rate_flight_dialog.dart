@@ -2,11 +2,11 @@ import 'package:eairflow_desktop/models/flight.dart';
 import 'package:eairflow_desktop/providers/flight_review_provider.dart';
 import 'package:flutter/material.dart';
 
-void showRateDialog(BuildContext context, int userId, Flight flight) {
+Future<bool?>  showRateDialog(BuildContext context, int userId, Flight flight) {
   int rating = 0;
   final commentCtrl = TextEditingController();
 
-  showDialog(
+  return showDialog<bool>(
     context: context,
     builder: (_) => AlertDialog(
       title: Text("Rate your flight"),
@@ -61,7 +61,7 @@ void showRateDialog(BuildContext context, int userId, Flight flight) {
               commentCtrl.text,
             );
 
-            Navigator.pop(context);
+            Navigator.pop(context,true);
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Thanks for your review!")),

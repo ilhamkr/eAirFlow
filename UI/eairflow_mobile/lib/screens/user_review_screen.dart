@@ -77,7 +77,7 @@ class _UserReviewsScreenMobileState extends State<UserReviewsScreenMobile> {
 class PendingReviewsMobile extends StatelessWidget {
   final List<Reservation> reservations;
   final List<FlightReview> reviews;
-  final Function refresh;
+  final Future<void> Function() refresh;
 
   const PendingReviewsMobile({
     super.key,
@@ -145,12 +145,14 @@ class PendingReviewsMobile extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      await showRateDialog(
+                      final submitted = await showRateDialog(
                         context,
                         AuthProvider.userId!,
                         r.flight!,
                       );
-                      refresh();
+                      if (submitted == true) {
+                        await refresh();
+                      }
                     },
                     child: const Text("Rate Flight"),
                   ),

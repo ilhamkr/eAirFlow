@@ -82,7 +82,9 @@ Duration? calculateDurationWithTimeZones(
     ) {
   if (departure == null || arrival == null) return null;
 
-   final diff = arrival.difference(departure);
+  final departureUtc = toUtcFromTimeZone(departure, departureTimeZone);
+  final arrivalUtc = toUtcFromTimeZone(arrival, arrivalTimeZone);
+  final diff = arrivalUtc.difference(departureUtc);
   return diff.isNegative ? diff.abs() : diff;
 }
 

@@ -23,6 +23,23 @@ tz.Location _safeLocation(String? timeZoneId) {
   }
 }
 
+DateTime toUtcFromTimeZone(DateTime dateTime, String? timeZoneId) {
+  final location = _safeLocation(timeZoneId);
+  final tzDate = tz.TZDateTime(
+    location,
+    dateTime.year,
+    dateTime.month,
+    dateTime.day,
+    dateTime.hour,
+    dateTime.minute,
+    dateTime.second,
+    dateTime.millisecond,
+    dateTime.microsecond,
+  );
+
+  return tzDate.toUtc();
+}
+
 String formatDateInTimeZone(DateTime? dateTime, String? timeZoneId,
     {String pattern = "yyyy-MM-dd HH:mm"}) {
   if (dateTime == null) return "N/A";
@@ -40,7 +57,9 @@ Duration? calculateDurationWithTimeZones(
     ) {
   if (departure == null || arrival == null) return null;
 
-  final diff = arrival.difference(departure);
+  final departureUtc = toUtcFromTimeZone(departure, departureTimeZone);
+  final arrivalUtc = toUtcFromTimeZone(arrival, arrivalTimeZone);
+  final diff = arrivalUtc.difference(departureUtc);
   return diff.isNegative ? diff.abs() : diff;
 }
 
